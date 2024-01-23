@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\DropdownController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RulesController;
+use App\Http\Controllers\SLFrameController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -25,6 +26,11 @@ Route::get('/logout', [AuthController::class, 'logout']);
 Route::middleware(['auth'])->group(function () {
     //Home Controller
     Route::get('/home', [HomeController::class, 'index']);
+
+
+    //SLFrame Controller
+    Route::post('/slframe', [SLFrameController::class, 'index']);
+    Route::get('/slframe/{noframe}', [SLFrameController::class, 'show'])->name('show');
 
     //Dropdown Controller
     Route::get('/dropdown', [DropdownController::class, 'index'])->middleware(['checkRole:IT']);

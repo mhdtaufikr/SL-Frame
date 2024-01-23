@@ -12,14 +12,13 @@ class CreateCommonInformationsTable extends Migration
         Schema::create('commoninformations', function (Blueprint $table) {
             $table->id('CommonInfoID');
             $table->string('NoFrame');
-            $table->date('TglProd');
-            $table->string('Shift');
-            $table->string('NamaQG');
-            $table->string('PDI');
-            $table->date('PDI_Date');
-            $table->string('itemcheck');
+            $table->date('TglProd')->nullable();
+            $table->string('Shift')->nullable();
+            $table->string('NamaQG')->nullable();
+            $table->string('PDI')->nullable();
+            $table->date('PDI_Date')->nullable();
             $table->string('Status', 50);
-            $table->text('Remarks');
+            $table->text('Remarks')->nullable();
             $table->timestamps();
         });
     }

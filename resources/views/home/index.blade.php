@@ -33,13 +33,12 @@
             {{-- <div class="card-header">Example Card</div> --}}
             <div class="card-body">
                 <div class="text-center">
-                    <form action="">
+                    <form action="{{ url('/slframe') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <label for="no_frame">Input No. Frame</label>
                         <input type="text" class="form-control mb-4 mt-4" name="no_frame" id="">
                         <button class="btn btn-success" type="submit">Submit</button>
                     </form>
-                 
                 </div>
             </div>
         </div>

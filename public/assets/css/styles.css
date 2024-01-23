@@ -6022,7 +6022,7 @@ textarea.form-control-lg {
 }
 
 .card-header {
-  padding: 1rem 1.35rem;
+  padding: 0.1rem 0.1rem;
   margin-bottom: 0;
   background-color: rgba(33, 40, 50, 0.03);
   border-bottom: 1px solid rgba(33, 40, 50, 0.125);
@@ -7665,7 +7665,7 @@ textarea.form-control-lg {
   flex-shrink: 0;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1rem;
+  padding: 0.5rem 0.5rem;
   border-bottom: 1px solid #e0e5ec;
   border-top-left-radius: calc(0.5rem - 1px);
   border-top-right-radius: calc(0.5rem - 1px);
