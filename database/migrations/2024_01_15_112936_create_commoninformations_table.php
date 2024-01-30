@@ -18,7 +18,9 @@ class CreateCommonInformationsTable extends Migration
             $table->string('PDI')->nullable();
             $table->date('PDI_Date')->nullable();
             $table->string('Status', 50);
+            $table->integer('InspectionLevel')->default(1); // Added InspectionLevel column
             $table->text('Remarks')->nullable();
+            $table->string('QualityStatus', 50)->default('Good'); // Added QualityStatus column
             $table->timestamps();
         });
     }
@@ -28,4 +30,3 @@ class CreateCommonInformationsTable extends Migration
         Schema::dropIfExists('commoninformations');
     }
 }
-

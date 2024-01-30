@@ -36,5 +36,12 @@ class SLFrameController extends Controller
         $itemCheckGroups = Itemcheckgroup::whereIn('CheckGroup', $checkGroups)->get()->groupBy('CheckGroup');
         return view('slframe.index', compact('Commoninformation', 'itemCheckGroups'));
     }
+    public function submit(Request $request)
+    {
+      dd($request->all());
+    
+        return redirect()->back()->with('success', 'Form submitted successfully!');
+    }
+    
     
 }
