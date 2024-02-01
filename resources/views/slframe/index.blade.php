@@ -48,44 +48,7 @@
                     </span>
                 </div>
             </div>
-            <script>
-                var checkboxStates = {};
-            
-                $(document).ready(function () {
-                    $('.check-checkbox').on('change', function () {
-                        updateSubmitButtonState();
-                    });
-                });
-            
-                function updateSubmitButtonState() {
-                    var allGroupsChecked = true;
-            
-                    $('.check-checkbox').each(function () {
-                        var group = $(this).data('group');
-                        checkboxStates[group] = $(this).prop('checked');
-                    });
-            
-                    for (var group in checkboxStates) {
-                        allGroupsChecked = allGroupsChecked && checkboxStates[group];
-                        console.log('Group: ' + group + ' - Checked: ' + checkboxStates[group]);
-                    }
-            
-                    console.log('All Groups Checked: ' + allGroupsChecked);
-            
-                    $('#submitButton').prop('disabled', !allGroupsChecked);
-                }
-            
-                // This function ensures that the modal is opened only if at least one checkbox is checked
-                $('#additionalInfoModal').on('show.bs.modal', function (event) {
-                    if (!Object.values(checkboxStates).some(state => state)) {
-                        // Prevent modal from opening if no checkboxes are checked
-                        event.preventDefault();
-                        alert('Please check at least one checkbox before submitting.');
-                    }
-                });
-            </script>
-                
-            
+                        
             <div class="card-body text-center d-flex justify-content-center align-items-center">
                 <img src="{{ asset('assets/img/SL-Frame.PNG') }}" alt="" class="img-fluid">
             </div>
@@ -100,8 +63,6 @@
                                 <input class="form-check-input check-checkbox custom-checkbox" type="checkbox" id="check{{ $checkGroup }}" {{ $isCheckedGroup ? 'checked' : '' }} onchange="updateSubmitButtonState('{{ $checkGroup }}')">
                                 <p class="mb-0 ml-2">Check</p>
                             </div>
-                            
-                            
                         </div>
                         
                         <div class="card h-100" data-bs-toggle="modal" data-bs-target="#modal{{ $checkGroup }}">
@@ -158,20 +119,7 @@
                                                     </td>
                                                 </tr>
                                             @endforeach
-                                            <script>
-                                            function handleFindingQCChange(findingQCCheckbox) {
-                                                // Get the corresponding RepairQC checkbox
-                                                var repairQCCheckbox = findingQCCheckbox.closest('tr').querySelector('.repair-qc-checkbox');
                                             
-                                                // Enable/disable RepairQC based on the state of FindingQC
-                                                repairQCCheckbox.disabled = !findingQCCheckbox.checked;
-                                            
-                                                // If FindingQC is unchecked, also uncheck RepairQC
-                                                if (!findingQCCheckbox.checked) {
-                                                    repairQCCheckbox.checked = false;
-                                                }
-                                            }
-                                            </script>
                                             </tbody>
                                         </table>
                                         <hr>
@@ -218,6 +166,10 @@
                                         <label for="nameOfQG" class="form-label">Name of QG</label>
                                         <input  value="{{ auth()->user()->name }}" type="text" class="form-control" id="nameOfQG" name="nameOfQG">
                                     </div>
+                                    <div class="col-sm-12">
+                                        <label for="remarks" style="font-size: 1em;">Remarks</label>
+                                        <textarea class="form-control" name="remarks" id="remarks" rows="5"></textarea>
+                                    </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -243,6 +195,44 @@
                 }
             @endphp
             <!-- ... Your existing code ... -->
+            <script>
+                function handleFindingQCChange(findingQCCheckbox) {
+                    // Get the corresponding RepairQC checkbox
+                    var repairQCCheckbox = findingQCCheckbox.closest('tr').querySelector('.repair-qc-checkbox');
+                
+                    // Enable/disable RepairQC based on the state of FindingQC
+                    repairQCCheckbox.disabled = !findingQCCheckbox.checked;
+                
+                    // If FindingQC is unchecked, also uncheck RepairQC
+                    if (!findingQCCheckbox.checked) {
+                        repairQCCheckbox.checked = false;
+                    }
+                }
+
+                $(document).ready(function () {
+                    $('.check-checkbox').on('change', function () {
+                        updateSubmitButtonState();
+                    });
+                });
+            
+                function updateSubmitButtonState() {
+                    var totalCheckboxes = $('.check-checkbox').length;
+                    var checkedCheckboxes = $('.check-checkbox:checked').length;
+            
+                    var allGroupsChecked = totalCheckboxes === checkedCheckboxes;
+            
+                    $('#submitButton').prop('disabled', !allGroupsChecked);
+                }
+            
+                // This function ensures that the modal is opened only if at least one checkbox is checked
+                $('#additionalInfoModal').on('show.bs.modal', function (event) {
+                    if ($('.check-checkbox:checked').length === 0) {
+                        // Prevent modal from opening if no checkboxes are checked
+                        event.preventDefault();
+                        alert('Please check at least one checkbox before submitting.');
+                    }
+                });
+            </script>
 
         </div>
     </div>
