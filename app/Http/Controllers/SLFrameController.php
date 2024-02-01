@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Commoninformation;
 use App\Models\Itemcheckgroup;
 use App\Models\Checksheet;
+use Illuminate\Support\Facades\Auth;
 
 class SLFrameController extends Controller
 {
@@ -15,6 +16,16 @@ class SLFrameController extends Controller
         $Commoninformation = Commoninformation::where('NoFrame', $request->no_frame)->first();
     
         if ($Commoninformation) {
+            if(Auth::user()->role == 'PDI'){
+                if ($Commoninformation->Status == '1') {
+                    return redirect()->route('home')->with('failed', 'SL-Frame already checked.');
+                }
+                return redirect()->route('show', ['noframe' => $request->no_frame]);
+            }
+            if ($Commoninformation->InspectionLevel == 2) {   
+                // If InspectionLevel is already 2, store the error message in the session
+                return redirect()->route('home')->with('failed', 'SL-Frame already checked.');
+            }
             // If the record exists, redirect to the view with existing data
             return redirect()->route('show', ['noframe' => $request->no_frame]);
         } else {
@@ -45,7 +56,6 @@ class SLFrameController extends Controller
             'noframe' => 'required',
             // Add validation rules for other fields if needed
         ]);
-
         // Find the Commoninformation record
         $commonInformation = Commoninformation::where('NoFrame', $request->noframe)->first();
 
@@ -63,8 +73,8 @@ class SLFrameController extends Controller
                     'CommonInfoID' => $commonInformation->CommonInfoID,
                     'ItemCheck' => $findingQC,
                     'checkGroup' => $request->checkGroup,
-                    'FindingQC' => '1',
-                    'RepairQC' => '1', // Assuming it's always 1 when storing FindingQC
+                    'Finding' => Auth::user()->role,
+                    'Repair' => Auth::user()->role, // Assuming it's always 1 when storing FindingQC
                     'RemarksQG' => $request->remarks,
                     // Add other fields if needed
                 ]);
@@ -77,7 +87,57 @@ class SLFrameController extends Controller
         return redirect()->route('show', ['noframe' => $request->noframe])->with('success', 'Data has been submitted successfully!');
     }
 
-    
-    
-    
+    public function submitMain(Request $request)
+    {
+        // Retrieve data from the form submission
+        $noFrame = $request->input('noFrame');
+        $tglProd = $request->input('tglProd');
+        $shift = $request->input('shift');
+        $name = $request->input('name');
+        $remarks = $request->input('remarks');
+        /// Find the Commoninformation based on noFrame
+        $commoninformation = Commoninformation::where('NoFrame', $noFrame)->first();
+
+        if(Auth::user()->role == 'PDI'){
+            // If Commoninformation exists, update its attributes
+        if ($commoninformation) {
+            $commoninformation->PDI = $name;
+            $commoninformation->Remarks = $remarks;
+            $commoninformation->Status = 1;
+            // Update InspectionLevel to 2
+
+            // Set QualityStatus based on Checksheet records
+            if ($commoninformation->checksheet->isEmpty()) {
+                $commoninformation->QualityStatus = 'Good';
+            } else {
+                $commoninformation->QualityStatus = 'Bad';
+            }
+
+            $commoninformation->save();
+        }
+        }
+
+        // If Commoninformation exists, update its attributes
+        if ($commoninformation) {
+            $commoninformation->TglProd = $tglProd;
+            $commoninformation->Shift = $shift;
+            $commoninformation->NamaQG = $name;
+            $commoninformation->Remarks = $remarks;
+            $commoninformation->InspectionLevel = 2; // Update InspectionLevel to 2
+
+            // Set QualityStatus based on Checksheet records
+            if ($commoninformation->checksheet->isEmpty()) {
+                $commoninformation->QualityStatus = 'Good';
+            } else {
+                $commoninformation->QualityStatus = 'Bad';
+            }
+
+            $commoninformation->save();
+        }
+        // Handle the rest of your form submission logic
+
+        // Redirect to the '/home' route
+        return redirect()->route('home');
+    }
 }
+

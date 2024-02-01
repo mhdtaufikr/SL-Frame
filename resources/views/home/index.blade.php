@@ -33,11 +33,63 @@
             {{-- <div class="card-header">Example Card</div> --}}
             <div class="card-body">
                 <div class="text-center">
+                    <div class="col-sm-12">
+                        <!--alert success -->
+                        @if (session('status'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                          <strong>{{ session('status') }}</strong>
+                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div> 
+                      @endif
+  
+                      @if (session('failed'))
+                      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>{{ session('failed') }}</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                      </div> 
+                    @endif
+                      
+                        <!--alert success -->
+                        <!--validasi form-->
+                          @if (count($errors)>0)
+                            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                <ul>
+                                    <li><strong>Data Process Failed !</strong></li>
+                                    @foreach ($errors->all() as $error)
+                                        <li><strong>{{ $error }}</strong></li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                          @endif
+                        <!--end validasi form-->
+                      </div>
                     <form action="{{ url('/slframe') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <label for="no_frame">Input No. Frame</label>
+                        <label class="mb-4" for="no_frame">Input No. Frame</label>
+                        @if(\Auth::user()->role === 'QG')
                         <input type="text" class="form-control mb-4 mt-4" name="no_frame" id="">
-                        <button class="btn btn-success" type="submit">Submit</button>
+                        @endif
+                        @if(\Auth::user()->role === 'PDI')
+                        <select name="no_frame" id="noFrame" class="form-control chosen-select">
+                            <option value="">- Please Select NO. Frame -</option>
+                            @foreach ($Commoninformation as $data)
+                                <option value="{{ $data->NoFrame }}">{{ $data->NoFrame }}</option>
+                            @endforeach
+                        </select>
+                    
+                        <!-- Initialize Chosen -->
+                        <script>
+                            $(document).ready(function () {
+                                $(".chosen-select").chosen({
+                                    search_contains: true,
+                                    width: "100%" // Adjust the width as needed
+                                });
+                            });
+                        </script>
+                    @endif
+                    
+                        <button class="btn btn-success mt-4" type="submit">Submit</button>
                     </form>
                 </div>
             </div>

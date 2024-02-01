@@ -86,6 +86,8 @@
                                 </div>
                                 <form action="{{ route('submit') }}" method="POST">
                                     @csrf
+                                    <input value="{{$noframe}}" hidden name="noframe" type="">
+                                    <input value="{{$checkGroup}}" hidden name="checkGroup" type="">
                                     <div class="modal-body" style="max-height: 500px; overflow-y: auto;">
                                         <table class="table table-bordered">
                                             <thead>
@@ -146,7 +148,7 @@
                             <h5 class="modal-title">Additional Information</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <form action="{{ route('submit') }}" method="POST">
+                        <form action="{{ route('submitMain') }}" method="POST">
                             @csrf
                             <div class="modal-body">
                                 <div class="row">
@@ -163,8 +165,14 @@
                                         <input type="number" class="form-control" id="shift" name="shift" value="{{ getShiftValue() }}" >
                                     </div>
                                     <div class="col-sm-6">
-                                        <label for="nameOfQG" class="form-label">Name of QG</label>
-                                        <input  value="{{ auth()->user()->name }}" type="text" class="form-control" id="nameOfQG" name="nameOfQG">
+                                    @if(\Auth::user()->role === 'QG')
+                                    <label for="name" class="form-label">Name of QG</label>
+                                    @endif
+                                    @if(\Auth::user()->role === 'PDI')
+                                    <label for="name" class="form-label">Name of PDI</label>
+                                    @endif
+                                      
+                                        <input  value="{{ auth()->user()->name }}" type="text" class="form-control" id="nameOfQG" name="name">
                                     </div>
                                     <div class="col-sm-12">
                                         <label for="remarks" style="font-size: 1em;">Remarks</label>

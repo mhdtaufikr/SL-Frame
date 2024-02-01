@@ -14,10 +14,8 @@ class CreateChecksheetsTable extends Migration
             $table->id();
             $table->integer('CommonInfoID');
             $table->string('ItemCheck');
-            $table->string('FindingQC');
-            $table->string('RepairQC');
-            $table->string('FindingPDI');
-            $table->string('RepairPDI');
+            $table->string('Finding');
+            $table->string('Repair');
             $table->text('RemarksQG');
             $table->text('RemarksPDI');
             $table->string('Problem');

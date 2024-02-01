@@ -25,13 +25,14 @@ Route::get('/logout', [AuthController::class, 'logout']);
 
 Route::middleware(['auth'])->group(function () {
     //Home Controller
-    Route::get('/home', [HomeController::class, 'index']);
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 
     //SLFrame Controller
     Route::post('/slframe', [SLFrameController::class, 'index']);
     Route::get('/slframe/{noframe}', [SLFrameController::class, 'show'])->name('show');
     Route::post('/submit', [SLFrameController::class, 'submit'])->name('submit');
+    Route::post('/submit/main', [SLFrameController::class, 'submitMain'])->name('submitMain');
 
     //Dropdown Controller
     Route::get('/dropdown', [DropdownController::class, 'index'])->middleware(['checkRole:IT']);
