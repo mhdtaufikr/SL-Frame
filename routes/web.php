@@ -32,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/slframe', [SLFrameController::class, 'index']);
     Route::get('/slframe/{noframe}', [SLFrameController::class, 'show'])->name('show');
     Route::post('/submit', [SLFrameController::class, 'submit'])->name('submit');
+    Route::post('/submit/pdi', [SLFrameController::class, 'submitPDI'])->name('submitPDI');
     Route::post('/submit/main', [SLFrameController::class, 'submitMain'])->name('submitMain');
 
     //Dropdown Controller

@@ -17,7 +17,7 @@ class SLFrameController extends Controller
     
         if ($Commoninformation) {
             if(Auth::user()->role == 'PDI'){
-                if ($Commoninformation->Status == '1') {
+                if ($Commoninformation->Status == '2') {
                     return redirect()->route('home')->with('failed', 'SL-Frame already checked.');
                 }
                 return redirect()->route('show', ['noframe' => $request->no_frame]);
@@ -56,88 +56,157 @@ class SLFrameController extends Controller
             'noframe' => 'required',
             // Add validation rules for other fields if needed
         ]);
+    
         // Find the Commoninformation record
         $commonInformation = Commoninformation::where('NoFrame', $request->noframe)->first();
-
-        // Loop through the submitted data and store it in the checksheets table
+    
+        // Update the status field to 1
+        $commonInformation->update(['Status' => 1]);
+    
         foreach ($request->findingQC as $index => $findingQC) {
             // Check if the data already exists in checksheets
             $existingChecksheet = Checksheet::where([
                 'CommonInfoID' => $commonInformation->CommonInfoID,
-                'ItemCheck' => $findingQC,
+                'ItemCheck' => $index,
             ])->first();
-
-            // If the data doesn't exist, store it
-            if (!$existingChecksheet) {
-                $checksheet = new Checksheet([
-                    'CommonInfoID' => $commonInformation->CommonInfoID,
-                    'ItemCheck' => $findingQC,
-                    'checkGroup' => $request->checkGroup,
-                    'Finding' => Auth::user()->role,
-                    'Repair' => Auth::user()->role, // Assuming it's always 1 when storing FindingQC
-                    'RemarksQG' => $request->remarks,
-                    // Add other fields if needed
-                ]);
-
-                $checksheet->save();
+    
+            // Initialize variables for findingQG and repairQG
+            $findingQGvalue = $findingQC;
+            $repairQGvalue = isset($request->repairQC[$index]) && $request->repairQC[$index] == 1 ? 1 : 0;
+    
+            // If the data exists, update it; otherwise, store it
+            if ($existingChecksheet) {
+                if ($existingChecksheet->FindingQG != $findingQGvalue || $existingChecksheet->RepairQG != $repairQGvalue) {
+                    
+                    $updateChecksheet = Checksheet::where('id',$existingChecksheet->id)->update([
+                        'Remarks' => $request->remarks,
+                        'FindingQG' => $findingQGvalue,
+                        'RepairQG' => $repairQGvalue,
+                    ]);
+                }
+            } else {
+                // If the data doesn't exist and the request value is 1, store it
+                if ($findingQGvalue == 1) {
+                    $checksheet = new Checksheet([
+                        'CommonInfoID' => $commonInformation->CommonInfoID,
+                        'ItemCheck' => $index,
+                        'checkGroup' => $request->checkGroup,
+                        'FindingQG' => $findingQGvalue,
+                        'RepairQG' => $repairQGvalue,
+                        'Remarks' => $request->remarks,
+                        // Add other fields if needed
+                    ]);
+    
+                    $checksheet->save();
+                }
             }
         }
-
+    
         // Redirect back to the show route
         return redirect()->route('show', ['noframe' => $request->noframe])->with('success', 'Data has been submitted successfully!');
     }
+    
+    
 
-    public function submitMain(Request $request)
+
+    public function submitPDI(Request $request)
     {
-        // Retrieve data from the form submission
-        $noFrame = $request->input('noFrame');
-        $tglProd = $request->input('tglProd');
-        $shift = $request->input('shift');
-        $name = $request->input('name');
-        $remarks = $request->input('remarks');
-        /// Find the Commoninformation based on noFrame
-        $commoninformation = Commoninformation::where('NoFrame', $noFrame)->first();
-
-        if(Auth::user()->role == 'PDI'){
-            // If Commoninformation exists, update its attributes
-        if ($commoninformation) {
-            $commoninformation->PDI = $name;
-            $commoninformation->Remarks = $remarks;
-            $commoninformation->Status = 1;
-            // Update InspectionLevel to 2
-
-            // Set QualityStatus based on Checksheet records
-            if ($commoninformation->checksheet->isEmpty()) {
-                $commoninformation->QualityStatus = 'Good';
+        // Validate the request data if necessary
+        $request->validate([
+            'noframe' => 'required',
+            // Add validation rules for other fields if needed
+        ]);
+    
+        // Find the Commoninformation record
+        $commonInformation = Commoninformation::where('NoFrame', $request->noframe)->first();
+    
+        // Update the status field to 1
+        $commonInformation->update(['Status' => 1]);
+    
+        foreach ($request->findingPDI as $index => $findingPDI) {
+            // Check if the data already exists in checksheets
+            $existingChecksheet = Checksheet::where([
+                'CommonInfoID' => $commonInformation->CommonInfoID,
+                'ItemCheck' => $index,
+            ])->first();
+    
+            // Initialize variables for findingPDI and repairPDI
+            $findingPDIValue = $findingPDI;
+            $repairPDIValue = isset($request->repairPDI[$index]) && $request->repairPDI[$index] == 1 ? 1 : 0;
+    
+            // If the data exists, update it; otherwise, store it
+            if ($existingChecksheet) {
+                if ($existingChecksheet->FindingPDI != $findingPDIValue || $existingChecksheet->RepairPDI != $repairPDIValue) {
+                    $updateChecksheet = Checksheet::where('id', $existingChecksheet->id)->update([
+                        'Remarks' => $request->remarks,
+                        'FindingPDI' => $findingPDIValue,
+                        'RepairPDI' => $repairPDIValue,
+                    ]);
+                }
             } else {
-                $commoninformation->QualityStatus = 'Bad';
+                // If the data doesn't exist and the request value is 1, store it
+                if ($findingPDIValue == 1) {
+                    $checksheet = new Checksheet([
+                        'CommonInfoID' => $commonInformation->CommonInfoID,
+                        'ItemCheck' => $index,
+                        'checkGroup' => $request->checkGroup,
+                        'FindingPDI' => $findingPDIValue,
+                        'RepairPDI' => $repairPDIValue,
+                        'Remarks' => $request->remarks,
+                        // Add other fields if needed
+                    ]);
+    
+                    $checksheet->save();
+                }
             }
-
-            $commoninformation->save();
         }
-        }
-
-        // If Commoninformation exists, update its attributes
-        if ($commoninformation) {
-            $commoninformation->TglProd = $tglProd;
-            $commoninformation->Shift = $shift;
-            $commoninformation->NamaQG = $name;
-            $commoninformation->Remarks = $remarks;
-            $commoninformation->InspectionLevel = 2; // Update InspectionLevel to 2
-
-            // Set QualityStatus based on Checksheet records
-            if ($commoninformation->checksheet->isEmpty()) {
-                $commoninformation->QualityStatus = 'Good';
-            } else {
-                $commoninformation->QualityStatus = 'Bad';
-            }
-
-            $commoninformation->save();
-        }
-        // Handle the rest of your form submission logic
-
-        // Redirect to the '/home' route
-        return redirect()->route('home');
+    
+        // Redirect back to the show route
+        return redirect()->route('show', ['noframe' => $request->noframe])->with('success', 'Data has been submitted successfully!');
     }
+    
+    
+
+   public function submitMain(Request $request)
+{
+    // Retrieve data from the form submission
+    $noFrame = $request->input('noFrame');
+    $tglProd = $request->input('tglProd');
+    $shift = $request->input('shift');
+    $name = $request->input('name');
+    $remarks = $request->input('remarks');
+
+    // Find the Commoninformation based on noFrame
+    $commoninformation = Commoninformation::where('NoFrame', $noFrame)->first();
+
+    if (!$commoninformation) {
+        // Handle the case where Commoninformation is not found
+        return redirect()->route('home')->with('error', 'Commoninformation not found');
+    }
+
+    // Update Commoninformation based on user role
+    if (Auth::user()->role == 'QG') {
+        $commoninformation->update([
+            'Status' => 0,
+            'TglProd' => $tglProd,
+            'Shift' => $shift,
+            'NamaQG' => $name,
+            'Remarks' => $remarks,
+            'InspectionLevel' => 2,
+            'QualityStatus' => $commoninformation->checksheet->isEmpty() ? 'Good' : 'Bad',
+        ]);
+    } elseif (Auth::user()->role == 'PDI') {
+        $commoninformation->update([
+            'Status' => 2,
+            'PDI' => $name,
+            'Remarks' => $remarks,
+            'QualityStatus' => $commoninformation->checksheet->isEmpty() ? 'Good' : 'Bad',
+        ]);
+    }
+
+    // Redirect to the '/home' route
+    return redirect()->route('home')->with('success', 'Data has been submitted successfully!');
+}
+
 }
 

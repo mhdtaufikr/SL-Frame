@@ -20,4 +20,4 @@ class Commoninformation extends Model
         return $this->hasMany(Checksheet::class, 'CommonInfoID', 'CommonInfoID');
     }
 }
-
+    

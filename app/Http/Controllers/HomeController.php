@@ -10,7 +10,10 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $Commoninformation = Commoninformation::get();
+        $Commoninformation = Commoninformation::where('InspectionLevel', '2')
+        ->where('Status', '<>', '2')
+        ->get();
+
         return view('home.index',compact('Commoninformation'));
 
     }

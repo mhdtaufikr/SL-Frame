@@ -36,7 +36,7 @@
                     
                     <span class="ml-auto">
                         @if($Commoninformation->Status == 0)
-                            <button class="btn btn-info btn-md">On Going</button>
+                            <button class="btn btn-info btn-md">Waiting List</button>
                         @elseif($Commoninformation->Status == 1)
                             <button class="btn btn-warning btn-md">Pending</button>
                         @elseif($Commoninformation->Status == 2)
@@ -54,6 +54,7 @@
             </div>
             <div class="row p-2">
                 @foreach ($itemCheckGroups as $checkGroup => $itemCheckGroup)
+                    @if ($checkGroup < 6 || \Auth::user()->role !== 'QG')
                     <div class="col-md-2 col-sm-4 p-2 mb-2">
                         <div class="form-check text-center d-flex align-items-center justify-content-center mb-2">
                             <div class="form-check text-center d-flex align-items-center justify-content-center mb-2">
@@ -67,7 +68,13 @@
                         
                         <div class="card h-100" data-bs-toggle="modal" data-bs-target="#modal{{ $checkGroup }}">
                             <div class="card-header text-dark text-center">
-                                <strong>{{ $checkGroup }}</strong>
+                                @if ($checkGroup == "5")
+                                5 & 6
+                           @elseif($checkGroup == "6")
+                                Painting
+                            @else
+                                {{ $checkGroup }}
+                            @endif
                             </div>
                             <div class="card-body">
                                 @foreach ($itemCheckGroup as $item)
@@ -81,10 +88,22 @@
                         <div class="modal-dialog modal-dialog-centered modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title">{{ $checkGroup }}</h5>
+                                    <h5 class="modal-title">            
+                                        @if ($checkGroup == "5")
+                                            5 & 6
+                                       @elseif($checkGroup == "6")
+                                            Painting
+                                        @else
+                                            {{ $checkGroup }}
+                                        @endif
+                                    </h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <form action="{{ route('submit') }}" method="POST">
+                                @if (\Auth::user()->role === 'PDI')
+                                    <form action="{{ route('submitPDI') }}" method="POST">
+                                @else
+                                    <form action="{{ url('/submit') }}" method="POST">
+                                @endif
                                     @csrf
                                     <input value="{{$noframe}}" hidden name="noframe" type="">
                                     <input value="{{$checkGroup}}" hidden name="checkGroup" type="">
@@ -93,32 +112,84 @@
                                             <thead>
                                                 <tr>
                                                     <th>ItemCheck</th>
-                                                    <th>FindingQC</th>
-                                                    <th>RepairQC</th>
+                                                    <th>FindingQG</th>
+                                                    <th>RepairQG</th>
+                                                    <th {{ \Auth::user()->role === 'QG' ? 'hidden' : '' }} >FindingPDI</th>
+                                                    <th {{ \Auth::user()->role === 'QG' ? 'hidden' : '' }} >RepairPDI</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach ($itemCheckGroup as $item)
                                                 <tr>
+                                                     <!-- Add hidden input fields for unchecked checkboxes -->
+                                                     <input type="hidden" name="findingQC[{{ $item->ItemCheck }}]" value="0">
+                                                     <input type="hidden" name="repairQC[{{ $item->ItemCheck }}]" value="0">
                                                     <td>{{ $item->ItemCheck }}</td>
+                                                    @if (\Auth::user()->role === 'QG')
                                                     <td>
                                                         <div class="form-check d-flex justify-content-center">
                                                             @php
-                                                                $isCheckedFinding = $checkSheet->contains('ItemCheck', $item->ItemCheck);
+                                                                $isCheckedFinding = $checkSheet->contains('ItemCheck', $item->ItemCheck) && $checkSheet->where('ItemCheck', $item->ItemCheck)->first()->FindingQG == 1;
                                                                 $remarksFinding = $isCheckedFinding ? $checkSheet->where('ItemCheck', $item->ItemCheck)->first()->RemarksQG : null;
                                                             @endphp
-                                                            <input class="form-check-input bigger-checkbox finding-qc-checkbox" type="checkbox" name="findingQC[]" value="{{ $item->ItemCheck }}" {{ $isCheckedFinding ? 'checked' : '' }} onchange="handleFindingQCChange(this)">
+                                                            <input class="form-check-input bigger-checkbox finding-qc-checkbox" type="checkbox" name="findingQC[{{ $item->ItemCheck }}]" value="1" {{ $isCheckedFinding ? 'checked' : '' }} onchange="handleFindingQCChange(this)">
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="form-check d-flex justify-content-center">
                                                             @php
-                                                                $isCheckedRepair = $checkSheet->contains('ItemCheck', $item->ItemCheck);
+                                                                $isCheckedRepair = $checkSheet->contains('ItemCheck', $item->ItemCheck) && $checkSheet->where('ItemCheck', $item->ItemCheck)->first()->RepairQG == 1;
                                                                 $remarksRepair = $isCheckedRepair ? $checkSheet->where('ItemCheck', $item->ItemCheck)->first()->RemarksQG : null;
                                                             @endphp
-                                                            <input class="form-check-input bigger-checkbox repair-qc-checkbox" type="checkbox" name="repairQC[]" value="{{ $item->ItemCheck }}" {{ $isCheckedRepair ? 'checked' : 'disabled' }}>
+                                                            <input class="form-check-input bigger-checkbox repair-qc-checkbox" type="checkbox" name="repairQC[{{ $item->ItemCheck }}]" value="1" {{ $isCheckedRepair ? 'checked' : '' }} {{ \Auth::user()->role !== 'QG' ? 'disabled' : '' }}>
                                                         </div>
                                                     </td>
+                                                @else
+                                                    <td>
+                                                        <div class="form-check d-flex justify-content-center">
+                                                            @php
+                                                                $isCheckedFinding = $checkSheet->contains('ItemCheck', $item->ItemCheck) && $checkSheet->where('ItemCheck', $item->ItemCheck)->first()->FindingQG == 1;
+                                                                $remarksFinding = $isCheckedFinding ? $checkSheet->where('ItemCheck', $item->ItemCheck)->first()->RemarksQG : null;
+                                                            @endphp
+                                                            <input disabled class="form-check-input bigger-checkbox finding-qc-checkbox" type="checkbox" name="findingQC[{{ $item->ItemCheck }}]" value="1" {{ $isCheckedFinding ? 'checked' : '' }} >
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-check d-flex justify-content-center">
+                                                            @php
+                                                                $isCheckedRepair = $checkSheet->contains('ItemCheck', $item->ItemCheck) && $checkSheet->where('ItemCheck', $item->ItemCheck)->first()->RepairQG == 1;
+                                                                $remarksRepair = $isCheckedRepair ? $checkSheet->where('ItemCheck', $item->ItemCheck)->first()->RemarksQG : null;
+                                                            @endphp
+                                                            <input disabled class="form-check-input bigger-checkbox " type="checkbox" name="repairQC[{{ $item->ItemCheck }}]" value="1" {{ $isCheckedRepair ? 'checked' : '' }}>
+                                                        </div>
+                                                    </td>
+                                                @endif
+                                                
+                                                        
+                                                        <td {{ \Auth::user()->role === 'QG' ? 'hidden' : '' }}>
+                                                            <div class="form-check d-flex justify-content-center">
+                                                                @php
+                                                                    $isCheckedFindingPDI = $checkSheet->contains('ItemCheck', $item->ItemCheck) && $checkSheet->where('ItemCheck', $item->ItemCheck)->first()->FindingPDI == 1;
+                                                                    $remarksFindingPDI = $isCheckedFindingPDI ? $checkSheet->where('ItemCheck', $item->ItemCheck)->first()->RemarksPDI : null;
+                                                                @endphp
+                                                                <!-- Add hidden input field for unchecked checkbox -->
+                                                                <input type="hidden" name="findingPDI[{{ $item->ItemCheck }}]" value="0">
+                                                                <input class="form-check-input bigger-checkbox finding-pdi-checkbox" type="checkbox" name="findingPDI[{{ $item->ItemCheck }}]" value="1" {{ $isCheckedFindingPDI ? 'checked' : '' }} onchange="handleFindingPDIChange(this)">
+                                                            </div>                                                        
+                                                        </td>
+                                                        <td {{ \Auth::user()->role === 'QG' ? 'hidden' : '' }}>
+                                                            <div class="form-check d-flex justify-content-center">
+                                                                @php
+                                                                    $isCheckedRepairPDI = $checkSheet->contains('ItemCheck', $item->ItemCheck) && $checkSheet->where('ItemCheck', $item->ItemCheck)->first()->RepairPDI == 1;
+                                                                    $remarksRepairPDI = $isCheckedRepairPDI ? $checkSheet->where('ItemCheck', $item->ItemCheck)->first()->RemarksPDI : null;
+                                                                @endphp
+                                                                <!-- Add hidden input field for unchecked checkbox -->
+                                                                <input type="hidden" name="repairPDI[{{ $item->ItemCheck }}]" value="0">
+                                                                <input class="form-check-input bigger-checkbox repair-pdi-checkbox" type="checkbox" name="repairPDI[{{ $item->ItemCheck }}]" value="1" {{ $isCheckedRepairPDI ? 'checked' : 'disabled' }}>
+                                                            </div>                                                                                                                
+                                                        </td>
+                                                        
+                                                    
                                                 </tr>
                                             @endforeach
                                             
@@ -126,7 +197,7 @@
                                         </table>
                                         <hr>
                                         <label for="remarks" style="font-size: 1em;">Remarks</label>
-                                        <textarea class="form-control" name="remarks" id="remarks" rows="5">{{ $remarksFinding ?: $remarksRepair ?: optional($checkSheet->where('checkGroup', $checkGroup)->first())->RemarksQG }}</textarea>
+                                        <textarea class="form-control" name="remarks" id="remarks" rows="5">{{ $remarksFinding ?: $remarksRepair ?: optional($checkSheet->where('checkGroup', $checkGroup)->first())->Remarks}}</textarea>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -136,6 +207,7 @@
                             </div>
                         </div>
                     </div>
+                    @endif
                 @endforeach
             </div>
             <!-- ... Your existing code ... -->
@@ -204,18 +276,41 @@
             @endphp
             <!-- ... Your existing code ... -->
             <script>
-                function handleFindingQCChange(findingQCCheckbox) {
-                    // Get the corresponding RepairQC checkbox
-                    var repairQCCheckbox = findingQCCheckbox.closest('tr').querySelector('.repair-qc-checkbox');
-                
-                    // Enable/disable RepairQC based on the state of FindingQC
-                    repairQCCheckbox.disabled = !findingQCCheckbox.checked;
-                
-                    // If FindingQC is unchecked, also uncheck RepairQC
-                    if (!findingQCCheckbox.checked) {
-                        repairQCCheckbox.checked = false;
-                    }
-                }
+                // Ensure that this code runs after the DOM is fully loaded
+    document.addEventListener("DOMContentLoaded", function() {
+        // Find all FindingQC checkboxes on the page
+        var findingQCCheckboxes = document.querySelectorAll('.finding-qc-checkbox');
+
+        // Iterate through each FindingQC checkbox
+        findingQCCheckboxes.forEach(function(findingQCCheckbox) {
+            // Get the corresponding RepairQC checkbox
+            var repairQCCheckbox = findingQCCheckbox.closest('tr').querySelector('.repair-qc-checkbox');
+
+            // Enable/disable RepairQC based on the state of FindingQC
+            repairQCCheckbox.disabled = !findingQCCheckbox.checked;
+
+            // If FindingQC is unchecked, also uncheck RepairQC
+            if (!findingQCCheckbox.checked) {
+                repairQCCheckbox.checked = false;
+            }
+        });
+    });
+
+    // Function to handle FindingQC checkbox changes
+    function handleFindingQCChange(findingQCCheckbox) {
+        // Get the corresponding RepairQC checkbox
+        var repairQCCheckbox = findingQCCheckbox.closest('tr').querySelector('.repair-qc-checkbox');
+
+        // Enable/disable RepairQC based on the state of FindingQC
+        repairQCCheckbox.disabled = !findingQCCheckbox.checked;
+
+        // If FindingQC is unchecked, also uncheck RepairQC
+        if (!findingQCCheckbox.checked) {
+            repairQCCheckbox.checked = false;
+        }
+    }
+
+
 
                 $(document).ready(function () {
                     $('.check-checkbox').on('change', function () {
@@ -240,6 +335,20 @@
                         alert('Please check at least one checkbox before submitting.');
                     }
                 });
+
+                function handleFindingPDIChange(findingPDICheckbox) {
+                // Get the corresponding RepairPDI checkbox
+                var repairPDICheckbox = findingPDICheckbox.closest('tr').querySelector('.repair-pdi-checkbox');
+
+                // Enable/disable RepairPDI based on the state of FindingPDI
+                repairPDICheckbox.disabled = !findingPDICheckbox.checked;
+
+                // If FindingPDI is unchecked, also uncheck RepairPDI
+                if (!findingPDICheckbox.checked) {
+                    repairPDICheckbox.checked = false;
+                }
+            }
+
             </script>
 
         </div>
