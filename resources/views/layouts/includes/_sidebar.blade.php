@@ -9,7 +9,7 @@
                     <div class="nav-link-icon"><i class="fas fa-fw fa-home"></i></div>
                     Home
                 </a>
-                <a class="nav-link" href="{{url('/slframe/records')}}">
+                <a class="nav-link" href="{{url('/record')}}">
                     <div class="nav-link-icon"><i class="fas fa-truck"></i></div>
                     SL-Frame Record
                 </a>

@@ -248,7 +248,7 @@
                                     </div>
                                     <div class="col-sm-12">
                                         <label for="remarks" style="font-size: 1em;">Remarks</label>
-                                        <textarea class="form-control" name="remarks" id="remarks" rows="5"></textarea>
+                                        <textarea class="form-control" name="remarks" id="remarks" rows="5">{{$Commoninformation->Remarks}}</textarea>
                                     </div>
                                 </div>
                             </div>

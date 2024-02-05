@@ -33,6 +33,7 @@ class SLFrameController extends Controller
             $Commoninformation = Commoninformation::create([
                 'NoFrame' => $request->no_frame,
                 'Status' => 0,
+                'NamaQG'=> Auth::user()->name,
             ]);
             return redirect()->route('show', ['noframe' => $request->no_frame]);
         }
@@ -42,6 +43,16 @@ class SLFrameController extends Controller
     public function show($noframe)
     {
         $Commoninformation = Commoninformation::where('NoFrame', $noframe)->first();
+        if (Auth::user()->role == 'PDI') {
+           if ($Commoninformation->InspectionLevel == 1) {
+            return redirect()->route('home')->with('failed', 'SL-Frame on QG Check.');
+           }
+        }
+        if (Auth::user()->role == 'QG') {
+            if ($Commoninformation->InspectionLevel == 2) {
+                return redirect()->route('home')->with('failed', 'SL-Frame Already Check.');
+               }
+        }
         // Define an array of CheckGroup values
         $checkGroups = [1, 2, 3, 4, 5, 6];
         // Fetch all Itemcheckgroups for the specified CheckGroup values
@@ -122,7 +133,7 @@ class SLFrameController extends Controller
     
         // Update the status field to 1
         $commonInformation->update(['Status' => 1]);
-    
+        $commonInformation->update(['PDI' => Auth::user()->name,]);
         foreach ($request->findingPDI as $index => $findingPDI) {
             // Check if the data already exists in checksheets
             $existingChecksheet = Checksheet::where([
@@ -199,14 +210,37 @@ class SLFrameController extends Controller
         $commoninformation->update([
             'Status' => 2,
             'PDI' => $name,
+            'PDI_Date' => $tglProd,
             'Remarks' => $remarks,
             'QualityStatus' => $commoninformation->checksheet->isEmpty() ? 'Good' : 'Bad',
         ]);
     }
 
     // Redirect to the '/home' route
-    return redirect()->route('home')->with('success', 'Data has been submitted successfully!');
+    return redirect()->route('home')->with('status', "Data SL-Frame No. {$noFrame} has been submitted successfully!");
+
 }
+
+    public function delete($id){
+        $idFrame = Commoninformation::where('NoFrame',$id)->first()->CommonInfoID;
+        $deleteslFrame=Commoninformation::where('CommonInfoID',$idFrame)->delete();
+        $deleteChecksheet = Checksheet::where('CommonInfoID',$idFrame)->delete();
+        if ($deleteslFrame && $deleteChecksheet) {
+                return redirect('/home')->with('status',"Success Delete {$id}");
+            }else{
+                return redirect('/rule')->with('status','Failed Delete ');
+            }
+        
+    }
+
+    public function slFrameRecords(){
+        $Commoninformation = Commoninformation::where('Status', 2)
+        ->where('InspectionLevel',2)
+        ->get();
+        return view('slframe.main', compact('Commoninformation'));
+    }
+
+    
 
 }
 
