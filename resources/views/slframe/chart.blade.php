@@ -61,7 +61,7 @@
                                         <p>Date Range: {{ $range }}      
                                             </div>
                                             <div class="col-md-6">
-                                         Count: {{ $count }}</p>       
+                                         Finding : {{ $count }}</p>       
                                             </div>    
                                         </div>   
                                          
@@ -93,7 +93,7 @@
                                         <p>Date Range: {{ $range }}      
                                             </div>
                                             <div class="col-md-6">
-                                         Count: {{ $count }}</p>       
+                                         Finding : {{ $count }}</p>       
                                             </div>    
                                         </div>   
                                          
@@ -125,7 +125,7 @@
                                         <p>Date Range: {{ $range }}      
                                             </div>
                                             <div class="col-md-6">
-                                         Count: {{ $count }}</p>       
+                                         Finding : {{ $count }}</p>       
                                             </div>    
                                         </div>   
                                          

@@ -9,12 +9,12 @@
                     <div class="nav-link-icon"><i class="fas fa-fw fa-home"></i></div>
                     Home
                 </a>
-                <a class="nav-link" href="{{url('/chart')}}">
-                    <div class="nav-link-icon"><i class="far fa-chart-bar"></i></div>
-                    SL Frame Chart
+                <a class="nav-link" href="{{url('/checksheet')}}">
+                    <div class="nav-link-icon"><i class="far fa-clipboard"></i></div>
+                    SL Frame Checksheet
                 </a>
                 <a class="nav-link" href="{{url('/record')}}">
-                    <div class="nav-link-icon"><i class="fas fa-truck"></i></div>
+                    <div class="nav-link-icon"><i class="fas fa-database"></i></div>
                     SL-Frame Record
                 </a>
                 @if(\Auth::user()->role === 'IT')

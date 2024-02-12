@@ -242,42 +242,44 @@ class SLFrameController extends Controller
         return view('slframe.main', compact('Commoninformation'));
     }
 
- 
-
-    
-
     public function chartSlFrame()
     {
         // Fetch data from the database
         $data = DB::table('commoninformations')
-        ->leftJoin('checksheets', 'commoninformations.CommonInfoID', '=', 'checksheets.CommonInfoID')
-        ->select(
-            DB::raw('DATE(checksheets.created_at) as date'),
-            DB::raw('SUM(IF(checksheets.FindingQG = 1, 1, 0)) as findingQGCount'),
-            DB::raw('SUM(IF(checksheets.FindingPDI = 1, 1, 0)) as findingPDICount'),
-            DB::raw('SUM(IF(commoninformations.Status != 2 OR commoninformations.InspectionLevel != 2, 1, 0)) as pendingCount')
-        )
-        ->where('checksheets.created_at', '>=', now()->firstOfMonth())
-        ->groupBy('date')
-        ->get();
-    
+            ->leftJoin('checksheets', 'commoninformations.CommonInfoID', '=', 'checksheets.CommonInfoID')
+            ->select(
+                DB::raw('DATE(checksheets.created_at) as date'),
+                DB::raw('COUNT(DISTINCT CASE WHEN checksheets.FindingQG = 1 THEN checksheets.CommonInfoID END) as findingQGCount'),
+                DB::raw('COUNT(DISTINCT CASE WHEN checksheets.FindingPDI = 1 THEN checksheets.CommonInfoID END) as findingPDICount'),
+                DB::raw('SUM(IF(commoninformations.Status != 2 OR commoninformations.InspectionLevel != 2, 1, 0)) as pendingCount')
+            )
+            ->where('checksheets.created_at', '>=', now()->firstOfMonth())
+            ->groupBy('date')
+            ->get();
+        
         // Prepare the data for the chart
         $dates = $findingQGCount = $findingPDICount = $pendingCount = [];
-
+    
         foreach ($data as $row) {
             $dates[] = $row->date;
             $findingQGCount[] = $row->findingQGCount;
             $findingPDICount[] = $row->findingPDICount;
             $pendingCount[] = $row->pendingCount;
         }
-
+    
         return view('slframe.chart', compact('dates', 'findingQGCount', 'findingPDICount', 'pendingCount'));
     }
     
     
-    
-
-    
-
+    public function detailSLFrame($id){
+        $noframe = $id;
+        $Commoninformation = Commoninformation::where('NoFrame', $noframe)->first();
+        // Define an array of CheckGroup values
+        $checkGroups = [1, 2, 3, 4, 5, 6];
+        // Fetch all Itemcheckgroups for the specified CheckGroup values
+        $itemCheckGroups = Itemcheckgroup::whereIn('CheckGroup', $checkGroups)->get()->groupBy('CheckGroup');
+        $checkSheet = Checksheet::where('CommonInfoID',$Commoninformation->CommonInfoID)->get();
+        return view('slframe.detail', compact('Commoninformation', 'itemCheckGroups','noframe','checkSheet'));
+    }
 }
 

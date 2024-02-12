@@ -82,6 +82,7 @@
                     <th>TglProd</th>
                     <th>PIC</th>
                     <th>Remarks</th>
+                    <th>status</th>
                     <th>Action</th>
                   </tr>
                   </thead>
@@ -98,10 +99,13 @@
                             <p>PDI : {{$data->PDI}}</p>
                         </td>
                         <td>{{ $data->Remarks}}</td>
+                        <td>@if ($data->QualityStatus == "Bad")
+                            <a href="#" class="btn btn-danger btn-sm">Bad</a>
+                        @else
+                        <a href="#" class="btn btn-success btn-sm">Good</a>
+                        @endif</td>
                         <td>
-                          <button title="Detail Information" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-update{{ $data->id }}">
-                            <i class="fas fa-info"></i>
-                        </button>
+                          <a title="Detail" class="btn btn-primary btn-sm" href="{{url("detail/".$data->NoFrame)}}"> <i class="fas fa-info"></i></a>
                           <button title="Delete" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-delete{{ $data->id }}">
                             <i class="fas fa-trash"></i>
                         </button> 

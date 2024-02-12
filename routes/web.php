@@ -25,7 +25,7 @@ Route::get('/logout', [AuthController::class, 'logout']);
 
 Route::middleware(['auth'])->group(function () {
     //Home Controller
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/checksheet', [HomeController::class, 'index'])->name('home');
 
 
     //SLFrame Controller
@@ -36,7 +36,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/submit/main', [SLFrameController::class, 'submitMain'])->name('submitMain');
     Route::delete('/slframe/delete/{id}', [SLFrameController::class, 'delete']);
     Route::get('/record', [SLFrameController::class, 'slFrameRecords'])->name('record');
-    Route::get('/chart', [SLFrameController::class, 'chartSlFrame'])->name('record');
+    Route::get('/home', [SLFrameController::class, 'chartSlFrame'])->name('record');
+    Route::get('/detail/{id}', [SLFrameController::class, 'detailSLFrame'])->name('record');
 
     //Dropdown Controller
     Route::get('/dropdown', [DropdownController::class, 'index'])->middleware(['checkRole:IT']);
