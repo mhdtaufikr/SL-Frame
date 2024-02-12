@@ -35,6 +35,17 @@
         <script src="{{ asset('plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
         <script src="{{ asset('plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
 
+        <!-- Include the chart.js-adapter-date-fns -->
+        <script src="{{ asset('plugins/chart.js/Chart.bundle.min.js') }}"></script>
+
+        <!-- Include Chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+       <!-- Include the chart.js-adapter-date-fns -->
+        <script src="{{ asset('node_modules/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js') }}"></script>
+        <script src="{{ asset('plugins/chart.js/Chart.bundle.min.js') }}"></script>
+
+
 
         <!-- Include Chosen CSS -->
         <link href="{{asset('chosen/chosen.min.css')}}" rel="stylesheet" />

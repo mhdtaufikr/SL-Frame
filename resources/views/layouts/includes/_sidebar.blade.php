@@ -9,6 +9,10 @@
                     <div class="nav-link-icon"><i class="fas fa-fw fa-home"></i></div>
                     Home
                 </a>
+                <a class="nav-link" href="{{url('/chart')}}">
+                    <div class="nav-link-icon"><i class="far fa-chart-bar"></i></div>
+                    SL Frame Chart
+                </a>
                 <a class="nav-link" href="{{url('/record')}}">
                     <div class="nav-link-icon"><i class="fas fa-truck"></i></div>
                     SL-Frame Record

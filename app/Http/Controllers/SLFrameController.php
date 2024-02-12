@@ -7,6 +7,8 @@ use App\Models\Commoninformation;
 use App\Models\Itemcheckgroup;
 use App\Models\Checksheet;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class SLFrameController extends Controller
 {
@@ -239,6 +241,41 @@ class SLFrameController extends Controller
         ->get();
         return view('slframe.main', compact('Commoninformation'));
     }
+
+ 
+
+    
+
+    public function chartSlFrame()
+    {
+        // Fetch data from the database
+        $data = DB::table('commoninformations')
+        ->leftJoin('checksheets', 'commoninformations.CommonInfoID', '=', 'checksheets.CommonInfoID')
+        ->select(
+            DB::raw('DATE(checksheets.created_at) as date'),
+            DB::raw('SUM(IF(checksheets.FindingQG = 1, 1, 0)) as findingQGCount'),
+            DB::raw('SUM(IF(checksheets.FindingPDI = 1, 1, 0)) as findingPDICount'),
+            DB::raw('SUM(IF(commoninformations.Status != 2 OR commoninformations.InspectionLevel != 2, 1, 0)) as pendingCount')
+        )
+        ->where('checksheets.created_at', '>=', now()->firstOfMonth())
+        ->groupBy('date')
+        ->get();
+    
+        // Prepare the data for the chart
+        $dates = $findingQGCount = $findingPDICount = $pendingCount = [];
+
+        foreach ($data as $row) {
+            $dates[] = $row->date;
+            $findingQGCount[] = $row->findingQGCount;
+            $findingPDICount[] = $row->findingPDICount;
+            $pendingCount[] = $row->pendingCount;
+        }
+
+        return view('slframe.chart', compact('dates', 'findingQGCount', 'findingPDICount', 'pendingCount'));
+    }
+    
+    
+    
 
     
 

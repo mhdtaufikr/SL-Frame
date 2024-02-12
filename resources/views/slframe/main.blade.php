@@ -99,7 +99,10 @@
                         </td>
                         <td>{{ $data->Remarks}}</td>
                         <td>
-                          <button title="Edit User" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-delete{{ $data->id }}">
+                          <button title="Detail Information" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-update{{ $data->id }}">
+                            <i class="fas fa-info"></i>
+                        </button>
+                          <button title="Delete" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-delete{{ $data->id }}">
                             <i class="fas fa-trash"></i>
                         </button> 
                            

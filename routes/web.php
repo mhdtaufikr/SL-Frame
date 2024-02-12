@@ -36,6 +36,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/submit/main', [SLFrameController::class, 'submitMain'])->name('submitMain');
     Route::delete('/slframe/delete/{id}', [SLFrameController::class, 'delete']);
     Route::get('/record', [SLFrameController::class, 'slFrameRecords'])->name('record');
+    Route::get('/chart', [SLFrameController::class, 'chartSlFrame'])->name('record');
 
     //Dropdown Controller
     Route::get('/dropdown', [DropdownController::class, 'index'])->middleware(['checkRole:IT']);
