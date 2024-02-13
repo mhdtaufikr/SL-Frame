@@ -118,7 +118,7 @@
                         <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                            <h4 class="modal-title" id="modal-delete{{ $data->id }}-label">Delete User</h4>
+                            <h4 class="modal-title" id="modal-delete{{ $data->id }}-label">Delete SL-Frame Record</h4>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <form action="{{ url('/slframe/delete/'.$data->NoFrame) }}" method="POST">
@@ -171,7 +171,7 @@ $(document).ready(function () {
         "order": [],
         "dom": 'Bfrtip',
         "buttons": [{
-                                title: 'Asset Management',
+                                title: 'SL Frame Record',
                                 text: '<i class="fas fa-file-excel"></i> Export to Excel',
                                 extend: 'excel',
                                 className: 'btn btn-success btn-sm mb-2'

@@ -228,9 +228,9 @@ class SLFrameController extends Controller
         $deleteslFrame=Commoninformation::where('CommonInfoID',$idFrame)->delete();
         $deleteChecksheet = Checksheet::where('CommonInfoID',$idFrame)->delete();
         if ($deleteslFrame && $deleteChecksheet) {
-                return redirect('/home')->with('status',"Success Delete {$id}");
+                return redirect()->route('record')->with('status',"Success Delete {$id}");
             }else{
-                return redirect('/rule')->with('status','Failed Delete ');
+                return redirect()->route('record')->with('status','Failed Delete ');
             }
         
     }
