@@ -31,6 +31,7 @@
     <section class="content">
         <div class="container-fluid">
      <div class="container-xl px-4 mt-n10">
+        @if ( \Auth::user()->role == 'QG' ||  \Auth::user()->role == 'PDI')
         <div class="card">
             {{-- <div class="card-header">Example Card</div> --}}
             <div class="card-body">
@@ -70,10 +71,10 @@
                         @csrf
                         <label class="mb-4" for="no_frame">Input No. Frame</label>
                         @if(\Auth::user()->role === 'QG')
-                        <input type="text" class="form-control mb-4 mt-4" name="no_frame" id="">
+                        <input type="text" class="form-control mb-4 mt-4" name="no_frame" id="" required>
                         @endif
                         @if(\Auth::user()->role === 'PDI')
-                        <select name="no_frame" id="noFrame" class="form-control chosen-select">
+                        <select name="no_frame" id="noFrame" class="form-control chosen-select" required>
                             <option value="">- Please Select NO. Frame -</option>
                             @foreach ($Commoninformation as $data)
                                 <option value="{{ $data->NoFrame }}">{{ $data->NoFrame }}</option>
@@ -96,7 +97,7 @@
                 </div>
             </div>
         </div>
-  
+        @endif
 
    
           <div class="mt-4 row">
