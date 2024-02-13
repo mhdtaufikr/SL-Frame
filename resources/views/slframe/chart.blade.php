@@ -36,108 +36,100 @@
                     
                     <div class="col-md-4">
                         <div class="card mb-4">
-                            <div class="card-header text-dark">Finding By QG ( {{ now()->format('Y') }} )</div>
+                            <div class="card-header text-dark">Finding By QG ({{ now()->format('Y') }})</div>
                             <div class="card-body">
                                 <div class="chart-bar">
                                     <canvas id="myBarChart1" width="100%" height="50"></canvas>
                                 </div>
                             </div>
-                            @php
-                            $dateRanges = [
-                                '1-5' => [1, 2, 3, 4, 5],
-                                '6-10' => [6, 7, 8, 9, 10],
-                                '11-15' => [11, 12, 13, 14, 15],
-                                '16-20' => [16, 17, 18, 19, 20],
-                                '21-25' => [21, 22, 23, 24, 25],
-                                '26-31' => [26, 27, 28, 29, 30, 31]]
-                        @endphp
-                            <div class="card-footer small text-muted"><p> Updated {{ now()->format('F d, Y \a\t h:i A') }}</p>
+                            <div class="card-footer small text-muted">
+                                <p> Updated {{ now()->format('F d, Y \a\t h:i A') }}</p>
                                 <div class="additional-info text-dark">
-                                    @foreach($findingQGCount as $index => $count)
-                                    @foreach($dateRanges as $range => $days)
-                                        @if(in_array(\Carbon\Carbon::parse($dates[$index])->day, $days))
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                        <p>Date Range: {{ $range }}      
-                                            </div>
-                                            <div class="col-md-6">
-                                         Finding : {{ $count }}</p>       
-                                            </div>    
-                                        </div>   
-                                         
-                                            @break
-                                        @endif
-                                    @endforeach
-                                @endforeach
+                                   
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            @foreach ($dates as $item)
+                                            <p>Date Range: 
+                                                    {{$item}}
+                                            </p>
+                                            @endforeach
+                                        </div>
+                                        <div class="col-md-6">
+                                            @foreach($findingQGCount as $index => $count)
+                                            <p>Finding : {{ $count }}</p>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    
                                 </div>
                             </div>
-                           
                         </div>
                     </div>
                     
                     <div class="col-md-4">
                         <div class="card mb-4">
-                            <div class="card-header text-dark">Finding By PDI ( {{ now()->format('Y') }} )</div>
+                            <div class="card-header text-dark">Finding By PDI ({{ now()->format('Y') }})</div>
                             <div class="card-body">
                                 <div class="chart-bar">
                                     <canvas id="myBarChart2" width="100%" height="50"></canvas>
                                 </div>
                             </div>
-                            <div class="card-footer small text-muted"><p> Updated {{ now()->format('F d, Y \a\t h:i A') }}</p>
-                                <div class="mr-3 additional-info text-dark">
-                                    @foreach($findingPDICount as $index => $count)
-                                    @foreach($dateRanges as $range => $days)
-                                        @if(in_array(\Carbon\Carbon::parse($dates[$index])->day, $days))
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                        <p>Date Range: {{ $range }}      
-                                            </div>
-                                            <div class="col-md-6">
-                                         Finding : {{ $count }}</p>       
-                                            </div>    
-                                        </div>   
-                                         
-                                            @break
-                                        @endif
-                                    @endforeach
-                                @endforeach
+                            <div class="card-footer small text-muted">
+                                <p> Updated {{ now()->format('F d, Y \a\t h:i A') }}</p>
+                                <div class="additional-info text-dark">
+                                   
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            @foreach ($dates as $item)
+                                            <p>Date Range: 
+                                                    {{$item}}
+                                            </p>
+                                            @endforeach
+                                        </div>
+                                        <div class="col-md-6">
+                                            @foreach($findingPDICount as $index => $count)
+                                            <p>Finding : {{ $count }}</p>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                   
                                 </div>
                             </div>
-                           
                         </div>
                     </div>
                     
                     <div class="col-md-4">
                         <div class="card mb-4">
-                            <div class="card-header text-dark">Pending SL-Frame ( {{ now()->format('Y') }} )</div>
+                            <div class="card-header text-dark">Pending SL-Frame ({{ now()->format('Y') }})</div>
                             <div class="card-body">
                                 <div class="chart-bar">
                                     <canvas id="myBarChart3" width="100%" height="50"></canvas>
                                 </div>
                             </div>
-                            <div class="card-footer small text-muted"><p>Updated {{ now()->format('F d, Y \a\t h:i A') }}</p>
+                            <div class="card-footer small text-muted">
+                                <p>Updated {{ now()->format('F d, Y \a\t h:i A') }}</p>
                                 <div class="additional-info text-dark">
-                                    @foreach($pendingCount as $index => $count)
-                                    @foreach($dateRanges as $range => $days)
-                                        @if(in_array(\Carbon\Carbon::parse($dates[$index])->day, $days))
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                        <p>Date Range: {{ $range }}      
-                                            </div>
-                                            <div class="col-md-6">
-                                         Finding : {{ $count }}</p>       
-                                            </div>    
-                                        </div>   
-                                         
-                                            @break
-                                        @endif
-                                    @endforeach
-                                @endforeach
+                                   
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            @foreach ($dates as $item)
+                                            <p>Date Range: 
+                                                    {{$item}}
+                                            </p>
+                                            @endforeach
+                                        </div>
+                                        <div class="col-md-6">
+                                            @foreach($pendingCount as $index => $count)
+                                            <p>Pending : {{ $count }}</p>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                 
                                 </div>
                             </div>
-                         
                         </div>
                     </div>
+                    
                     
                     
                 </div>
@@ -234,9 +226,9 @@
                         yAxes: [{
                             ticks: {
                                 min: 0,
-                                max: 50,
-                                maxTicksLimit: 10,
-                                padding: 5,
+                                max: 30,
+                                maxTicksLimit: 15,
+                                padding: 10,
                                 // Include a dollar sign in the ticks
                                 callback: function(value, index, values) {
                                     return number_format(value);
@@ -318,8 +310,8 @@
                         yAxes: [{
                             ticks: {
                                 min: 0,
-                                max: 50,
-                                maxTicksLimit: 10,
+                                max: 30,
+                                maxTicksLimit: 15,
                                 padding: 10,
                                 // Include a dollar sign in the ticks
                                 callback: function(value, index, values) {
@@ -402,8 +394,8 @@
                         yAxes: [{
                             ticks: {
                                 min: 0,
-                                max: 50,
-                                maxTicksLimit: 10,
+                                max: 30,
+                                maxTicksLimit: 15,
                                 padding: 10,
                                 // Include a dollar sign in the ticks
                                 callback: function(value, index, values) {

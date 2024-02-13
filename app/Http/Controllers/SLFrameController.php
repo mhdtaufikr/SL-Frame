@@ -243,32 +243,95 @@ class SLFrameController extends Controller
     }
 
     public function chartSlFrame()
-    {
-        // Fetch data from the database
-        $data = DB::table('commoninformations')
-            ->leftJoin('checksheets', 'commoninformations.CommonInfoID', '=', 'checksheets.CommonInfoID')
-            ->select(
-                DB::raw('DATE(checksheets.created_at) as date'),
-                DB::raw('COUNT(DISTINCT CASE WHEN checksheets.FindingQG = 1 THEN checksheets.CommonInfoID END) as findingQGCount'),
-                DB::raw('COUNT(DISTINCT CASE WHEN checksheets.FindingPDI = 1 THEN checksheets.CommonInfoID END) as findingPDICount'),
-                DB::raw('SUM(IF(commoninformations.Status != 2 OR commoninformations.InspectionLevel != 2, 1, 0)) as pendingCount')
-            )
-            ->where('checksheets.created_at', '>=', now()->firstOfMonth())
-            ->groupBy('date')
-            ->get();
-        
-        // Prepare the data for the chart
-        $dates = $findingQGCount = $findingPDICount = $pendingCount = [];
-    
-        foreach ($data as $row) {
-            $dates[] = $row->date;
-            $findingQGCount[] = $row->findingQGCount;
-            $findingPDICount[] = $row->findingPDICount;
-            $pendingCount[] = $row->pendingCount;
+{
+    // Fetch data from the database for FindingQG and FindingPDI counts
+    $findingData = DB::table('commoninformations')
+        ->leftJoin('checksheets', 'commoninformations.CommonInfoID', '=', 'checksheets.CommonInfoID')
+        ->select(
+            DB::raw('DATE(checksheets.created_at) as date'),
+            DB::raw('COUNT(DISTINCT CASE WHEN checksheets.FindingQG = 1 THEN checksheets.CommonInfoID END) as findingQGCount'),
+            DB::raw('COUNT(DISTINCT CASE WHEN checksheets.FindingPDI = 1 THEN checksheets.CommonInfoID END) as findingPDICount')
+        )
+        ->where('checksheets.created_at', '>=', now()->firstOfMonth())
+        ->groupBy('date')
+        ->get();
+
+    // Fetch data from the database for Pending count
+    $pendingData = DB::table('commoninformations')
+        ->select(
+            DB::raw('DATE(created_at) as date'),
+            DB::raw('SUM(IF(Status != 2 OR InspectionLevel != 2, 1, 0)) as pendingCount')
+        )
+        ->where('created_at', '>=', now()->firstOfMonth())
+        ->groupBy('date')
+        ->get();
+
+    // Initialize arrays for dates and counts
+    $dates = $findingQGCount = $findingPDICount = $pendingCount = [];
+
+    // Define date ranges
+    $dateRanges = [
+        '1-5' => [1, 2, 3, 4, 5],
+        '6-10' => [6, 7, 8, 9, 10],
+        '11-15' => [11, 12, 13, 14, 15],
+        '16-20' => [16, 17, 18, 19, 20],
+        '21-25' => [21, 22, 23, 24, 25],
+        '26-31' => [26, 27, 28, 29, 30, 31]
+    ];
+
+    // Loop through the fetched FindingQG and FindingPDI data
+    foreach ($findingData as $row) {
+        // Check the day of the date and assign it to the corresponding date range
+        foreach ($dateRanges as $range => $days) {
+            if (in_array(\Carbon\Carbon::parse($row->date)->day, $days)) {
+                // Append date range and counts to their respective arrays
+                $dates[] = $range;
+                $findingQGCount[] = $row->findingQGCount;
+                $findingPDICount[] = $row->findingPDICount;
+                // Break the loop once the date range is found
+                break;
+            }
         }
-    
-        return view('slframe.chart', compact('dates', 'findingQGCount', 'findingPDICount', 'pendingCount'));
     }
+
+    // Define the unique date ranges array
+    $uniqueDateRanges = [
+        '1-5' => [1, 2, 3, 4, 5],
+        '6-10' => [6, 7, 8, 9, 10],
+        '11-15' => [11, 12, 13, 14, 15],
+        '16-20' => [16, 17, 18, 19, 20],
+        '21-25' => [21, 22, 23, 24, 25],
+        '26-31' => [26, 27, 28, 29, 30, 31]
+    ];
+
+    // Initialize the dates array with unique date ranges
+    $dates = array_keys($uniqueDateRanges);
+
+    // Loop through the fetched pending count data
+    foreach ($pendingData as $row) {
+        // Check the day of the date and assign it to the corresponding date range
+        foreach ($uniqueDateRanges as $range => $days) {
+            if (in_array(\Carbon\Carbon::parse($row->date)->day, $days)) {
+                // Append pending count to the pendingCount array
+                $pendingCount[] = $row->pendingCount;
+                // Break the loop once the date range is found
+                break;
+            }
+        }
+    }
+    // Ensure all arrays have the same length
+    $maxCount = max(6, 6,6);
+    $findingQGCount = array_pad($findingQGCount, $maxCount, 0);
+    $findingPDICount = array_pad($findingPDICount, $maxCount, 0);
+    $pendingCount = array_pad($pendingCount, $maxCount, 0);
+
+
+
+    // Pass the data to the view
+    return view('slframe.chart', compact('dates', 'findingQGCount', 'findingPDICount', 'pendingCount'));
+}
+
+
     
     
     public function detailSLFrame($id){
