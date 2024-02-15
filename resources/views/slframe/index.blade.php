@@ -50,8 +50,30 @@
             </div>
                         
             <div class="card-body text-center d-flex justify-content-center align-items-center">
-                <img src="{{ asset('assets/img/SL-Frame.PNG') }}" alt="" class="img-fluid">
+                <img src="{{ asset('assets/img/SL-Frame.PNG') }}" alt="" class="img-fluid" usemap="#image-map">
             </div>
+            @php
+            $coordinates = [
+                '1' => '955,260,1233,337',
+                '2' => '941,129,1236,249',
+                '3' => '700,0,973,112',
+                '4' => '41,2,366,192',
+                '5' => '99,205,702,416',
+            ];
+        @endphp
+            <map name="image-map">
+                @foreach ($itemCheckGroups as $checkGroup => $itemCheckGroup)
+                    
+                        @php
+                            $coordinate = $coordinates[$checkGroup] ?? null;
+                        @endphp
+                        @if ($coordinate)
+                            <area target="" alt="{{ $checkGroup }}" title="{{ $checkGroup }}" href="" coords="{{ $coordinate }}" shape="rect" data-bs-toggle="modal" data-bs-target="#modal{{ $checkGroup }}">
+                        @endif
+                   
+                @endforeach
+            </map>
+
             <div class="row p-2">
                 @foreach ($itemCheckGroups as $checkGroup => $itemCheckGroup)
                     @if ($checkGroup < 6 || \Auth::user()->role !== 'QG')
