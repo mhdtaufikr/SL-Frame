@@ -25,7 +25,9 @@ Route::get('/logout', [AuthController::class, 'logout']);
 
 Route::middleware(['auth'])->group(function () {
     //Home Controller
-    Route::get('/checksheet', [HomeController::class, 'index'])->name('home');
+    Route::get('/checksheet', [HomeController::class, 'index'])->name('checksheet');
+
+    
 
 
     //SLFrame Controller
@@ -38,6 +40,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/record', [SLFrameController::class, 'slFrameRecords'])->name('record');
     Route::get('/home', [SLFrameController::class, 'chartSlFrame'])->name('home');
     Route::get('/detail/{id}', [SLFrameController::class, 'detailSLFrame']);
+    Route::get('/export', [SLFrameController::class, 'export'])->name('export');
+
 
     //Dropdown Controller
     Route::get('/dropdown', [DropdownController::class, 'index'])->middleware(['checkRole:IT']);

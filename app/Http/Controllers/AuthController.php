@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+
 class AuthController extends Controller
 {
     public function login(){
@@ -13,53 +14,49 @@ class AuthController extends Controller
     }
 
     public function postLogin(Request $request){
-        //dd($request->all());
-        $email=$request->email;
-        $password=$request->password;
-        $credentials = [
-            'email' => $email,
-            'password' => $password
-        ];
-        //dd($credentials);
-        $cekuser_status=User::where('email',$email)->first();
-        // dd($cekuser_status);
-        $dologin=Auth::attempt($credentials);
-        
-        //dd($dologin);
-        if($dologin){
-            // dd('hai');
-            if($cekuser_status->is_active=='1'){
-
-                //update last login
-                $update_lastlogin=User:: where('email',$email)
-                ->update([
-                    'last_login' => now(),
-                    'login_counter' => $cekuser_status->login_counter+1,
-                ]);
-
-                if($update_lastlogin){
-                    //Audit Log
-                    // $username= auth()->user()->email; 
-                    // $ipAddress=$_SERVER['REMOTE_ADDR'];
-                    // $location='0';
-                    // $access_from=Browser::browserName();
-                    // $activity='Login';
-
-                    // //dd($location);
-                    // $this->auditLogs($username,$ipAddress,$location,$access_from,$activity);
-
-                    return redirect('/home');
-                }
-            }
-            else{
-                return redirect('/')->with('statusLogin','Give Access First to User');
-            }
+        $emailOrName = $request->input('email');
+        $password = $request->input('password');
+    
+        // Determine if input is likely an email address
+        $isEmail = filter_var($emailOrName, FILTER_VALIDATE_EMAIL);
+    
+        // Define the credentials array based on input type
+        if ($isEmail) {
+            $credentials = ['email' => $emailOrName];
+        } else {
+            $credentials = ['name' => $emailOrName];
         }
-        else{
-            //dd('hai');
-            return redirect('/')->with('statusLogin','Wrong Email or Password');
+    
+        $credentials['password'] = $password;
+    
+        // Attempt authentication
+        if (Auth::attempt($credentials)) {
+            // Authentication successful
+            $user = Auth::user();
+            
+            // Check user status
+            if ($user->is_active == '1') {
+                // Update last login
+
+                  //update last login
+                  $update_lastlogin=User:: where('email',$user->email)
+                  ->update([
+                      'last_login' => now(),
+                      'login_counter' =>  $user->login_counter + 1,
+                  ]);
+    
+                // Redirect to home page
+                return redirect('/home');
+            } else {
+                // User is not active, redirect with message
+                return redirect('/')->with('statusLogin', 'Give Access First to User');
+            }
+        } else {
+            // Authentication failed, redirect with message
+            return redirect('/')->with('statusLogin', 'Wrong Email/Name or Password');
         }
     }
+    
 
     public function logout()
     {

@@ -47,7 +47,80 @@
               <div class="card-body">
                 <div class="row">
                     <div class="mb-3 col-sm-12">
-                       
+                      <button title="Export to Excel" type="button" class="btn btn-success btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#modal-export-excel">
+                        Export to Excel
+                    </button>
+
+                    <!-- Export to Excel Modal -->
+                    <div class="modal fade" id="modal-export-excel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">Export to Excel</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                  <!-- Add any content related to exporting to Excel here -->
+                                  <p>Choose export options and click export.</p>
+                                  <!-- You can add form elements, checkboxes, or any other export-related options here -->
+
+                                  <div class="col-sm-12 mb-2">
+                                      <form action="{{ url('/export') }}" method="GET">
+                                          @csrf
+                                          <div class="input-group input-group-sm">
+                                              <select class="form-control" name="searchBy" id="searchByModal" onchange="toggleSearchInputs()">
+                                                  <option value="">Export by</option>
+                                                  <option value="dateRange">Date Range</option>
+                                                  <option value="inspectionLevel">Inspection Level</option>
+                                              </select>
+
+                                              <input name="startDate" type="date" class="form-control" id="startDateModal" style="display: none;">
+                                              <input name="endDate" type="date" class="form-control" id="endDateModal" style="display: none;">
+                                              <select class="form-control" name="inspectionLevel" id="inspectionLevelModal" style="display: none;">
+                                                  <option value="">Select Inspection Level</option>
+                                                  <option value="qg">QG</option>
+                                                  <option value="pdi">PDI</option>
+                                              </select>
+
+                                              <button class="btn btn-success btn-sm" type="submit">Export</button>
+                                          </div>
+                                      </form>
+                                  </div>
+                              </div>
+
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                              </div>
+                          </div>
+                      </div>
+                    </div>
+
+                    <script>
+                      function toggleSearchInputs() {
+                          var searchBy = document.getElementById('searchByModal').value;
+                          var startDateInput = document.getElementById('startDateModal');
+                          var endDateInput = document.getElementById('endDateModal');
+                          var inspectionLevelInput = document.getElementById('inspectionLevelModal');
+
+                          if (searchBy === 'dateRange') {
+                              startDateInput.style.display = 'block';
+                              endDateInput.style.display = 'block';
+                              inspectionLevelInput.style.display = 'none';
+                          } else if (searchBy === 'inspectionLevel') {
+                              startDateInput.style.display = 'none';
+                              endDateInput.style.display = 'none';
+                              inspectionLevelInput.style.display = 'block';
+                          } else {
+                              startDateInput.style.display = 'none';
+                              endDateInput.style.display = 'none';
+                              inspectionLevelInput.style.display = 'none';
+                          }
+                      }
+                    </script>
+
+
+
+
                     <div class="col-sm-12">
                       <!--alert success -->
                       @if (session('status'))
@@ -170,12 +243,7 @@ $(document).ready(function () {
         "autoWidth": false,
         "order": [],
         "dom": 'Bfrtip',
-        "buttons": [{
-                                title: 'SL Frame Record',
-                                text: '<i class="fas fa-file-excel"></i> Export to Excel',
-                                extend: 'excel',
-                                className: 'btn btn-success btn-sm mb-2'
-                            }]  // Set buttons to an empty array to disable export button
+        "buttons": []  // Set buttons to an empty array to disable export button
     });
 });
 

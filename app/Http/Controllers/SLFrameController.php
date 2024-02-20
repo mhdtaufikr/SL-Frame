@@ -9,6 +9,8 @@ use App\Models\Checksheet;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\SLFrameExport;
 
 class SLFrameController extends Controller
 {
@@ -20,13 +22,13 @@ class SLFrameController extends Controller
         if ($Commoninformation) {
             if(Auth::user()->role == 'PDI'){
                 if ($Commoninformation->Status == '2') {
-                    return redirect()->route('home')->with('failed', 'SL-Frame already checked.');
+                    return redirect()->route('checksheet')->with('failed', 'SL-Frame already checked.');
                 }
                 return redirect()->route('show', ['noframe' => $request->no_frame]);
             }
             if ($Commoninformation->InspectionLevel == 2) {   
                 // If InspectionLevel is already 2, store the error message in the session
-                return redirect()->route('home')->with('failed', 'SL-Frame already checked.');
+                return redirect()->route('checksheet')->with('failed', 'SL-Frame already checked.');
             }
             // If the record exists, redirect to the view with existing data
             return redirect()->route('show', ['noframe' => $request->no_frame]);
@@ -47,12 +49,12 @@ class SLFrameController extends Controller
         $Commoninformation = Commoninformation::where('NoFrame', $noframe)->first();
         if (Auth::user()->role == 'PDI') {
            if ($Commoninformation->InspectionLevel == 1) {
-            return redirect()->route('home')->with('failed', 'SL-Frame on QG Check.');
+            return redirect()->route('checksheet')->with('failed', 'SL-Frame on QG Check.');
            }
         }
         if (Auth::user()->role == 'QG') {
             if ($Commoninformation->InspectionLevel == 2) {
-                return redirect()->route('home')->with('failed', 'SL-Frame Already Check.');
+                return redirect()->route('checksheet')->with('failed', 'SL-Frame Already Check.');
                }
         }
         // Define an array of CheckGroup values
@@ -194,7 +196,7 @@ class SLFrameController extends Controller
 
     if (!$commoninformation) {
         // Handle the case where Commoninformation is not found
-        return redirect()->route('home')->with('error', 'Commoninformation not found');
+        return redirect()->route('checksheet')->with('error', 'Commoninformation not found');
     }
 
     // Update Commoninformation based on user role
@@ -219,7 +221,7 @@ class SLFrameController extends Controller
     }
 
     // Redirect to the '/home' route
-    return redirect()->route('home')->with('status', "Data SL-Frame No. {$noFrame} has been submitted successfully!");
+    return redirect()->route('checksheet')->with('status', "Data SL-Frame No. {$noFrame} has been submitted successfully!");
 
 }
 
@@ -244,17 +246,20 @@ class SLFrameController extends Controller
 
     public function chartSlFrame()
 {
-    // Fetch data from the database for FindingQG and FindingPDI counts
     $findingData = DB::table('commoninformations')
-        ->leftJoin('checksheets', 'commoninformations.CommonInfoID', '=', 'checksheets.CommonInfoID')
-        ->select(
-            DB::raw('DATE(checksheets.created_at) as date'),
-            DB::raw('COUNT(DISTINCT CASE WHEN checksheets.FindingQG = 1 THEN checksheets.CommonInfoID END) as findingQGCount'),
-            DB::raw('COUNT(DISTINCT CASE WHEN checksheets.FindingPDI = 1 THEN checksheets.CommonInfoID END) as findingPDICount')
-        )
-        ->where('checksheets.created_at', '>=', now()->firstOfMonth())
-        ->groupBy('date')
-        ->get();
+    ->leftJoin('checksheets', function ($join) {
+        $join->on('commoninformations.CommonInfoID', '=', 'checksheets.CommonInfoID')
+             ->where('commoninformations.Status', '=', 2)
+             ->where('commoninformations.InspectionLevel', '=', 2);
+    })
+    ->select(
+        DB::raw('DATE(checksheets.created_at) as date'),
+        DB::raw('COUNT(DISTINCT CASE WHEN checksheets.FindingQG = 1 THEN checksheets.CommonInfoID END) as findingQGCount'),
+        DB::raw('COUNT(DISTINCT CASE WHEN checksheets.FindingPDI = 1 THEN checksheets.CommonInfoID END) as findingPDICount')
+    )
+    ->where('checksheets.created_at', '>=', now()->firstOfMonth())
+    ->groupBy('date')
+    ->get();
 
     // Fetch data from the database for Pending count
     $pendingData = DB::table('commoninformations')
@@ -283,7 +288,7 @@ class SLFrameController extends Controller
     foreach ($findingData as $row) {
         // Check the day of the date and assign it to the corresponding date range
         foreach ($dateRanges as $range => $days) {
-            if (in_array(\Carbon\Carbon::parse($row->date)->day, $days)) {
+            if (in_array(Carbon::parse($row->date)->day, $days)) {
                 // Append date range and counts to their respective arrays
                 $dates[] = $range;
                 $findingQGCount[] = $row->findingQGCount;
@@ -311,7 +316,7 @@ class SLFrameController extends Controller
     foreach ($pendingData as $row) {
         // Check the day of the date and assign it to the corresponding date range
         foreach ($uniqueDateRanges as $range => $days) {
-            if (in_array(\Carbon\Carbon::parse($row->date)->day, $days)) {
+            if (in_array(Carbon::parse($row->date)->day, $days)) {
                 // Append pending count to the pendingCount array
                 $pendingCount[] = $row->pendingCount;
                 // Break the loop once the date range is found
@@ -343,6 +348,12 @@ class SLFrameController extends Controller
         $itemCheckGroups = Itemcheckgroup::whereIn('CheckGroup', $checkGroups)->get()->groupBy('CheckGroup');
         $checkSheet = Checksheet::where('CommonInfoID',$Commoninformation->CommonInfoID)->get();
         return view('slframe.detail', compact('Commoninformation', 'itemCheckGroups','noframe','checkSheet'));
+    }
+
+    public function export() {
+      
+    
+     return Excel::download(new SLFrameExport(), 'sl_frame_export.xlsx');
     }
 }
 
