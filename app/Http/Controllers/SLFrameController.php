@@ -350,10 +350,22 @@ class SLFrameController extends Controller
         return view('slframe.detail', compact('Commoninformation', 'itemCheckGroups','noframe','checkSheet'));
     }
 
-    public function export() {
-      
-    
-     return Excel::download(new SLFrameExport(), 'sl_frame_export.xlsx');
+    public function export(Request $request) {
+        // Get the start and end dates from the request
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+        
+        // Get the current date
+        $currentDate = Carbon::now()->toDateString();
+        
+        // Combine the remarks, current date, and file extension
+        // Change this to your desired remarks
+        $fileName = "sl_frame_export_{$currentDate}.xlsx";
+        
+        // Pass the start and end dates to the export class
+        return Excel::download(new SLFrameExport($startDate, $endDate), $fileName);
     }
+    
+    
 }
 

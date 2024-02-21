@@ -19,32 +19,50 @@ use App\Models\Commoninformation;
 class SLFrameExport implements FromCollection, WithHeadings, WithStyles, ShouldAutoSize
 {
     use Exportable;
+    
+    private $startDate;
+    private $endDate;
+
+    // Constructor to accept the start and end dates
+    public function __construct($startDate, $endDate) {
+        $this->startDate = $startDate;
+        $this->endDate = $endDate;
+    }
 
     public function collection()
 {
     // Get the unique item check values
     $uniqueItemChecks = Itemcheckgroup::distinct()->pluck('ItemCheck');
 
-    $checksheets = Commoninformation::leftjoin('checksheets', 'checksheets.CommonInfoID', '=', 'commoninformations.CommonInfoID')
+    $checksheetsQuery = Commoninformation::rightJoin('checksheets', 'checksheets.CommonInfoID', '=', 'commoninformations.CommonInfoID')
         ->where('commoninformations.Status', 2)
-        ->where('commoninformations.InspectionLevel', 2)
-        ->get();
+        ->where('commoninformations.InspectionLevel', 2);
+
+    // Check if start and end dates are set
+    if (isset($this->startDate) && isset($this->endDate)) {
+        $checksheetsQuery->whereBetween('commoninformations.TglProd', [$this->startDate, $this->endDate]);
+    }
+
+    $checksheets = $checksheetsQuery->get();
 
     $result = [];
+    $no = 1;
 
     foreach ($checksheets as $item) {
         if (!isset($result[$item->CommonInfoID])) {
             $result[$item->CommonInfoID] = [
-                'no' => $no = 1,
+                'no' => $no,
                 'tgl' => $item->TglProd,
                 'shift' => $item->Shift,
                 'No. Frame' => $item->NoFrame,
             ];
-            $no = $no++;
+
+            $no++;
         }
 
         foreach ($uniqueItemChecks as $check) {
             $checkName = $item->ItemCheck;
+
             if ($check == $checkName) {
                 // If QG Finding and Repair are both 1, set QGCheck to 1
                 if ($item->FindingQG == 1) {
@@ -65,6 +83,7 @@ class SLFrameExport implements FromCollection, WithHeadings, WithStyles, ShouldA
                 } else {
                     $result[$item->CommonInfoID][$check . '_FindingPDI'] = 0;
                 }
+
                 if ($item->RepairPDI == 1) {
                     $result[$item->CommonInfoID][$check . '_RepairPDI'] = 'V';
                 } else {
@@ -74,39 +93,99 @@ class SLFrameExport implements FromCollection, WithHeadings, WithStyles, ShouldA
                 if (!isset($result[$item->CommonInfoID][$check . '_FindingQG'])) {
                     $result[$item->CommonInfoID][$check . '_FindingQG'] = 0;
                 }
+
                 if (!isset($result[$item->CommonInfoID][$check . '_RepairQG'])) {
                     $result[$item->CommonInfoID][$check . '_RepairQG'] = 0;
                 }
+
                 if (!isset($result[$item->CommonInfoID][$check . '_FindingPDI'])) {
                     $result[$item->CommonInfoID][$check . '_FindingPDI'] = 0;
                 }
+
                 if (!isset($result[$item->CommonInfoID][$check . '_RepairPDI'])) {
                     $result[$item->CommonInfoID][$check . '_RepairPDI'] = 0;
                 }
             }
         }
     }
+
+    // Add missing No. Frame entries
+    $compare = Commoninformation::where('commoninformations.Status', 2)
+        ->where('commoninformations.InspectionLevel', 2);
+          // Check if start and end dates are set
+    if (isset($this->startDate) && isset($this->endDate)) {
+        $compare->whereBetween('commoninformations.TglProd', [$this->startDate, $this->endDate]);
+    }
+    $compare = $compare->get()->toArray();
+        
+
+    foreach ($compare as $frame) {
+        if (!in_array($frame['NoFrame'], array_column($result, 'No. Frame'))) {
+            $result[] = [
+                'no' => $no,
+                'tgl' => $frame['TglProd'],
+                'shift' => $frame['Shift'],
+                'No. Frame' => $frame['NoFrame'],
+            ];
+            $no++;
+        }
+    }
+    // Sort the result array by No. Frame column in ascending order
+    usort($result, function ($a, $b) {
+        return strcmp($a['No. Frame'], $b['No. Frame']);
+    });
+
+    // Reassign the 'no' keys to ensure they are sequential
+    $result = array_values(array_map(function ($item, $index) {
+        $item['no'] = $index + 1;
+        return $item;
+    }, $result, array_keys($result)));
+
+
+    foreach ($result as &$item) {
+        $item['total'] = count($item) > 5 ? 1 : 0;
+    }
+    if (!empty($result)) {
+        $maxCount = max(array_map('count', $result));
+    } else {
+        $maxCount = 0;
+    }
+    
+    // Add blank elements to the arrays in $result
+    foreach ($result as &$item) {
+        $item += array_fill(count($item), $maxCount - count($item), '');
+    }
+
+    // Remove any '&' reference symbols
+    unset($item);
+
     // Convert the result array to a collection
     return collect($result);
+
 }
+
+
+
+
+
 
     public function headings(): array
     {
         return [
-            ['NO.','Tgl','Shift','Serie','C/Mbr No.1 + Complete Bracket','','','','Hook Frt / CKD','','','','Bracket Tie Down / SLJ-77','','','','Bracket  / SGC -22','','','','Bracket Horn / SLJ-55','','','','Bracket Mtg Cabin A/SLJ-85','','','','C/Mbr No.1,5 + Complete Bracket','','','','Bracket Strut Bar  / SLJ-38','','','','Bracket Radiator  / SLJ-82-83','','','','Reinforcement / SLJ-44 & SLJ-33','','','','Bracket Roller / SLJ-73','','','','Bracket / SLJ-103','','','','C/Mbr No.2 + Complete Bracket','','','','Long Sill   / SLJ-81','','','','Bracket Assy Cab Mtg / SLJ-119','','','','Bracket Eng. Sup.  / SLJ-141','','','','Bracket Cable A / SLJ-65','','','','Bracket Hose / SLJ-35','','','','Hanger Spring / CKD','','','','Bracket Fuel Tank  / SLJ-97','','','','Brkt Brake Hose','','','','C/Mbr No. 3 + Complete Brkt','','','','C/Mbr No.4 + Complete Brkt','','','','Hook Rear / CKD','','','','Brkt Shackle','','','','Brkt Stay muffler / SLJ-97','','','','Brkt Stoper Bumper / SLJ-43','','','','Brkt Mtg SLJ-18 Assy Nut','','','','Brkt Harness , RH side x 3','','','','Bracket / SGJ-22','','','','Bracket Clip Bintang x 2','','','','Bracket New x 3','','','','Cat Belang','','','','Cat Bubble','','','','Vin Number','','','','Grease Shift Lev.','','','','Grease Pin Dumper','','','',],
+            ['NO.','Tgl','Shift','Serie','C/Mbr No.1 + Complete Bracket','','','','Hook Frt / CKD','','','','Bracket Tie Down / SLJ-77','','','','Bracket  / SGC -22','','','','Bracket Horn / SLJ-55','','','','Bracket Mtg Cabin A/SLJ-85','','','','C/Mbr No.1,5 + Complete Bracket','','','','Bracket Strut Bar  / SLJ-38','','','','Bracket Radiator  / SLJ-82-83','','','','Reinforcement / SLJ-44 & SLJ-33','','','','Bracket Roller / SLJ-73','','','','Bracket / SLJ-103','','','','C/Mbr No.2 + Complete Bracket','','','','Long Sill   / SLJ-81','','','','Bracket Assy Cab Mtg / SLJ-119','','','','Bracket Eng. Sup.  / SLJ-141','','','','Bracket Cable A / SLJ-65','','','','Bracket Hose / SLJ-35','','','','Hanger Spring / CKD','','','','Bracket Fuel Tank  / SLJ-97','','','','Brkt Brake Hose','','','','C/Mbr No. 3 + Complete Brkt','','','','C/Mbr No.4 + Complete Brkt','','','','Hook Rear / CKD','','','','Brkt Shackle','','','','Brkt Stay muffler / SLJ-97','','','','Brkt Stoper Bumper / SLJ-43','','','','Brkt Mtg SLJ-18 Assy Nut','','','','Brkt Harness , RH side x 3','','','','Bracket / SGJ-22','','','','Bracket Clip Bintang x 2','','','','Bracket New x 3','','','','Cat Belang','','','','Cat Bubble','','','','Vin Number','','','','Grease Shift Lev.','','','','Grease Pin Dumper','','','','Total',],
             ['', '', '', '','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI',''],
         ];
     }
     
     public function styles(Worksheet $sheet)
     {
-        $style = $sheet->getStyle('A1:EV1');
+        $style = $sheet->getStyle('A1:EW1');
 
         $alignment = $style->getAlignment();
         $alignment->setVertical(Alignment::VERTICAL_CENTER);
         $alignment->setHorizontal(Alignment::HORIZONTAL_CENTER);
         
-        $sheet->getStyle("E1:EV1")->getAlignment()->setTextRotation(90);
+        $sheet->getStyle("E1:EW1")->getAlignment()->setTextRotation(90);
         $sheet->getDefaultColumnDimension()->setWidth(3); // Set the width of all columns to 20
 
         $startRow = 1;
@@ -238,6 +317,7 @@ class SLFrameExport implements FromCollection, WithHeadings, WithStyles, ShouldA
         $sheet->mergeCells('EQ2:ER2');
         $sheet->mergeCells('ES2:ET2');
         $sheet->mergeCells('EU2:EV2');
+        $sheet->mergeCells('EW1:EW2');
 
         $alignment = [
             'horizontal' => Alignment::HORIZONTAL_CENTER,
