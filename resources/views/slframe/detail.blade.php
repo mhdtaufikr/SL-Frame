@@ -185,7 +185,7 @@
                                                         </div>
                                                     </td>
                                                 @endif
-                                                        <td>
+                                                        <td {{ \Auth::user()->role === 'QG' ? 'hidden' : '' }}>
                                                             <div class="form-check d-flex justify-content-center">
                                                                 @php
                                                                     $isCheckedFindingPDI = $checkSheet->contains('ItemCheck', $item->ItemCheck) && $checkSheet->where('ItemCheck', $item->ItemCheck)->first()->FindingPDI == 1;
@@ -196,7 +196,7 @@
                                                                 <input class="form-check-input bigger-checkbox finding-pdi-checkbox" type="checkbox" name="findingPDI[{{ $item->ItemCheck }}]" value="1" {{ $isCheckedFindingPDI ? 'checked' : '' }} onchange="handleFindingPDIChange(this)" disabled>
                                                             </div>                                                        
                                                         </td>
-                                                        <td>
+                                                        <td {{ \Auth::user()->role === 'QG' ? 'hidden' : '' }}>
                                                             <div class="form-check d-flex justify-content-center">
                                                                 @php
                                                                     $isCheckedRepairPDI = $checkSheet->contains('ItemCheck', $item->ItemCheck) && $checkSheet->where('ItemCheck', $item->ItemCheck)->first()->RepairPDI == 1;
