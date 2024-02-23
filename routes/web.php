@@ -41,6 +41,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/home', [SLFrameController::class, 'chartSlFrame'])->name('home');
     Route::get('/detail/{id}', [SLFrameController::class, 'detailSLFrame']);
     Route::get('/export', [SLFrameController::class, 'export'])->name('export');
+    Route::get('/detail/{role}/{date}', [SLFrameController::class, 'detailPDI']);
 
 
     //Dropdown Controller

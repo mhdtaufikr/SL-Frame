@@ -56,7 +56,19 @@
                                         </div>
                                         <div class="col-md-6">
                                             @foreach($findingQGCount as $index => $count)
-                                            <p>Finding : {{ $count }}</p>
+                                                @if($count > 0)
+                                                    @php
+                                                        $startDate = $index * 5 + 1;
+                                                        $endDate = min(($index + 1) * 5, 31);
+                                                        $dateRange = $startDate . '-' . $endDate;
+                                                        $role = 'qg';
+                                                    @endphp
+                                                    <a target="_blank" href="detail/{{$role}}/{{$dateRange}}">
+                                                        <p>Finding : {{ $count }}</p>
+                                                    </a>
+                                                    @else
+                                                    <a href="#"><p>Finding: {{ $count }}</p></a>
+                                                @endif
                                             @endforeach
                                         </div>
                                     </div>
@@ -88,9 +100,23 @@
                                         </div>
                                         <div class="col-md-6">
                                             @foreach($findingPDICount as $index => $count)
-                                            <p>Finding : {{ $count }}</p>
+                                                @if($count > 0)
+                                                    @php
+                                                        $startDate = $index * 5 + 1;
+                                                        $endDate = min(($index + 1) * 5, 31);
+                                                        $dateRange = $startDate . '-' . $endDate;
+                                                        $role = 'pdi';
+                                                    @endphp
+                                                    <a target="_blank" href="detail/{{$role}}/{{$dateRange}}">
+                                                        <p>Finding : {{ $count }}</p>
+                                                    </a>
+                                                    @else
+                                                    <a href="#"><p>Finding: {{ $count }}</p></a>
+                                                @endif
                                             @endforeach
                                         </div>
+                                        
+                                        
                                     </div>
                                    
                                 </div>

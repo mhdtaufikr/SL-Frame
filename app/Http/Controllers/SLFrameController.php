@@ -43,7 +43,6 @@ class SLFrameController extends Controller
         }
     }
     
-
     public function show($noframe)
     {
         $Commoninformation = Commoninformation::where('NoFrame', $noframe)->first();
@@ -121,9 +120,6 @@ class SLFrameController extends Controller
         return redirect()->route('show', ['noframe' => $request->noframe])->with('success', 'Data has been submitted successfully!');
     }
     
-    
-
-
     public function submitPDI(Request $request)
     {
         // Validate the request data if necessary
@@ -180,51 +176,48 @@ class SLFrameController extends Controller
         return redirect()->route('show', ['noframe' => $request->noframe])->with('success', 'Data has been submitted successfully!');
     }
     
-    
-
    public function submitMain(Request $request)
-{
-    // Retrieve data from the form submission
-    $noFrame = $request->input('noFrame');
-    $tglProd = $request->input('tglProd');
-    $shift = $request->input('shift');
-    $name = $request->input('name');
-    $remarks = $request->input('remarks');
+    {
+        // Retrieve data from the form submission
+        $noFrame = $request->input('noFrame');
+        $tglProd = $request->input('tglProd');
+        $shift = $request->input('shift');
+        $name = $request->input('name');
+        $remarks = $request->input('remarks');
 
-    // Find the Commoninformation based on noFrame
-    $commoninformation = Commoninformation::where('NoFrame', $noFrame)->first();
+        // Find the Commoninformation based on noFrame
+        $commoninformation = Commoninformation::where('NoFrame', $noFrame)->first();
 
-    if (!$commoninformation) {
-        // Handle the case where Commoninformation is not found
-        return redirect()->route('checksheet')->with('error', 'Commoninformation not found');
+        if (!$commoninformation) {
+            // Handle the case where Commoninformation is not found
+            return redirect()->route('checksheet')->with('error', 'Commoninformation not found');
+        }
+
+        // Update Commoninformation based on user role
+        if (Auth::user()->role == 'QG') {
+            $commoninformation->update([
+                'Status' => 0,
+                'TglProd' => $tglProd,
+                'Shift' => $shift,
+                'NamaQG' => $name,
+                'Remarks' => $remarks,
+                'InspectionLevel' => 2,
+                'QualityStatus' => $commoninformation->checksheet->isEmpty() ? 'Good' : 'Bad',
+            ]);
+        } elseif (Auth::user()->role == 'PDI') {
+            $commoninformation->update([
+                'Status' => 2,
+                'PDI' => $name,
+                'PDI_Date' => $tglProd,
+                'Remarks' => $remarks,
+                'QualityStatus' => $commoninformation->checksheet->isEmpty() ? 'Good' : 'Bad',
+            ]);
+        }
+
+        // Redirect to the '/home' route
+        return redirect()->route('checksheet')->with('status', "Data SL-Frame No. {$noFrame} has been submitted successfully!");
+
     }
-
-    // Update Commoninformation based on user role
-    if (Auth::user()->role == 'QG') {
-        $commoninformation->update([
-            'Status' => 0,
-            'TglProd' => $tglProd,
-            'Shift' => $shift,
-            'NamaQG' => $name,
-            'Remarks' => $remarks,
-            'InspectionLevel' => 2,
-            'QualityStatus' => $commoninformation->checksheet->isEmpty() ? 'Good' : 'Bad',
-        ]);
-    } elseif (Auth::user()->role == 'PDI') {
-        $commoninformation->update([
-            'Status' => 2,
-            'PDI' => $name,
-            'PDI_Date' => $tglProd,
-            'Remarks' => $remarks,
-            'QualityStatus' => $commoninformation->checksheet->isEmpty() ? 'Good' : 'Bad',
-        ]);
-    }
-
-    // Redirect to the '/home' route
-    return redirect()->route('checksheet')->with('status', "Data SL-Frame No. {$noFrame} has been submitted successfully!");
-
-}
-
     public function delete($id){
         $idFrame = Commoninformation::where('NoFrame',$id)->first()->CommonInfoID;
         $deleteslFrame=Commoninformation::where('CommonInfoID',$idFrame)->delete();
@@ -236,14 +229,12 @@ class SLFrameController extends Controller
             }
         
     }
-
     public function slFrameRecords(){
         $Commoninformation = Commoninformation::where('Status', 2)
         ->where('InspectionLevel',2)
         ->get();
         return view('slframe.main', compact('Commoninformation'));
     }
-
     public function chartSlFrame()
     {
         $findingData = DB::table('commoninformations')
@@ -320,11 +311,7 @@ class SLFrameController extends Controller
         // Pass the data to the view
         return view('slframe.chart', compact('dates', 'findingQGCount', 'findingPDICount', 'pendingCount'));
     }
-    
-
-
-    
-    
+      
     public function detailSLFrame($id){
         $noframe = $id;
         $Commoninformation = Commoninformation::where('NoFrame', $noframe)->first();
@@ -350,6 +337,52 @@ class SLFrameController extends Controller
         
         // Pass the start and end dates to the export class
         return Excel::download(new SLFrameExport($startDate, $endDate), $fileName);
+    }
+
+    public function detailPDI($role,$date)
+    {
+        // Extract the start and end date from the provided $date range
+        $dates = explode('-', $date);
+        $startDate = Carbon::create(now()->year, now()->month, $dates[0], 0, 0, 0);
+        $endDate = Carbon::create(now()->year, now()->month, $dates[1], 23, 59, 59);
+        
+        if ($role == 'pdi') {
+            // Fetch Commoninformation records where FindingPDI or RepairPDI is 1 and there is a related record in checksheet
+            $Commoninformation = Commoninformation::where('Status', 2)
+                ->where('InspectionLevel', 2)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->whereHas('checksheet', function ($query) {
+                    $query->where('FindingPDI', 1)->orWhere('RepairPDI', 1);
+                })
+                ->get();
+    
+            // Join to checksheet table where FindingPDI or RepairPDI is 1
+            $Commoninformation->load(['checksheet' => function ($query) {
+                $query->where('FindingPDI', 1)->orWhere('RepairPDI', 1);
+            }]);
+        } else if ($role == 'qg') {
+            // Fetch Commoninformation records where FindingQG or RepairQG is 1 and there is a related record in checksheet
+            $Commoninformation = Commoninformation::where('Status', 2)
+                ->where('InspectionLevel', 2)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->whereHas('checksheet', function ($query) {
+                    $query->where('FindingQG', 1)->orWhere('RepairQG', 1);
+                })
+                ->get();
+            // Join to checksheet table where FindingQG or RepairQG is 1
+            $Commoninformation->load(['checksheet' => function ($query) {
+                $query->where('FindingQG', 1)->orWhere('RepairQG', 1);
+            }]);
+        } else {
+            // Fetch Commoninformation records where Status is not 2 and InspectionLevel is not 2 and there is a related record in checksheet
+            $Commoninformation = Commoninformation::where('Status', '!=', 2)
+                ->where('InspectionLevel', '!=', 2)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->whereHas('checksheet')
+                ->get();
+        }
+        
+        return view('slframe.main', compact('Commoninformation'));
     }
     
     
