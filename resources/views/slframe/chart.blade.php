@@ -33,134 +33,56 @@
         <div class="container-fluid">
             <div class="container-xl px-4 mt-n10">
                 <div class="row">
-                    
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="card mb-4">
-                            <div class="card-header text-dark">Finding By QG ({{ now()->format('Y') }})</div>
+                            <div class="card-header text-dark">
+                                <div class="d-flex justify-content-between">
+                                    <span>Finding by QG ({{now()->format('F Y') }})</span>
+                                    <span style="padding-right: 10px"><strong>Total : {{$sums['sumFindingqg']}}</strong></span>
+                                </div>
+                            </div>
+
+
                             <div class="card-body">
-                                <div class="chart-bar">
-                                    <canvas id="myBarChart1" width="100%" height="50"></canvas>
-                                </div>
+                                <div class="chart-area"><canvas id="myAreaChart" width="100%" height="30"></canvas></div>
                             </div>
-                            <div class="card-footer small text-muted">
-                                <p> Updated {{ now()->format('F d, Y \a\t h:i A') }}</p>
-                                <div class="additional-info text-dark">
-                                   
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            @foreach ($dates as $item)
-                                            <p>Date Range: 
-                                                    {{$item}}
-                                            </p>
-                                            @endforeach
-                                        </div>
-                                        <div class="col-md-6">
-                                            @foreach($findingQGCount as $index => $count)
-                                                @if($count > 0)
-                                                    @php
-                                                        $startDate = $index * 5 + 1;
-                                                        $endDate = min(($index + 1) * 5, 31);
-                                                        $dateRange = $startDate . '-' . $endDate;
-                                                        $role = 'qg';
-                                                    @endphp
-                                                    <a target="_blank" href="detail/{{$role}}/{{$dateRange}}">
-                                                        <p>Finding : {{ $count }}</p>
-                                                    </a>
-                                                    @else
-                                                    <a href="#"><p>Finding: {{ $count }}</p></a>
-                                                @endif
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                    
-                                </div>
-                            </div>
+                            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
                         </div>
                     </div>
-                    
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="card mb-4">
-                            <div class="card-header text-dark">Finding By PDI ({{ now()->format('Y') }})</div>
+                            <div class="card-header text-dark">
+                                <div class="d-flex justify-content-between">
+                                    <span>Finding by QG ({{now()->format('F Y') }})</span>
+                                    <span style="padding-right: 10px"><strong>Total : {{$sums['sumFindingPDI']}}</strong></span>
+                                </div>
+                            </div>
                             <div class="card-body">
-                                <div class="chart-bar">
-                                    <canvas id="myBarChart2" width="100%" height="50"></canvas>
-                                </div>
+                                <div class="chart-area"><canvas id="myAreaChart2" width="100%" height="30"></canvas></div>
                             </div>
-                            <div class="card-footer small text-muted">
-                                <p> Updated {{ now()->format('F d, Y \a\t h:i A') }}</p>
-                                <div class="additional-info text-dark">
-                                   
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            @foreach ($dates as $item)
-                                            <p>Date Range: 
-                                                    {{$item}}
-                                            </p>
-                                            @endforeach
-                                        </div>
-                                        <div class="col-md-6">
-                                            @foreach($findingPDICount as $index => $count)
-                                                @if($count > 0)
-                                                    @php
-                                                        $startDate = $index * 5 + 1;
-                                                        $endDate = min(($index + 1) * 5, 31);
-                                                        $dateRange = $startDate . '-' . $endDate;
-                                                        $role = 'pdi';
-                                                    @endphp
-                                                    <a target="_blank" href="detail/{{$role}}/{{$dateRange}}">
-                                                        <p>Finding : {{ $count }}</p>
-                                                    </a>
-                                                    @else
-                                                    <a href="#"><p>Finding: {{ $count }}</p></a>
-                                                @endif
-                                            @endforeach
-                                        </div>
-                                        
-                                        
-                                    </div>
-                                   
-                                </div>
-                            </div>
+                            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
                         </div>
                     </div>
-                    
-                    <div class="col-md-4">
+                    <div class="col-md-12">
                         <div class="card mb-4">
-                            <div class="card-header text-dark">Pending SL-Frame ({{ now()->format('Y') }})</div>
+                            <div class="card-header text-dark">
+                                <div class="d-flex justify-content-between">
+                                    <span>  Pending({{now()->format('F Y') }})</span>
+                                    <span style="padding-right: 10px"><strong>Total : {{$sums['sumPending']}}</strong></span>
+                                </div>
+                                </div>
+
                             <div class="card-body">
-                                <div class="chart-bar">
-                                    <canvas id="myBarChart3" width="100%" height="50"></canvas>
-                                </div>
+                                <div class="chart-area"><canvas id="myAreaChart3" width="100%" height="30"></canvas></div>
                             </div>
-                            <div class="card-footer small text-muted">
-                                <p>Updated {{ now()->format('F d, Y \a\t h:i A') }}</p>
-                                <div class="additional-info text-dark">
-                                   
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            @foreach ($dates as $item)
-                                            <p>Date Range: 
-                                                    {{$item}}
-                                            </p>
-                                            @endforeach
-                                        </div>
-                                        <div class="col-md-6">
-                                            @foreach($pendingCount as $index => $count)
-                                            <p>Pending : {{ $count }}</p>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                 
-                                </div>
-                            </div>
+                            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
                         </div>
                     </div>
-                    
-                    
-                    
                 </div>
+
+
             </div>
-            
+
         </div>
         <!-- /.container-fluid -->
     </section>
@@ -182,286 +104,336 @@
     </script>
     <script>
         // Set new default font family and font color to mimic Bootstrap's default styling
-            (Chart.defaults.global.defaultFontFamily = "Metropolis"),
-            '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-            Chart.defaults.global.defaultFontColor = "#858796";
+        (Chart.defaults.global.defaultFontFamily = "Metropolis"),
+        '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+        Chart.defaults.global.defaultFontColor = "#858796";
 
-            function number_format(number, decimals, dec_point, thousands_sep) {
-                // *     example: number_format(1234.56, 2, ',', ' ');
-                // *     return: '1 234,56'
-                number = (number + "").replace(",", "").replace(" ", "");
-                var n = !isFinite(+number) ? 0 : +number,
-                    prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
-                    sep = typeof thousands_sep === "undefined" ? "," : thousands_sep,
-                    dec = typeof dec_point === "undefined" ? "." : dec_point,
-                    s = "",
-                    toFixedFix = function(n, prec) {
-                        var k = Math.pow(10, prec);
-                        return "" + Math.round(n * k) / k;
-                    };
-                // Fix for IE parseFloat(0.55).toFixed(0) = 0;
-                s = (prec ? toFixedFix(n, prec) : "" + Math.round(n)).split(".");
-                if (s[0].length > 3) {
-                    s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
-                }
-                if ((s[1] || "").length < prec) {
-                    s[1] = s[1] || "";
-                    s[1] += new Array(prec - s[1].length + 1).join("0");
-                }
-                return s.join(dec);
+        function number_format(number, decimals, dec_point, thousands_sep) {
+            // *     example: number_format(1234.56, 2, ',', ' ');
+            // *     return: '1 234,56'
+            number = (number + "").replace(",", "").replace(" ", "");
+            var n = !isFinite(+number) ? 0 : +number,
+                prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
+                sep = typeof thousands_sep === "undefined" ? "," : thousands_sep,
+                dec = typeof dec_point === "undefined" ? "." : dec_point,
+                s = "",
+                toFixedFix = function(n, prec) {
+                    var k = Math.pow(10, prec);
+                    return "" + Math.round(n * k) / k;
+                };
+            // Fix for IE parseFloat(0.55).toFixed(0) = 0;
+            s = (prec ? toFixedFix(n, prec) : "" + Math.round(n)).split(".");
+            if (s[0].length > 3) {
+                s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
             }
+            if ((s[1] || "").length < prec) {
+                s[1] = s[1] || "";
+                s[1] += new Array(prec - s[1].length + 1).join("0");
+            }
+            return s.join(dec);
+        }
 
-            // Bar Chart Example
-            var ctx = document.getElementById("myBarChart1");
-            var myBarChart = new Chart(ctx, {
-                type: "bar",
-                data: {
-                    labels: ["1-5", "6-10", "11-15", "16-20", "21-25", "26-31"],
-                    datasets: [{
-                        label: "Finding : ",
-                        backgroundColor: "#ff0008",
-                        hoverBackgroundColor: "#5c0205",
-                        borderColor: "#4e73df",
-                        data: {!! json_encode($findingQGCount) !!},
-                        maxBarThickness: 25
-                    }]
+        var ctx = document.getElementById("myAreaChart");
+var myLineChart = new Chart(ctx, {
+    type: "line",
+    data: {
+        labels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"],
+        datasets: [{
+            label: "Finding",
+            lineTension: 0,
+            backgroundColor: "rgba(60, 60, 60, 0.5)",
+            borderColor: "#f50505",
+            pointRadius: 3,
+            pointBackgroundColor: "#000000",
+            pointBorderColor: "#000000",
+            pointHoverRadius: 3,
+            pointHoverBackgroundColor: "#f50505",
+            pointHoverBorderColor: "#f50505",
+            pointHitRadius: 10,
+            pointBorderWidth: 2,
+            data: {!! json_encode($findingQGCount) !!} // Pass PHP array to JavaScript here
+        }]
+    },
+    options: {
+        maintainAspectRatio: false,
+        layout: {
+            padding: {
+                left: 10,
+                right: 25,
+                top: 25,
+                bottom: 0
+            }
+        },
+        scales: {
+            xAxes: [{
+                time: {
+                    unit: "date"
                 },
-                options: {
-                    maintainAspectRatio: false,
-                    layout: {
-                        padding: {
-                            left: 10,
-                            right: 25,
-                            top: 25,
-                            bottom: 0
+                gridLines: {
+                    display: false,
+                    drawBorder: false
+                },
+                ticks: {
+                    maxTicksLimit: 31
+                }
+            }],
+            yAxes: [{
+                ticks: {
+                    max: 10, // Set max value here
+                    maxTicksLimit: 10,
+                    padding: 10,
+                    // Include a dollar sign in the ticks
+                    callback: function(value, index, values) {
+                        return "" + number_format(value);
+                    }
+                },
+                gridLines: {
+                    color: "#000000",
+                    zeroLineColor: "rgb(234, 236, 244)",
+                    drawBorder: false,
+                    borderDash: [2],
+                    zeroLineBorderDash: [2]
+                }
+            }]
+        },
+        legend: {
+            display: false
+        },
+        tooltips: {
+            backgroundColor: "rgb(255,255,255)",
+            bodyFontColor: "#858796",
+            titleMarginBottom: 10,
+            titleFontColor: "#6e707e",
+            titleFontSize: 14,
+            borderColor: "#dddfeb",
+            borderWidth: 1,
+            xPadding: 15,
+            yPadding: 15,
+            displayColors: false,
+            intersect: false,
+            mode: "index",
+            caretPadding: 10,
+            callbacks: {
+                label: function(tooltipItem, chart) {
+                    var datasetLabel =
+                        chart.datasets[tooltipItem.datasetIndex].label || "";
+                    return datasetLabel + ": " + number_format(tooltipItem.yLabel);
+                }
+            }
+        },
+        onClick: function(evt, elements) {
+            if (elements.length > 0) {
+                // Get the label for the clicked element
+                var label = this.data.labels[elements[0]._index];
+                var role = 'qg';
+                // Construct the URL using the label (date)
+                var url = 'detail/'+ role + '/' + label;
+
+                // Open the URL in a new tab
+                window.open(url, '_blank');
+            }
+        }
+    }
+});
+
+var ctx = document.getElementById("myAreaChart2");
+var myLineChart = new Chart(ctx, {
+    type: "line",
+    data: {
+        labels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"],
+        datasets: [{
+            label: "Finding",
+            lineTension: 0,
+            backgroundColor: "rgba(60, 60, 60, 0.5)",
+            borderColor: "#f50505",
+            pointRadius: 3,
+            pointBackgroundColor: "#000000",
+            pointBorderColor: "#000000",
+            pointHoverRadius: 3,
+            pointHoverBackgroundColor: "#f50505",
+            pointHoverBorderColor: "#f50505",
+            pointHitRadius: 10,
+            pointBorderWidth: 2,
+            data: {!! json_encode($findingPDICount) !!} // Pass PHP array to JavaScript here
+        }]
+    },
+    options: {
+        maintainAspectRatio: false,
+        layout: {
+            padding: {
+                left: 10,
+                right: 25,
+                top: 25,
+                bottom: 0
+            }
+        },
+        scales: {
+            xAxes: [{
+                time: {
+                    unit: "date"
+                },
+                gridLines: {
+                    display: false,
+                    drawBorder: false
+                },
+                ticks: {
+                    maxTicksLimit: 31
+                }
+            }],
+            yAxes: [{
+                ticks: {
+                    max: 10, // Set max value here
+                    maxTicksLimit: 10,
+                    padding: 10,
+                    // Include a dollar sign in the ticks
+                    callback: function(value, index, values) {
+                        return "" + number_format(value);
+                    }
+                },
+                gridLines: {
+                    color: "#000000",
+                    zeroLineColor: "rgb(234, 236, 244)",
+                    drawBorder: false,
+                    borderDash: [2],
+                    zeroLineBorderDash: [2]
+                }
+            }]
+        },
+        legend: {
+            display: false
+        },
+        tooltips: {
+            backgroundColor: "rgb(255,255,255)",
+            bodyFontColor: "#858796",
+            titleMarginBottom: 10,
+            titleFontColor: "#6e707e",
+            titleFontSize: 14,
+            borderColor: "#dddfeb",
+            borderWidth: 1,
+            xPadding: 15,
+            yPadding: 15,
+            displayColors: false,
+            intersect: false,
+            mode: "index",
+            caretPadding: 10,
+            callbacks: {
+                label: function(tooltipItem, chart) {
+                    var datasetLabel =
+                        chart.datasets[tooltipItem.datasetIndex].label || "";
+                    return datasetLabel + ": " + number_format(tooltipItem.yLabel);
+                }
+            }
+        },
+        // New code for adding anchor tags to the points
+       // New code for adding anchor tags to the points
+       onClick: function(event, chartElement) {
+            var point = chartElement[0];
+            if (point) {
+                var label = this.data.labels[point._index];
+                var role = 'pdi'; // set your role here
+                // Construct the URL using the label (date) and role
+                var url = '/detail/' + role + '/' + label;
+                // Open the URL in a new tab
+                window.open(url, '_blank');
+            }
+        }
+
+    }
+});
+
+
+    var ctx = document.getElementById("myAreaChart3");
+    var myLineChart = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"],
+            datasets: [{
+                label: "Pending",
+                lineTension: 0,
+                backgroundColor: "rgba(60, 60, 60, 0.5)",
+                borderColor: "#f50505",
+                pointRadius: 3,
+                pointBackgroundColor: "#000000",
+                pointBorderColor: "#000000",
+                pointHoverRadius: 3,
+                pointHoverBackgroundColor: "#f50505",
+                pointHoverBorderColor: "#f50505",
+                pointHitRadius: 10,
+                pointBorderWidth: 2,
+                data: {!! json_encode($pendingCount) !!} // Pass PHP array to JavaScript here
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    left: 10,
+                    right: 25,
+                    top: 25,
+                    bottom: 0
+                }
+            },
+            scales: {
+                xAxes: [{
+                    time: {
+                        unit: "date"
+                    },
+                    gridLines: {
+                        display: false,
+                        drawBorder: false
+                    },
+                    ticks: {
+                        maxTicksLimit: 31
+                    }
+                }],
+                yAxes: [{
+                    ticks: {
+                        max: 10, // Set max value here
+                        maxTicksLimit: 10,
+                        padding: 10,
+                        // Include a dollar sign in the ticks
+                        callback: function(value, index, values) {
+                            return "" + number_format(value);
                         }
                     },
-                    scales: {
-                        xAxes: [{
-                            time: {
-                                unit: "month"
-                            },
-                            gridLines: {
-                                display: false,
-                                drawBorder: false
-                            },
-                            ticks: {
-                                maxTicksLimit: 6
-                            }
-                        }],
-                        yAxes: [{
-                            ticks: {
-                                min: 0,
-                                max: 30,
-                                maxTicksLimit: 15,
-                                padding: 10,
-                                // Include a dollar sign in the ticks
-                                callback: function(value, index, values) {
-                                    return number_format(value);
-                                }
-                            },
-                            gridLines: {
-                                color: "rgb(234, 236, 244)",
-                                zeroLineColor: "rgb(234, 236, 244)",
-                                drawBorder: false,
-                                borderDash: [2],
-                                zeroLineBorderDash: [2]
-                            }
-                        }]
-                    },
-                    legend: {
-                        display: false
-                    },
-                    tooltips: {
-                        titleMarginBottom: 10,
-                        titleFontColor: "#6e707e",
-                        titleFontSize: 14,
-                        backgroundColor: "rgb(255,255,255)",
-                        bodyFontColor: "#858796",
-                        borderColor: "#dddfeb",
-                        borderWidth: 1,
-                        xPadding: 15,
-                        yPadding: 15,
-                        displayColors: false,
-                        caretPadding: 10,
-                        callbacks: {
-                            label: function(tooltipItem, chart) {
-                                var datasetLabel =
-                                    chart.datasets[tooltipItem.datasetIndex].label || "";
-                                return datasetLabel + number_format(tooltipItem.yLabel);
-                            }
-                        }
+                    gridLines: {
+                        color: "#000000",
+                        zeroLineColor: "rgb(234, 236, 244)",
+                        drawBorder: false,
+                        borderDash: [2],
+                        zeroLineBorderDash: [2]
+                    }
+                }]
+            },
+            legend: {
+                display: false
+            },
+            tooltips: {
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                titleMarginBottom: 10,
+                titleFontColor: "#6e707e",
+                titleFontSize: 14,
+                borderColor: "#dddfeb",
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                intersect: false,
+                mode: "index",
+                caretPadding: 10,
+                callbacks: {
+                    label: function(tooltipItem, chart) {
+                        var datasetLabel =
+                            chart.datasets[tooltipItem.datasetIndex].label || "";
+                        return datasetLabel + ": " + number_format(tooltipItem.yLabel);
                     }
                 }
-            });
+            }
+        }
+    });
 
-            // Bar Chart Example
-            var ctx = document.getElementById("myBarChart2");
-            var myBarChart = new Chart(ctx, {
-                type: "bar",
-                data: {
-                    labels: ["1-5", "6-10", "11-15", "16-20", "21-25", "26-31"],
-                    datasets: [{
-                        label: "Finding : ",
-                      backgroundColor: "#ff0008",
-                        hoverBackgroundColor: "#5c0205",
-                        borderColor: "#4e73df",
-                        data: {!! json_encode($findingPDICount) !!}, 
-                        maxBarThickness: 25
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    layout: {
-                        padding: {
-                            left: 10,
-                            right: 25,
-                            top: 25,
-                            bottom: 0
-                        }
-                    },
-                    scales: {
-                        xAxes: [{
-                            time: {
-                                unit: "month"
-                            },
-                            gridLines: {
-                                display: false,
-                                drawBorder: false
-                            },
-                            ticks: {
-                                maxTicksLimit: 6
-                            }
-                        }],
-                        yAxes: [{
-                            ticks: {
-                                min: 0,
-                                max: 30,
-                                maxTicksLimit: 15,
-                                padding: 10,
-                                // Include a dollar sign in the ticks
-                                callback: function(value, index, values) {
-                                    return number_format(value);
-                                }
-                            },
-                            gridLines: {
-                                color: "rgb(234, 236, 244)",
-                                zeroLineColor: "rgb(234, 236, 244)",
-                                drawBorder: false,
-                                borderDash: [2],
-                                zeroLineBorderDash: [2]
-                            }
-                        }]
-                    },
-                    legend: {
-                        display: false
-                    },
-                    tooltips: {
-                        titleMarginBottom: 10,
-                        titleFontColor: "#6e707e",
-                        titleFontSize: 14,
-                        backgroundColor: "rgb(255,255,255)",
-                        bodyFontColor: "#858796",
-                        borderColor: "#dddfeb",
-                        borderWidth: 1,
-                        xPadding: 15,
-                        yPadding: 15,
-                        displayColors: false,
-                        caretPadding: 10,
-                        callbacks: {
-                            label: function(tooltipItem, chart) {
-                                var datasetLabel =
-                                    chart.datasets[tooltipItem.datasetIndex].label || "";
-                                return datasetLabel + number_format(tooltipItem.yLabel);
-                            }
-                        }
-                    }
-                }
-            });
 
-            // Bar Chart Example
-            var ctx = document.getElementById("myBarChart3");
-            var myBarChart = new Chart(ctx, {
-                type: "bar",
-                data: {
-                    labels: ["1-5", "6-10", "11-15", "16-20", "21-25", "26-31"],
-                    datasets: [{
-                        label: "Pending : ",
-                      backgroundColor: "#ff0008",
-                        hoverBackgroundColor: "#5c0205",
-                        borderColor: "#4e73df",
-                        data: {!! json_encode($pendingCount) !!}, 
-                        maxBarThickness: 25
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    layout: {
-                        padding: {
-                            left: 10,
-                            right: 25,
-                            top: 25,
-                            bottom: 0
-                        }
-                    },
-                    scales: {
-                        xAxes: [{
-                            time: {
-                                unit: "month"
-                            },
-                            gridLines: {
-                                display: false,
-                                drawBorder: false
-                            },
-                            ticks: {
-                                maxTicksLimit: 6
-                            }
-                        }],
-                        yAxes: [{
-                            ticks: {
-                                min: 0,
-                                max: 30,
-                                maxTicksLimit: 15,
-                                padding: 10,
-                                // Include a dollar sign in the ticks
-                                callback: function(value, index, values) {
-                                    return number_format(value);
-                                }
-                            },
-                            gridLines: {
-                                color: "rgb(234, 236, 244)",
-                                zeroLineColor: "rgb(234, 236, 244)",
-                                drawBorder: false,
-                                borderDash: [2],
-                                zeroLineBorderDash: [2]
-                            }
-                        }]
-                    },
-                    legend: {
-                        display: false
-                    },
-                    tooltips: {
-                        titleMarginBottom: 10,
-                        titleFontColor: "#6e707e",
-                        titleFontSize: 14,
-                        backgroundColor: "rgb(255,255,255)",
-                        bodyFontColor: "#858796",
-                        borderColor: "#dddfeb",
-                        borderWidth: 1,
-                        xPadding: 15,
-                        yPadding: 15,
-                        displayColors: false,
-                        caretPadding: 10,
-                        callbacks: {
-                            label: function(tooltipItem, chart) {
-                                var datasetLabel =
-                                    chart.datasets[tooltipItem.datasetIndex].label || "";
-                                return datasetLabel + number_format(tooltipItem.yLabel);
-                            }
-                        }
-                    }
-                }
-            });
     </script>
 </main>
 @endsection

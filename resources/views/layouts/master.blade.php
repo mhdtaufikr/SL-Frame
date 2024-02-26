@@ -13,7 +13,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
         <script src="https://cdn.ckeditor.com/4.6.2/standard/ckeditor.js"></script>
         <script src="{{ url('https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js') }}"></script>
-    
+
          <!-- DataTables CSS -->
         <link rel="stylesheet" type="text/css" href="{{ asset('plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
@@ -42,7 +42,6 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
        <!-- Include the chart.js-adapter-date-fns -->
-        <script src="{{ asset('node_modules/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js') }}"></script>
         <script src="{{ asset('plugins/chart.js/Chart.bundle.min.js') }}"></script>
 
 
@@ -56,7 +55,7 @@
 
 
     </head>
-    
+
     <body class="nav-fixed sidenav-toggled">
         @include('layouts.includes._topbar')
             <div id="layoutSidenav">

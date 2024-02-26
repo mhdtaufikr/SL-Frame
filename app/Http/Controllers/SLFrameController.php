@@ -18,7 +18,7 @@ class SLFrameController extends Controller
     {
         // Check if record with the given NoFrame already exists
         $Commoninformation = Commoninformation::where('NoFrame', $request->no_frame)->first();
-    
+
         if ($Commoninformation) {
             if(Auth::user()->role == 'PDI'){
                 if ($Commoninformation->Status == '2') {
@@ -26,7 +26,7 @@ class SLFrameController extends Controller
                 }
                 return redirect()->route('show', ['noframe' => $request->no_frame]);
             }
-            if ($Commoninformation->InspectionLevel == 2) {   
+            if ($Commoninformation->InspectionLevel == 2) {
                 // If InspectionLevel is already 2, store the error message in the session
                 return redirect()->route('checksheet')->with('failed', 'SL-Frame already checked.');
             }
@@ -42,7 +42,7 @@ class SLFrameController extends Controller
             return redirect()->route('show', ['noframe' => $request->no_frame]);
         }
     }
-    
+
     public function show($noframe)
     {
         $Commoninformation = Commoninformation::where('NoFrame', $noframe)->first();
@@ -70,28 +70,28 @@ class SLFrameController extends Controller
             'noframe' => 'required',
             // Add validation rules for other fields if needed
         ]);
-    
+
         // Find the Commoninformation record
         $commonInformation = Commoninformation::where('NoFrame', $request->noframe)->first();
-    
+
         // Update the status field to 1
         $commonInformation->update(['Status' => 1]);
-    
+
         foreach ($request->findingQC as $index => $findingQC) {
             // Check if the data already exists in checksheets
             $existingChecksheet = Checksheet::where([
                 'CommonInfoID' => $commonInformation->CommonInfoID,
                 'ItemCheck' => $index,
             ])->first();
-    
+
             // Initialize variables for findingQG and repairQG
             $findingQGvalue = $findingQC;
             $repairQGvalue = isset($request->repairQC[$index]) && $request->repairQC[$index] == 1 ? 1 : 0;
-    
+
             // If the data exists, update it; otherwise, store it
             if ($existingChecksheet) {
                 if ($existingChecksheet->FindingQG != $findingQGvalue || $existingChecksheet->RepairQG != $repairQGvalue) {
-                    
+
                     $updateChecksheet = Checksheet::where('id',$existingChecksheet->id)->update([
                         'Remarks' => $request->remarks,
                         'FindingQG' => $findingQGvalue,
@@ -110,16 +110,16 @@ class SLFrameController extends Controller
                         'Remarks' => $request->remarks,
                         // Add other fields if needed
                     ]);
-    
+
                     $checksheet->save();
                 }
             }
         }
-    
+
         // Redirect back to the show route
         return redirect()->route('show', ['noframe' => $request->noframe])->with('success', 'Data has been submitted successfully!');
     }
-    
+
     public function submitPDI(Request $request)
     {
         // Validate the request data if necessary
@@ -127,10 +127,10 @@ class SLFrameController extends Controller
             'noframe' => 'required',
             // Add validation rules for other fields if needed
         ]);
-    
+
         // Find the Commoninformation record
         $commonInformation = Commoninformation::where('NoFrame', $request->noframe)->first();
-    
+
         // Update the status field to 1
         $commonInformation->update(['Status' => 1]);
         $commonInformation->update(['PDI' => Auth::user()->name,]);
@@ -140,11 +140,11 @@ class SLFrameController extends Controller
                 'CommonInfoID' => $commonInformation->CommonInfoID,
                 'ItemCheck' => $index,
             ])->first();
-    
+
             // Initialize variables for findingPDI and repairPDI
             $findingPDIValue = $findingPDI;
             $repairPDIValue = isset($request->repairPDI[$index]) && $request->repairPDI[$index] == 1 ? 1 : 0;
-    
+
             // If the data exists, update it; otherwise, store it
             if ($existingChecksheet) {
                 if ($existingChecksheet->FindingPDI != $findingPDIValue || $existingChecksheet->RepairPDI != $repairPDIValue) {
@@ -166,16 +166,16 @@ class SLFrameController extends Controller
                         'Remarks' => $request->remarks,
                         // Add other fields if needed
                     ]);
-    
+
                     $checksheet->save();
                 }
             }
         }
-    
+
         // Redirect back to the show route
         return redirect()->route('show', ['noframe' => $request->noframe])->with('success', 'Data has been submitted successfully!');
     }
-    
+
    public function submitMain(Request $request)
     {
         // Retrieve data from the form submission
@@ -227,7 +227,7 @@ class SLFrameController extends Controller
             }else{
                 return redirect()->route('record')->with('status','Failed Delete ');
             }
-        
+
     }
     public function slFrameRecords(){
         $Commoninformation = Commoninformation::where('Status', 2)
@@ -236,82 +236,77 @@ class SLFrameController extends Controller
         return view('slframe.main', compact('Commoninformation'));
     }
     public function chartSlFrame()
-    {
-        $findingData = DB::table('commoninformations')
-            ->leftJoin('checksheets', function ($join) {
-                $join->on('commoninformations.CommonInfoID', '=', 'checksheets.CommonInfoID')
-                     ->where('commoninformations.Status', '=', 2)
-                     ->where('commoninformations.InspectionLevel', '=', 2);
-            })
-            ->select(
-                DB::raw('DATE(checksheets.created_at) as date'),
-                DB::raw('COUNT(DISTINCT CASE WHEN checksheets.FindingQG = 1 THEN checksheets.CommonInfoID END) as findingQGCount'),
-                DB::raw('COUNT(DISTINCT CASE WHEN checksheets.FindingPDI = 1 THEN checksheets.CommonInfoID END) as findingPDICount')
-            )
-            ->where('checksheets.created_at', '>=', now()->firstOfMonth())
-            ->groupBy('date')
-            ->get();
-    
-        $pendingData = DB::table('commoninformations')
-            ->select(
-                DB::raw('DATE(created_at) as date'),
-                DB::raw('SUM(IF(Status != 2 OR InspectionLevel != 2, 1, 0)) as pendingCount')
-            )
-            ->where('created_at', '>=', now()->firstOfMonth())
-            ->groupBy('date')
-            ->get();
-    
-        // Define the date ranges
-        $dateRanges = [
-            '1-5' => [1, 2, 3, 4, 5],
-            '6-10' => [6, 7, 8, 9, 10],
-            '11-15' => [11, 12, 13, 14, 15],
-            '16-20' => [16, 17, 18, 19, 20],
-            '21-25' => [21, 22, 23, 24, 25],
-            '26-31' => [26, 27, 28, 29, 30, 31]
-        ];
-    
-        // Initialize arrays for counts
-        $findingQGCount = $findingPDICount = $pendingCount = [];
-    
-        // Initialize counts with zeros for each date range
-        foreach ($dateRanges as $range => $days) {
-            $findingQGCount[$range] = 0;
-            $findingPDICount[$range] = 0;
-            $pendingCount[$range] = 0;
-        }
-    
-        // Loop through the finding data and increment counts for each date range
-        foreach ($findingData as $row) {
-            foreach ($dateRanges as $range => $days) {
-                if (in_array(Carbon::parse($row->date)->day, $days)) {
-                    $findingQGCount[$range] += $row->findingQGCount;
-                    $findingPDICount[$range] += $row->findingPDICount;
-                    break;
-                }
-            }
-        }
-    
-        // Loop through the pending data and increment counts for each date range
-        foreach ($pendingData as $row) {
-            foreach ($dateRanges as $range => $days) {
-                if (in_array(Carbon::parse($row->date)->day, $days)) {
-                    $pendingCount[$range] += $row->pendingCount;
-                    break;
-                }
-            }
-        }
-    
-        // Extract the date ranges and counts
-        $dates = array_keys($dateRanges);
-        $findingQGCount = array_values($findingQGCount);
-        $findingPDICount = array_values($findingPDICount);
-        $pendingCount = array_values($pendingCount);
-    
-        // Pass the data to the view
-        return view('slframe.chart', compact('dates', 'findingQGCount', 'findingPDICount', 'pendingCount'));
+{
+    // Your existing query to get data from the database
+    $findingData = DB::table('commoninformations')
+        ->leftJoin('checksheets', function ($join) {
+            $join->on('commoninformations.CommonInfoID', '=', 'checksheets.CommonInfoID')
+                ->where('commoninformations.Status', '=', 2)
+                ->where('commoninformations.InspectionLevel', '=', 2);
+        })
+        ->select(
+            DB::raw('DATE(checksheets.created_at) as date'),
+            DB::raw('COUNT(DISTINCT CASE WHEN checksheets.FindingQG = 1 THEN checksheets.CommonInfoID END) as findingQGCount'),
+            DB::raw('COUNT(DISTINCT CASE WHEN checksheets.FindingPDI = 1 THEN checksheets.CommonInfoID END) as findingPDICount')
+        )
+        ->where('checksheets.created_at', '>=', now()->firstOfMonth())
+        ->groupBy('date')
+        ->get();
+
+    $pendingData = DB::table('commoninformations')
+        ->select(
+            DB::raw('DATE(created_at) as date'),
+            DB::raw('SUM(IF(Status != 2 OR InspectionLevel != 2, 1, 0)) as pendingCount')
+        )
+        ->where('created_at', '>=', now()->firstOfMonth())
+        ->groupBy('date')
+        ->get();
+
+    // Initialize arrays for counts
+    $findingQGCount = $findingPDICount = $pendingCount = [];
+
+    // Initialize counts with zeros for each day of the month
+    for ($i = 1; $i <= 31; $i++) {
+        $findingQGCount[$i] = 0;
+        $findingPDICount[$i] = 0;
+        $pendingCount[$i] = 0;
     }
-      
+
+    // Loop through the finding data and increment counts for each day of the month
+    foreach ($findingData as $row) {
+        $dateFormatted = Carbon::parse($row->date)->format('d');
+        $findingQGCount[$dateFormatted] += $row->findingQGCount;
+        $findingPDICount[$dateFormatted] += $row->findingPDICount;
+    }
+
+    // Loop through the pending data and increment counts for each day of the month
+    foreach ($pendingData as $row) {
+        $dateFormatted = Carbon::parse($row->date)->format('d');
+        $pendingCount[$dateFormatted] += $row->pendingCount;
+    }
+
+    // Convert counts to array format
+    $findingQGCount = array_values($findingQGCount);
+    $findingPDICount = array_values($findingPDICount);
+    $pendingCount = array_values($pendingCount);
+    // Calculate the sums
+    $sumFindingqg = array_sum($findingQGCount);
+    $sumFindingPDI = array_sum($findingPDICount);
+    $sumPending = array_sum($pendingCount);
+
+    // Create an associative array to store the sums
+    $sums = [
+        'sumFindingqg' => $sumFindingqg,
+        'sumFindingPDI' => $sumFindingPDI,
+        'sumPending' => $sumPending,
+    ];
+    // Pass the data to the view
+    return view('slframe.chart', compact('sums','findingQGCount', 'findingPDICount', 'pendingCount'));
+}
+
+
+
+
     public function detailSLFrame($id){
         $noframe = $id;
         $Commoninformation = Commoninformation::where('NoFrame', $noframe)->first();
@@ -327,25 +322,31 @@ class SLFrameController extends Controller
         // Get the start and end dates from the request
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
-        
+
         // Get the current date
         $currentDate = Carbon::now()->toDateString();
-        
+
         // Combine the remarks, current date, and file extension
         // Change this to your desired remarks
         $fileName = "sl_frame_export_{$currentDate}.xlsx";
-        
+
         // Pass the start and end dates to the export class
         return Excel::download(new SLFrameExport($startDate, $endDate), $fileName);
     }
 
-    public function detailPDI($role,$date)
+    public function detailPDI($role, $day)
     {
+        $year = now()->year;
+        $month = now()->month;
+
         // Extract the start and end date from the provided $date range
-        $dates = explode('-', $date);
-        $startDate = Carbon::create(now()->year, now()->month, $dates[0], 0, 0, 0);
-        $endDate = Carbon::create(now()->year, now()->month, $dates[1], 23, 59, 59);
-        
+        // $dates = explode('-', $date);
+        // $startDate = Carbon::create(now()->year, now()->month, $dates[0], 0, 0, 0);
+        // $endDate = Carbon::create(now()->year, now()->month, $dates[1], 23, 59, 59);
+
+        $startDate = Carbon::create($year, $month, $day, 0, 0, 0);
+        $endDate = Carbon::create($year, $month, $day, 23, 59, 59);
+
         if ($role == 'pdi') {
             // Fetch Commoninformation records where FindingPDI or RepairPDI is 1 and there is a related record in checksheet
             $Commoninformation = Commoninformation::where('Status', 2)
@@ -355,7 +356,7 @@ class SLFrameController extends Controller
                     $query->where('FindingPDI', 1)->orWhere('RepairPDI', 1);
                 })
                 ->get();
-    
+
             // Join to checksheet table where FindingPDI or RepairPDI is 1
             $Commoninformation->load(['checksheet' => function ($query) {
                 $query->where('FindingPDI', 1)->orWhere('RepairPDI', 1);
@@ -381,10 +382,11 @@ class SLFrameController extends Controller
                 ->whereHas('checksheet')
                 ->get();
         }
-        
+
         return view('slframe.main', compact('Commoninformation'));
     }
-    
-    
+
+
+
 }
 

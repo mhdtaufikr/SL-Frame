@@ -27,7 +27,7 @@ Route::middleware(['auth'])->group(function () {
     //Home Controller
     Route::get('/checksheet', [HomeController::class, 'index'])->name('checksheet');
 
-    
+
 
 
     //SLFrame Controller

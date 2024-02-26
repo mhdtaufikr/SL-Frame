@@ -33,7 +33,7 @@
             <div class="card-header text-dark">
                 <div class="d-flex justify-content-between">
                     <h1> <strong>{{ $Commoninformation->NoFrame }}</strong></h1>
-                    
+
                     <span class="ml-auto">
                         @if($Commoninformation->Status == 0)
                             <button class="btn btn-info btn-md">Waiting List</button>
@@ -48,7 +48,7 @@
                     </span>
                 </div>
             </div>
-                        
+
             <div class="card-body text-center d-flex justify-content-center align-items-center">
                 <img src="{{ asset('assets/img/SL-Frame.PNG') }}" alt="" class="img-fluid" usemap="#image-map">
             </div>
@@ -63,14 +63,14 @@
         @endphp
             <map name="image-map">
                 @foreach ($itemCheckGroups as $checkGroup => $itemCheckGroup)
-                    
+
                         @php
                             $coordinate = $coordinates[$checkGroup] ?? null;
                         @endphp
                         @if ($coordinate)
                             <area target="" alt="{{ $checkGroup }}" title="{{ $checkGroup }}" href="" coords="{{ $coordinate }}" shape="rect" data-bs-toggle="modal" data-bs-target="#modal{{ $checkGroup }}">
                         @endif
-                   
+
                 @endforeach
             </map>
 
@@ -87,7 +87,7 @@
                                 <p class="mb-0 ml-2">Check</p>
                             </div>
                         </div>
-                        
+
                         <div class="card h-100" data-bs-toggle="modal" data-bs-target="#modal{{ $checkGroup }}">
                             <div class="card-header text-dark text-center">
                                 @if ($checkGroup == "5")
@@ -100,7 +100,7 @@
                             </div>
                             <div class="card-body">
                                 @foreach ($itemCheckGroup as $item)
-                                    <p>{{ $item->ItemCheck }}</p>
+                                    <p>{{$item->index}}{{ $item->ItemCheck }}</p>
                                 @endforeach
                             </div>
                         </div>
@@ -110,7 +110,7 @@
                         <div class="modal-dialog modal-dialog-centered modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title">            
+                                    <h5 class="modal-title">
                                         @if ($checkGroup == "5")
                                             5 & 6
                                        @elseif($checkGroup == "6")
@@ -146,7 +146,7 @@
                                                      <!-- Add hidden input fields for unchecked checkboxes -->
                                                      <input type="hidden" name="findingQC[{{ $item->ItemCheck }}]" value="0">
                                                      <input type="hidden" name="repairQC[{{ $item->ItemCheck }}]" value="0">
-                                                    <td>{{ $item->ItemCheck }}</td>
+                                                    <td>{{$item->index}} {{ $item->ItemCheck }}</td>
                                                     @if (\Auth::user()->role === 'QG')
                                                     <td>
                                                         <div class="form-check d-flex justify-content-center">
@@ -186,8 +186,8 @@
                                                         </div>
                                                     </td>
                                                 @endif
-                                                
-                                                        
+
+
                                                         <td {{ \Auth::user()->role === 'QG' ? 'hidden' : '' }}>
                                                             <div class="form-check d-flex justify-content-center">
                                                                 @php
@@ -197,7 +197,7 @@
                                                                 <!-- Add hidden input field for unchecked checkbox -->
                                                                 <input type="hidden" name="findingPDI[{{ $item->ItemCheck }}]" value="0">
                                                                 <input class="form-check-input bigger-checkbox finding-pdi-checkbox" type="checkbox" name="findingPDI[{{ $item->ItemCheck }}]" value="1" {{ $isCheckedFindingPDI ? 'checked' : '' }} onchange="handleFindingPDIChange(this)">
-                                                            </div>                                                        
+                                                            </div>
                                                         </td>
                                                         <td {{ \Auth::user()->role === 'QG' ? 'hidden' : '' }}>
                                                             <div class="form-check d-flex justify-content-center">
@@ -208,13 +208,13 @@
                                                                 <!-- Add hidden input field for unchecked checkbox -->
                                                                 <input type="hidden" name="repairPDI[{{ $item->ItemCheck }}]" value="0">
                                                                 <input class="form-check-input bigger-checkbox repair-pdi-checkbox" type="checkbox" name="repairPDI[{{ $item->ItemCheck }}]" value="1" {{ $isCheckedRepairPDI ? 'checked' : 'disabled' }}>
-                                                            </div>                                                                                                                
+                                                            </div>
                                                         </td>
-                                                        
-                                                    
+
+
                                                 </tr>
                                             @endforeach
-                                            
+
                                             </tbody>
                                         </table>
                                         <hr>
@@ -253,7 +253,7 @@
                                     <div class="col-sm-6">
                                         <label for="tglProd" class="form-label">Tanggal Production</label>
                                         <input  type="date" class="form-control" id="tglProd" name="tglProd" value="{{ now()->toDateString() }}">
-                                    </div>                        
+                                    </div>
                                     <div class="col-sm-6">
                                         <label for="shift" class="form-label">Shift</label>
                                         <input type="number" class="form-control" id="shift" name="shift" value="{{ getShiftValue() }}" >
@@ -265,7 +265,7 @@
                                     @if(\Auth::user()->role === 'PDI')
                                     <label for="name" class="form-label">Name of PDI</label>
                                     @endif
-                                      
+
                                         <input  value="{{ auth()->user()->name }}" type="text" class="form-control" id="nameOfQG" name="name">
                                     </div>
                                     <div class="col-sm-12">
@@ -285,7 +285,7 @@
             @php
                 function getShiftValue() {
                     $currentHour = date('H');
-        
+
                     if ($currentHour >= 7 && $currentHour < 15) {
                         return 1;
                     } elseif ($currentHour >= 15 && $currentHour < 23) {
@@ -339,16 +339,16 @@
                         updateSubmitButtonState();
                     });
                 });
-            
+
                 function updateSubmitButtonState() {
                     var totalCheckboxes = $('.check-checkbox').length;
                     var checkedCheckboxes = $('.check-checkbox:checked').length;
-            
+
                     var allGroupsChecked = totalCheckboxes === checkedCheckboxes;
-            
+
                     $('#submitButton').prop('disabled', !allGroupsChecked);
                 }
-            
+
                 // This function ensures that the modal is opened only if at least one checkbox is checked
                 $('#additionalInfoModal').on('show.bs.modal', function (event) {
                     if ($('.check-checkbox:checked').length === 0) {
