@@ -42,7 +42,6 @@ class SLFrameController extends Controller
             return redirect()->route('show', ['noframe' => $request->no_frame]);
         }
     }
-
     public function show($noframe)
     {
         $Commoninformation = Commoninformation::where('NoFrame', $noframe)->first();
@@ -119,7 +118,6 @@ class SLFrameController extends Controller
         // Redirect back to the show route
         return redirect()->route('show', ['noframe' => $request->noframe])->with('success', 'Data has been submitted successfully!');
     }
-
     public function submitPDI(Request $request)
     {
         // Validate the request data if necessary
@@ -175,7 +173,6 @@ class SLFrameController extends Controller
         // Redirect back to the show route
         return redirect()->route('show', ['noframe' => $request->noframe])->with('success', 'Data has been submitted successfully!');
     }
-
    public function submitMain(Request $request)
     {
         // Retrieve data from the form submission
@@ -236,77 +233,115 @@ class SLFrameController extends Controller
         return view('slframe.main', compact('Commoninformation'));
     }
     public function chartSlFrame()
-{
-    // Your existing query to get data from the database
-    $findingData = DB::table('commoninformations')
-        ->leftJoin('checksheets', function ($join) {
-            $join->on('commoninformations.CommonInfoID', '=', 'checksheets.CommonInfoID')
-                ->where('commoninformations.Status', '=', 2)
-                ->where('commoninformations.InspectionLevel', '=', 2);
-        })
-        ->select(
-            DB::raw('DATE(checksheets.created_at) as date'),
-            DB::raw('COUNT(DISTINCT CASE WHEN checksheets.FindingQG = 1 THEN checksheets.CommonInfoID END) as findingQGCount'),
-            DB::raw('COUNT(DISTINCT CASE WHEN checksheets.FindingPDI = 1 THEN checksheets.CommonInfoID END) as findingPDICount')
-        )
-        ->where('checksheets.created_at', '>=', now()->firstOfMonth())
-        ->groupBy('date')
-        ->get();
+    {
+        // Your existing query to get data from the database for findingQG
+        $findingQGData = DB::table('commoninformations')
+            ->leftJoin('checksheets', function ($join) {
+                $join->on('commoninformations.CommonInfoID', '=', 'checksheets.CommonInfoID')
+                    ->where('commoninformations.Status', '=', 2)
+                    ->where('commoninformations.InspectionLevel', '=', 2)
+                    ->where('checksheets.FindingQG', '=', 1); // Filter by findingQG
+            })
+            ->select(
+                DB::raw('DATE(checksheets.created_at) as date'),
+                DB::raw('COUNT(DISTINCT CASE WHEN checksheets.FindingQG = 1 THEN checksheets.CommonInfoID END) as findingQGCount')
+            )
+            ->where('checksheets.created_at', '>=', now()->firstOfMonth())
+            ->groupBy('date')
+            ->get();
+        // Your existing query to get data from the database for findingPDI
+        $findingPDIData = DB::table('commoninformations')
+            ->leftJoin('checksheets', function ($join) {
+                $join->on('commoninformations.CommonInfoID', '=', 'checksheets.CommonInfoID')
+                    ->where('commoninformations.Status', '=', 2)
+                    ->where('commoninformations.InspectionLevel', '=', 2)
+                    ->where('checksheets.FindingPDI', '=', 1); // Filter by findingPDI
+            })
+            ->select(
+                DB::raw('DATE(checksheets.created_at) as date'),
+                DB::raw('COUNT(DISTINCT CASE WHEN checksheets.FindingPDI = 1 THEN checksheets.CommonInfoID END) as findingPDICount')
+            )
+            ->where('checksheets.created_at', '>=', now()->firstOfMonth())
+            ->groupBy('date')
+            ->get();
 
-    $pendingData = DB::table('commoninformations')
-        ->select(
-            DB::raw('DATE(created_at) as date'),
-            DB::raw('SUM(IF(Status != 2 OR InspectionLevel != 2, 1, 0)) as pendingCount')
-        )
-        ->where('created_at', '>=', now()->firstOfMonth())
-        ->groupBy('date')
-        ->get();
+        // Your existing query to get data from the database for pending
+        $pendingData = DB::table('commoninformations')
+            ->select(
+                DB::raw('DATE(created_at) as date'),
+                DB::raw('SUM(IF(Status != 2 OR InspectionLevel != 2, 1, 0)) as pendingCount')
+            )
+            ->where('created_at', '>=', now()->firstOfMonth())
+            ->groupBy('date')
+            ->get();
 
-    // Initialize arrays for counts
-    $findingQGCount = $findingPDICount = $pendingCount = [];
+        // Initialize associative arrays for counts, starting from index 1
+// Initialize associative arrays for counts, starting from index 1
+$findingQGCount = [];
+$findingPDICount = [];
+$pendingCount = [];
 
-    // Initialize counts with zeros for each day of the month
-    for ($i = 1; $i <= 31; $i++) {
-        $findingQGCount[$i] = 0;
-        $findingPDICount[$i] = 0;
-        $pendingCount[$i] = 0;
-    }
-
-    // Loop through the finding data and increment counts for each day of the month
-    foreach ($findingData as $row) {
-        $dateFormatted = Carbon::parse($row->date)->format('d');
-        $findingQGCount[$dateFormatted] += $row->findingQGCount;
-        $findingPDICount[$dateFormatted] += $row->findingPDICount;
-    }
-
-    // Loop through the pending data and increment counts for each day of the month
-    foreach ($pendingData as $row) {
-        $dateFormatted = Carbon::parse($row->date)->format('d');
-        $pendingCount[$dateFormatted] += $row->pendingCount;
-    }
-
-    // Convert counts to array format
-    $findingQGCount = array_values($findingQGCount);
-    $findingPDICount = array_values($findingPDICount);
-    $pendingCount = array_values($pendingCount);
-    // Calculate the sums
-    $sumFindingqg = array_sum($findingQGCount);
-    $sumFindingPDI = array_sum($findingPDICount);
-    $sumPending = array_sum($pendingCount);
-
-    // Create an associative array to store the sums
-    $sums = [
-        'sumFindingqg' => $sumFindingqg,
-        'sumFindingPDI' => $sumFindingPDI,
-        'sumPending' => $sumPending,
-    ];
-    // Pass the data to the view
-    return view('slframe.chart', compact('sums','findingQGCount', 'findingPDICount', 'pendingCount'));
+// Loop through the findingQG data and increment counts for each day of the month
+foreach ($findingQGData as $row) {
+    $dateFormatted = Carbon::parse($row->date)->format('d');
+    $findingQGCount[$dateFormatted] = $row->findingQGCount;
 }
 
+// Loop through the findingPDI data and increment counts for each day of the month
+foreach ($findingPDIData as $row) {
+    $dateFormatted = Carbon::parse($row->date)->format('d');
+    $findingPDICount[$dateFormatted] = $row->findingPDICount;
+}
+
+// Loop through the pending data and increment counts for each day of the month
+foreach ($pendingData as $row) {
+    $dateFormatted = Carbon::parse($row->date)->format('d');
+    $pendingCount[$dateFormatted] = $row->pendingCount;
+}
+
+// Fill in any missing days with zero counts
+for ($i = 1; $i <= 31; $i++) {
+    if (!isset($findingQGCount[$i])) {
+        $findingQGCount[$i] = 0;
+    }
+    if (!isset($findingPDICount[$i])) {
+        $findingPDICount[$i] = 0;
+    }
+    if (!isset($pendingCount[$i])) {
+        $pendingCount[$i] = 0;
+    }
+}
+
+// Sort arrays by keys to ensure they are ordered correctly
+ksort($findingQGCount);
+ksort($findingPDICount);
+ksort($pendingCount);
+
+// Convert associative arrays to numerically indexed arrays
+$findingQGCount = array_values($findingQGCount);
+$findingPDICount = array_values($findingPDICount);
+$pendingCount = array_values($pendingCount);
+
+// Add a dummy value at the beginning of the arrays
+array_unshift($findingQGCount, 0);
+array_unshift($findingPDICount, 0);
+array_unshift($pendingCount, 0);
 
 
+        // Calculate the sums
+        $sumFindingQG = array_sum($findingQGCount);
+        $sumFindingPDI = array_sum($findingPDICount);
+        $sumPending = array_sum($pendingCount);
 
+        // Create an associative array to store the sums
+        $sums = [
+            'sumFindingQG' => $sumFindingQG,
+            'sumFindingPDI' => $sumFindingPDI,
+            'sumPending' => $sumPending,
+        ];
+        // Pass the data to the view
+        return view('slframe.chart', compact('sums', 'findingQGCount', 'findingPDICount', 'pendingCount'));
+    }
     public function detailSLFrame($id){
         $noframe = $id;
         $Commoninformation = Commoninformation::where('NoFrame', $noframe)->first();
@@ -346,7 +381,6 @@ class SLFrameController extends Controller
 
         $startDate = Carbon::create($year, $month, $day, 0, 0, 0);
         $endDate = Carbon::create($year, $month, $day, 23, 59, 59);
-
         if ($role == 'pdi') {
             // Fetch Commoninformation records where FindingPDI or RepairPDI is 1 and there is a related record in checksheet
             $Commoninformation = Commoninformation::where('Status', 2)
