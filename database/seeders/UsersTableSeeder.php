@@ -11,7 +11,7 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         DB::table('users')->insert([
-            
+
             [
                 'id' => 1,
                 'name' => 'IT',
@@ -48,6 +48,34 @@ class UsersTableSeeder extends Seeder
                 'password' => Hash::make('Password.1'), // Replace 'your_password_here' with the desired password
                 'remember_token' => null,
                 'role' => 'User',
+                'last_login' => '2023-08-15 11:38:49',
+                'login_counter' => 1,
+                'is_active' => '1',
+                'created_at' => '2023-07-08 05:42:25',
+                'updated_at' => '2023-08-15 11:38:49',
+            ],
+            [
+                'id' => 4,
+                'name' => 'userqg',
+                'email' => 'userqg@ptmkm.co.id',
+                'email_verified_at' => null,
+                'password' => Hash::make('Password.1'), // Replace 'your_password_here' with the desired password
+                'remember_token' => null,
+                'role' => 'QG',
+                'last_login' => '2023-08-15 11:38:49',
+                'login_counter' => 1,
+                'is_active' => '1',
+                'created_at' => '2023-07-08 05:42:25',
+                'updated_at' => '2023-08-15 11:38:49',
+            ],
+            [
+                'id' => 5,
+                'name' => 'userpdi',
+                'email' => 'userpdi@ptmkm.co.id',
+                'email_verified_at' => null,
+                'password' => Hash::make('Password.1'), // Replace 'your_password_here' with the desired password
+                'remember_token' => null,
+                'role' => 'PDI',
                 'last_login' => '2023-08-15 11:38:49',
                 'login_counter' => 1,
                 'is_active' => '1',

@@ -35,6 +35,20 @@ class DropdownsTableSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'category' => 'Role',
+                'name_value' => 'QG',
+                'code_format' => 'QG',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'category' => 'Role',
+                'name_value' => 'PDI',
+                'code_format' => 'PDI',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
             // Add more dropdowns if needed
         ]);
     }

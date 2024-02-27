@@ -219,7 +219,10 @@
                                         </table>
                                         <hr>
                                         <label for="remarks" style="font-size: 1em;">Remarks</label>
-                                        <textarea class="form-control" name="remarks" id="remarks" rows="5">{{ $remarksFinding ?: $remarksRepair ?: optional($checkSheet->where('checkGroup', $checkGroup)->first())->Remarks}}</textarea>
+                                        <textarea class="form-control" name="remarks" id="remarks" rows="5">
+                                            {{ $remarksFinding ?: $remarksRepair ?: optional($checkSheet->sortByDesc('created_at')->firstWhere('checkGroup', $checkGroup))->Remarks }}
+                                        </textarea>
+
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

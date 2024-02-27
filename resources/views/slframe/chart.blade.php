@@ -46,7 +46,7 @@
                                 <div id="findingByQG" style="height: 370px; max-width: 920px; margin: 0px auto;"></div>
                             </div>
                             <div class="card-footer small text-muted"><p>
-                                <p style="color: black" >Updated today at {{ now()->format('h:i A') }}</p>
+                                Updated today at {{ now()->format('h:i A') }}
                             </p></div>
                         </div>
                     </div>
@@ -64,7 +64,7 @@
                                 <div id="findingByPDI" style="height: 370px; max-width: 920px; margin: 0px auto;"></div>
                             </div>
                             <div class="card-footer small text-muted"><p>
-                              <p style="color: black" >Updated today at {{ now()->format('h:i A') }}</p>
+                              Updated today at {{ now()->format('h:i A') }}
                             </p></div>
                         </div>
                     </div>
@@ -82,7 +82,7 @@
                                 <div id="pending" style="height: 370px; max-width: 920px; margin: 0px auto;"></div>
                             </div>
                             <div class="card-footer small text-muted"><p>
-                              <p style="color: black" >Updated today at {{ now()->format('h:i A') }}</p>
+                              Updated today at {{ now()->format('h:i A') }}
                             </p></div>
                         </div>
                     </div>
@@ -116,7 +116,7 @@
         var findingByQGChart = new CanvasJS.Chart("findingByQG", {
             animationEnabled: true,
             title:{
-                text: "Finding By Quality Gate"
+                text: "Finding By QG"
             },
             axisX:{
                 valueFormatString: "DD MMM",

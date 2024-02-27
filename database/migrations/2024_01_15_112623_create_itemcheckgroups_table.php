@@ -11,6 +11,7 @@ class CreateItemCheckGroupsTable extends Migration
     {
         Schema::create('itemcheckgroups', function (Blueprint $table) {
             $table->id('GroupID');
+            $table->string('index');
             $table->integer('CheckGroup');
             $table->string('ItemCheck');
             $table->timestamps();
