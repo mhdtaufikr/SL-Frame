@@ -99,7 +99,7 @@
                             </div>
                             <div class="card-body">
                                 @foreach ($itemCheckGroup as $item)
-                                    <p>{{ $item->ItemCheck }}</p>
+                                    <p>{{$item->index}} {{ $item->ItemCheck }}</p>
                                 @endforeach
                             </div>
                         </div>
@@ -145,7 +145,7 @@
                                                      <!-- Add hidden input fields for unchecked checkboxes -->
                                                      <input type="hidden" name="findingQC[{{ $item->ItemCheck }}]" value="0">
                                                      <input type="hidden" name="repairQC[{{ $item->ItemCheck }}]" value="0">
-                                                    <td>{{ $item->ItemCheck }}</td>
+                                                    <td>{{$item->index}} {{ $item->ItemCheck }}</td>
                                                     @if (\Auth::user()->role === 'QG')
                                                     <td>
                                                         <div class="form-check d-flex justify-content-center">
@@ -276,19 +276,18 @@
             </div>
             @php
                 function getShiftValue() {
-                    $currentHour = date('H:i');
+                    $currentHour = date('H');
 
-                    if ($currentHour >= '07:30' && $currentHour < '20:00') {
-                        return 2;
-                    } elseif ($currentHour >= '20:00' || $currentHour < '07:30') {
+                    if ($currentHour >= 7 && $currentHour < 15) {
                         return 1;
+                    } elseif ($currentHour >= 15 && $currentHour < 23) {
+                        return 2;
                     } else {
                         // You may want to handle other cases or set a default value
                         return 1;
                     }
                 }
             @endphp
-
             <!-- ... Your existing code ... -->
             <script>
                 // Ensure that this code runs after the DOM is fully loaded

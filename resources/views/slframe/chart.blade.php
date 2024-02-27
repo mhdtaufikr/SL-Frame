@@ -45,7 +45,9 @@
                             <div class="card-body">
                                 <div id="findingByQG" style="height: 370px; max-width: 920px; margin: 0px auto;"></div>
                             </div>
-                            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+                            <div class="card-footer small text-muted"><p>
+                                <p style="color: black" >Updated today at {{ now()->format('h:i A') }}</p>
+                            </p></div>
                         </div>
                     </div>
 
@@ -61,7 +63,9 @@
                             <div class="card-body">
                                 <div id="findingByPDI" style="height: 370px; max-width: 920px; margin: 0px auto;"></div>
                             </div>
-                            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+                            <div class="card-footer small text-muted"><p>
+                              <p style="color: black" >Updated today at {{ now()->format('h:i A') }}</p>
+                            </p></div>
                         </div>
                     </div>
 
@@ -77,7 +81,9 @@
                             <div class="card-body">
                                 <div id="pending" style="height: 370px; max-width: 920px; margin: 0px auto;"></div>
                             </div>
-                            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+                            <div class="card-footer small text-muted"><p>
+                              <p style="color: black" >Updated today at {{ now()->format('h:i A') }}</p>
+                            </p></div>
                         </div>
                     </div>
                 </div>
