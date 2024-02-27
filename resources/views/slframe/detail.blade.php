@@ -33,7 +33,7 @@
             <div class="card-header text-dark">
                 <div class="d-flex justify-content-between">
                     <h1> <strong>{{ $Commoninformation->NoFrame }}</strong></h1>
-                    
+
                     <span class="ml-auto">
                         @if($Commoninformation->Status == 0)
                             <button class="btn btn-info btn-md">Waiting List</button>
@@ -48,7 +48,7 @@
                     </span>
                 </div>
             </div>
-                        
+
             <div class="card-body text-center d-flex justify-content-center align-items-center">
                 <img src="{{ asset('assets/img/SL-Frame.PNG') }}" alt="" class="img-fluid" usemap="#image-map">
             </div>
@@ -63,14 +63,14 @@
         @endphp
             <map name="image-map">
                 @foreach ($itemCheckGroups as $checkGroup => $itemCheckGroup)
-                    
+
                         @php
                             $coordinate = $coordinates[$checkGroup] ?? null;
                         @endphp
                         @if ($coordinate)
                             <area target="" alt="{{ $checkGroup }}" title="{{ $checkGroup }}" href="" coords="{{ $coordinate }}" shape="rect" data-bs-toggle="modal" data-bs-target="#modal{{ $checkGroup }}">
                         @endif
-                   
+
                 @endforeach
             </map>
             <div class="row p-2">
@@ -86,7 +86,7 @@
                                 <p class="mb-0 ml-2">Finding & Repair</p>
                             </div>
                         </div>
-                        
+
                         <div class="card h-100" data-bs-toggle="modal" data-bs-target="#modal{{ $checkGroup }}">
                             <div class="card-header text-dark text-center">
                                 @if ($checkGroup == "5")
@@ -109,7 +109,7 @@
                         <div class="modal-dialog modal-dialog-centered modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title">            
+                                    <h5 class="modal-title">
                                         @if ($checkGroup == "5")
                                             5 & 6
                                        @elseif($checkGroup == "6")
@@ -194,7 +194,7 @@
                                                                 <!-- Add hidden input field for unchecked checkbox -->
                                                                 <input type="hidden" name="findingPDI[{{ $item->ItemCheck }}]" value="0">
                                                                 <input class="form-check-input bigger-checkbox finding-pdi-checkbox" type="checkbox" name="findingPDI[{{ $item->ItemCheck }}]" value="1" {{ $isCheckedFindingPDI ? 'checked' : '' }} onchange="handleFindingPDIChange(this)" disabled>
-                                                            </div>                                                        
+                                                            </div>
                                                         </td>
                                                         <td {{ \Auth::user()->role === 'QG' ? 'hidden' : '' }}>
                                                             <div class="form-check d-flex justify-content-center">
@@ -205,11 +205,11 @@
                                                                 <!-- Add hidden input field for unchecked checkbox -->
                                                                 <input type="hidden" name="repairPDI[{{ $item->ItemCheck }}]" value="0">
                                                                 <input class="form-check-input bigger-checkbox repair-pdi-checkbox" type="checkbox" name="repairPDI[{{ $item->ItemCheck }}]" value="1" {{ $isCheckedRepairPDI ? 'checked' : 'disabled' }} disabled>
-                                                            </div>                                                                                                                
+                                                            </div>
                                                         </td>
                                                 </tr>
                                             @endforeach
-                                            
+
                                             </tbody>
                                         </table>
                                         <hr>
@@ -218,7 +218,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                       
+
                                     </div>
                                 </form>
                             </div>
@@ -248,7 +248,7 @@
                                     <div class="col-sm-4">
                                         <label for="tglProd" class="form-label">Tgl. Production</label>
                                         <input disabled  type="date" class="form-control" id="tglProd" name="tglProd" value="{{ $Commoninformation->TglProd }}">
-                                    </div>                        
+                                    </div>
                                     <div class="col-sm-3">
                                         <label for="shift" class="form-label">Shift</label>
                                         <input disabled type="number" class="form-control" id="shift" name="shift" value="{{ $Commoninformation->Shift }}" >
@@ -276,18 +276,19 @@
             </div>
             @php
                 function getShiftValue() {
-                    $currentHour = date('H');
-        
-                    if ($currentHour >= 7 && $currentHour < 15) {
-                        return 1;
-                    } elseif ($currentHour >= 15 && $currentHour < 23) {
+                    $currentHour = date('H:i');
+
+                    if ($currentHour >= '07:30' && $currentHour < '20:00') {
                         return 2;
+                    } elseif ($currentHour >= '20:00' || $currentHour < '07:30') {
+                        return 1;
                     } else {
                         // You may want to handle other cases or set a default value
                         return 1;
                     }
                 }
             @endphp
+
             <!-- ... Your existing code ... -->
             <script>
                 // Ensure that this code runs after the DOM is fully loaded
@@ -326,9 +327,9 @@
 
 
 
-               
 
-                
+
+
 
             </script>
 

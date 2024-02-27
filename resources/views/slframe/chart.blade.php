@@ -324,7 +324,6 @@ var myLineChart = new Chart(ctx, {
                 }
             }
         },
-        // New code for adding anchor tags to the points
        // New code for adding anchor tags to the points
        onClick: function(event, chartElement) {
             var point = chartElement[0];
