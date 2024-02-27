@@ -19,7 +19,7 @@ use App\Models\Commoninformation;
 class SLFrameExport implements FromCollection, WithHeadings, WithStyles, ShouldAutoSize
 {
     use Exportable;
-    
+
     private $startDate;
     private $endDate;
 
@@ -107,6 +107,13 @@ class SLFrameExport implements FromCollection, WithHeadings, WithStyles, ShouldA
                 }
             }
         }
+        // Remove the unwanted keys
+        unset(
+            $result[$item->CommonInfoID]['_FindingQG'],
+            $result[$item->CommonInfoID]['_RepairQG'],
+            $result[$item->CommonInfoID]['_FindingPDI'],
+            $result[$item->CommonInfoID]['_RepairPDI']
+        );
     }
 
     // Add missing No. Frame entries
@@ -117,7 +124,7 @@ class SLFrameExport implements FromCollection, WithHeadings, WithStyles, ShouldA
         $compare->whereBetween('commoninformations.TglProd', [$this->startDate, $this->endDate]);
     }
     $compare = $compare->get()->toArray();
-        
+
 
     foreach ($compare as $frame) {
         if (!in_array($frame['NoFrame'], array_column($result, 'No. Frame'))) {
@@ -150,7 +157,7 @@ class SLFrameExport implements FromCollection, WithHeadings, WithStyles, ShouldA
     } else {
         $maxCount = 0;
     }
-    
+
     // Add blank elements to the arrays in $result
     foreach ($result as &$item) {
         $item += array_fill(count($item), $maxCount - count($item), '');
@@ -158,25 +165,20 @@ class SLFrameExport implements FromCollection, WithHeadings, WithStyles, ShouldA
 
     // Remove any '&' reference symbols
     unset($item);
-
     // Convert the result array to a collection
     return collect($result);
 
 }
-
-
-
-
-
-
     public function headings(): array
     {
         return [
             ['NO.','Tgl','Shift','Serie','C/Mbr No.1 + Complete Bracket','','','','Hook Frt / CKD','','','','Bracket Tie Down / SLJ-77','','','','Bracket  / SGC -22','','','','Bracket Horn / SLJ-55','','','','Bracket Mtg Cabin A/SLJ-85','','','','C/Mbr No.1,5 + Complete Bracket','','','','Bracket Strut Bar  / SLJ-38','','','','Bracket Radiator  / SLJ-82-83','','','','Reinforcement / SLJ-44 & SLJ-33','','','','Bracket Roller / SLJ-73','','','','Bracket / SLJ-103','','','','C/Mbr No.2 + Complete Bracket','','','','Long Sill   / SLJ-81','','','','Bracket Assy Cab Mtg / SLJ-119','','','','Bracket Eng. Sup.  / SLJ-141','','','','Bracket Cable A / SLJ-65','','','','Bracket Hose / SLJ-35','','','','Hanger Spring / CKD','','','','Bracket Fuel Tank  / SLJ-97','','','','Brkt Brake Hose','','','','C/Mbr No. 3 + Complete Brkt','','','','C/Mbr No.4 + Complete Brkt','','','','Hook Rear / CKD','','','','Brkt Shackle','','','','Brkt Stay muffler / SLJ-97','','','','Brkt Stoper Bumper / SLJ-43','','','','Brkt Mtg SLJ-18 Assy Nut','','','','Brkt Harness , RH side x 3','','','','Bracket / SGJ-22','','','','Bracket Clip Bintang x 2','','','','Bracket New x 3','','','','Cat Belang','','','','Cat Bubble','','','','Vin Number','','','','Grease Shift Lev.','','','','Grease Pin Dumper','','','','Total',],
+            ['', '', '', '','1.1','1.1','1.1','1.1','1.2','1.2','1.2','1.2','1.3','1.3','1.3','1.3','1.4','1.4','1.4','1.4','1.5','1.5','1.5','1.5','1.6','1.6','1.6','1.6','2.1','2.1','2.1','2.1','2.2','2.2','2.2','2.2','2.3','2.3','2.3','2.3','2.4','2.4','2.4','2.4','2.5','2.5','2.5','2.5','2.6','2.6','2.6','2.6','3.1','3.1','3.1','3.1','3.2','3.2','3.2','3.2','3.3','3.3','3.3','3.3','3.4','3.4','3.4','3.4','3.5','3.5','3.5','3.5','3.6','3.6','3.6','3.6','3.7','3.7','3.7','3.7','3.8','3.8','3.8','3.8','4.1','4.1','4.1','4.1','4.2','4.2','4.2','4.2','4.3','4.3','4.3','4.3','4.4','4.4','4.4','4.4','4.5','4.5','4.5','4.5','4.6','4.6','4.6','4.6','4.7','4.7','4.7','4.7','4.8','4.8','4.8','4.8','5.1','5.1','5.1','5.1','5.2','5.2','5.2','5.2','6.1','6.1','6.1','6.1','6.2','6.2','6.2','6.2','7.1','7.1','7.1','7.1','7.2','7.2','7.2','7.2','7.3','7.3','7.3','7.3','7.4','7.4','7.4','7.4','7.5','7.5','7.5','7.5'],
             ['', '', '', '','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI',''],
+
         ];
     }
-    
+
     public function styles(Worksheet $sheet)
     {
         $style = $sheet->getStyle('A1:EW1');
@@ -184,7 +186,7 @@ class SLFrameExport implements FromCollection, WithHeadings, WithStyles, ShouldA
         $alignment = $style->getAlignment();
         $alignment->setVertical(Alignment::VERTICAL_CENTER);
         $alignment->setHorizontal(Alignment::HORIZONTAL_CENTER);
-        
+
         $sheet->getStyle("E1:EW1")->getAlignment()->setTextRotation(90);
         $sheet->getDefaultColumnDimension()->setWidth(3); // Set the width of all columns to 20
 
@@ -196,10 +198,10 @@ class SLFrameExport implements FromCollection, WithHeadings, WithStyles, ShouldA
             $rowDimension->setRowHeight(100); // Set the height of each row to 50
         }
 
-        $sheet->mergeCells('A1:A2');
-        $sheet->mergeCells('B1:B2');
-        $sheet->mergeCells('C1:C2');
-        $sheet->mergeCells('D1:D2');
+        $sheet->mergeCells('A1:A3');
+        $sheet->mergeCells('B1:B3');
+        $sheet->mergeCells('C1:C3');
+        $sheet->mergeCells('D1:D3');
         //HEADER ITEM CHECK
         $sheet->mergeCells('E1:H1');
         $sheet->mergeCells('I1:L1');
@@ -239,91 +241,91 @@ class SLFrameExport implements FromCollection, WithHeadings, WithStyles, ShouldA
         $sheet->mergeCells('EO1:ER1');
         $sheet->mergeCells('ES1:EV1');
         //PDI QG
-        $sheet->mergeCells('E2:F2');
-        $sheet->mergeCells('G2:H2');
-        $sheet->mergeCells('I2:J2');
-        $sheet->mergeCells('K2:L2');
-        $sheet->mergeCells('M2:N2');
-        $sheet->mergeCells('O2:P2');
-        $sheet->mergeCells('Q2:R2');
-        $sheet->mergeCells('S2:T2');
-        $sheet->mergeCells('U2:V2');
-        $sheet->mergeCells('W2:X2');
-        $sheet->mergeCells('Y2:Z2');
-        $sheet->mergeCells('AA2:AB2');
-        $sheet->mergeCells('AC2:AD2');
-        $sheet->mergeCells('AE2:AF2');
-        $sheet->mergeCells('AG2:AH2');
-        $sheet->mergeCells('AI2:AJ2');
-        $sheet->mergeCells('AK2:AL2');
-        $sheet->mergeCells('AM2:AN2');
-        $sheet->mergeCells('AO2:AP2');
-        $sheet->mergeCells('AQ2:AR2');
-        $sheet->mergeCells('AS2:AT2');
-        $sheet->mergeCells('AU2:AV2');
-        $sheet->mergeCells('AW2:AX2');
-        $sheet->mergeCells('AY2:AZ2');
-        
-        $sheet->mergeCells('BA2:BB2');
-        $sheet->mergeCells('BC2:BD2');
-        $sheet->mergeCells('BE2:BF2');
-        $sheet->mergeCells('BG2:BH2');
-        $sheet->mergeCells('BI2:BJ2');
-        $sheet->mergeCells('BK2:BL2');
-        $sheet->mergeCells('BM2:BN2');
-        $sheet->mergeCells('BO2:BP2');
-        $sheet->mergeCells('BQ2:BR2');
-        $sheet->mergeCells('BS2:BT2');
-        $sheet->mergeCells('BU2:BV2');
-        $sheet->mergeCells('BW2:BX2');
-        $sheet->mergeCells('BY2:BZ2');
+        $sheet->mergeCells('E3:F3');
+        $sheet->mergeCells('G3:H3');
+        $sheet->mergeCells('I3:J3');
+        $sheet->mergeCells('K3:L3');
+        $sheet->mergeCells('M3:N3');
+        $sheet->mergeCells('O3:P3');
+        $sheet->mergeCells('Q3:R3');
+        $sheet->mergeCells('S3:T3');
+        $sheet->mergeCells('U3:V3');
+        $sheet->mergeCells('W3:X3');
+        $sheet->mergeCells('Y3:Z3');
+        $sheet->mergeCells('AA3:AB3');
+        $sheet->mergeCells('AC3:AD3');
+        $sheet->mergeCells('AE3:AF3');
+        $sheet->mergeCells('AG3:AH3');
+        $sheet->mergeCells('AI3:AJ3');
+        $sheet->mergeCells('AK3:AL3');
+        $sheet->mergeCells('AM3:AN3');
+        $sheet->mergeCells('AO3:AP3');
+        $sheet->mergeCells('AQ3:AR3');
+        $sheet->mergeCells('AS3:AT3');
+        $sheet->mergeCells('AU3:AV3');
+        $sheet->mergeCells('AW3:AX3');
+        $sheet->mergeCells('AY3:AZ3');
 
-        $sheet->mergeCells('CA2:CB2');
-        $sheet->mergeCells('CC2:CD2');
-        $sheet->mergeCells('CE2:CF2');
-        $sheet->mergeCells('CG2:CH2');
-        $sheet->mergeCells('CI2:CJ2');
-        $sheet->mergeCells('CK2:CL2');
-        $sheet->mergeCells('CM2:CN2');
-        $sheet->mergeCells('CO2:CP2');
-        $sheet->mergeCells('CQ2:CR2');
-        $sheet->mergeCells('CS2:CT2');
-        $sheet->mergeCells('CU2:CV2');
-        $sheet->mergeCells('CW2:CX2');
-        $sheet->mergeCells('CY2:CZ2');
+        $sheet->mergeCells('BA3:BB3');
+        $sheet->mergeCells('BC3:BD3');
+        $sheet->mergeCells('BE3:BF3');
+        $sheet->mergeCells('BG3:BH3');
+        $sheet->mergeCells('BI3:BJ3');
+        $sheet->mergeCells('BK3:BL3');
+        $sheet->mergeCells('BM3:BN3');
+        $sheet->mergeCells('BO3:BP3');
+        $sheet->mergeCells('BQ3:BR3');
+        $sheet->mergeCells('BS3:BT3');
+        $sheet->mergeCells('BU3:BV3');
+        $sheet->mergeCells('BW3:BX3');
+        $sheet->mergeCells('BY3:BZ3');
 
-        $sheet->mergeCells('DA2:DB2');
-        $sheet->mergeCells('DC2:DD2');
-        $sheet->mergeCells('DE2:DF2');
-        $sheet->mergeCells('DG2:DH2');
-        $sheet->mergeCells('DI2:DJ2');
-        $sheet->mergeCells('DK2:DL2');
-        $sheet->mergeCells('DM2:DN2');
-        $sheet->mergeCells('DO2:DP2');
-        $sheet->mergeCells('DQ2:DR2');
-        $sheet->mergeCells('DS2:DT2');
-        $sheet->mergeCells('DU2:DV2');
-        $sheet->mergeCells('DW2:DX2');
-        $sheet->mergeCells('DY2:DZ2');
+        $sheet->mergeCells('CA3:CB3');
+        $sheet->mergeCells('CC3:CD3');
+        $sheet->mergeCells('CE3:CF3');
+        $sheet->mergeCells('CG3:CH3');
+        $sheet->mergeCells('CI3:CJ3');
+        $sheet->mergeCells('CK3:CL3');
+        $sheet->mergeCells('CM3:CN3');
+        $sheet->mergeCells('CO3:CP3');
+        $sheet->mergeCells('CQ3:CR3');
+        $sheet->mergeCells('CS3:CT3');
+        $sheet->mergeCells('CU3:CV3');
+        $sheet->mergeCells('CW3:CX3');
+        $sheet->mergeCells('CY3:CZ3');
 
-        $sheet->mergeCells('EA2:EB2');
-        $sheet->mergeCells('EC2:ED2');
-        $sheet->mergeCells('EE2:EF2');
-        $sheet->mergeCells('EG2:EH2');
-        $sheet->mergeCells('EI2:EJ2');
-        $sheet->mergeCells('EK2:EL2');
-        $sheet->mergeCells('EM2:EN2');
-        $sheet->mergeCells('EO2:EP2');
-        $sheet->mergeCells('EQ2:ER2');
-        $sheet->mergeCells('ES2:ET2');
-        $sheet->mergeCells('EU2:EV2');
-        $sheet->mergeCells('EW1:EW2');
+        $sheet->mergeCells('DA3:DB3');
+        $sheet->mergeCells('DC3:DD3');
+        $sheet->mergeCells('DE3:DF3');
+        $sheet->mergeCells('DG3:DH3');
+        $sheet->mergeCells('DI3:DJ3');
+        $sheet->mergeCells('DK3:DL3');
+        $sheet->mergeCells('DM3:DN3');
+        $sheet->mergeCells('DO3:DP3');
+        $sheet->mergeCells('DQ3:DR3');
+        $sheet->mergeCells('DS3:DT3');
+        $sheet->mergeCells('DU3:DV3');
+        $sheet->mergeCells('DW3:DX3');
+        $sheet->mergeCells('DY3:DZ3');
+
+        $sheet->mergeCells('EA3:EB3');
+        $sheet->mergeCells('EC3:ED3');
+        $sheet->mergeCells('EE3:EF3');
+        $sheet->mergeCells('EG3:EH3');
+        $sheet->mergeCells('EI3:EJ3');
+        $sheet->mergeCells('EK3:EL3');
+        $sheet->mergeCells('EM3:EN3');
+        $sheet->mergeCells('EO3:EP3');
+        $sheet->mergeCells('EQ3:ER3');
+        $sheet->mergeCells('ES3:ET3');
+        $sheet->mergeCells('EU3:EV3');
+        $sheet->mergeCells('EW1:EW3');
 
         $alignment = [
             'horizontal' => Alignment::HORIZONTAL_CENTER,
             'vertical' => Alignment::VERTICAL_CENTER,
         ];
-    
+
         $sheet->getStyle('F1:AP1')->getAlignment()->applyFromArray($alignment);
     }
 }
