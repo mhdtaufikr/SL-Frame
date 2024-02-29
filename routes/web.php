@@ -42,6 +42,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/detail/{id}', [SLFrameController::class, 'detailSLFrame']);
     Route::get('/export', [SLFrameController::class, 'export'])->name('export');
     Route::get('/detail/{role}/{date}', [SLFrameController::class, 'detailPDI']);
+    Route::post('/frame/search', [SLFrameController::class, 'slFrameRecords'])->name('record');
 
 
     //Dropdown Controller

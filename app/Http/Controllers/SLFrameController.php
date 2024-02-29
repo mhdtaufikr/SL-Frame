@@ -227,12 +227,30 @@ class SLFrameController extends Controller
             }
 
     }
-    public function slFrameRecords(){
-        $Commoninformation = Commoninformation::where('Status', 2)
-        ->where('InspectionLevel',2)
-        ->get();
+    public function slFrameRecords(Request $request){
+        $status = 2;
+        $inspectionLevel = 2;
+        $Commoninformation = [];
+
+        $query = Commoninformation::where('Status', $status)
+            ->where('InspectionLevel', $inspectionLevel);
+
+        $searchBy = $request->input('searchBy');
+
+        if ($searchBy === 'date') {
+            $dateFrom = $request->input('dateFrom');
+            $dateTo = $request->input('dateTo');
+            $query->whereBetween('created_at', [$dateFrom, $dateTo]);
+        } elseif ($searchBy === 'no_frame') {
+            $frameNo = $request->input('frameNo');
+            $query->where('NoFrame', $frameNo);
+        }
+
+        $Commoninformation = $query->get();
+
         return view('slframe.main', compact('Commoninformation'));
     }
+
     public function chartSlFrame()
     {
         // Your existing query to get data from the database for findingQG

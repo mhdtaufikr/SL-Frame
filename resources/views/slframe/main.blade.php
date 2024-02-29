@@ -19,7 +19,7 @@
         </div>
     </header>
 <!-- Main page content-->
-<div class="container-xl px-4 mt-n10">       
+<div class="container-xl px-4 mt-n10">
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -42,84 +42,10 @@
               <div class="card-header">
                 <h3 class="card-title">List of SL-Frame</h3>
               </div>
-              
+
               <!-- /.card-header -->
               <div class="card-body">
                 <div class="row">
-                    <div class="mb-3 col-sm-12">
-                      <button title="Export to Excel" type="button" class="btn btn-success btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#modal-export-excel">
-                        Export to Excel
-                    </button>
-
-                    <!-- Export to Excel Modal -->
-                    <div class="modal fade" id="modal-export-excel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                      <div class="modal-dialog">
-                          <div class="modal-content">
-                              <div class="modal-header">
-                                  <h5 class="modal-title" id="exampleModalLabel">Export to Excel</h5>
-                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                              </div>
-                              <div class="modal-body">
-                                  <!-- Add any content related to exporting to Excel here -->
-                                  <p>Choose export options and click export.</p>
-                                  <!-- You can add form elements, checkboxes, or any other export-related options here -->
-
-                                  <div class="col-sm-12 mb-2">
-                                      <form action="{{ url('/export') }}" method="GET">
-                                          @csrf
-                                          <div class="input-group input-group-sm">
-                                              <select class="form-control" name="searchBy" id="searchByModal" onchange="toggleSearchInputs()">
-                                                  <option value="">Export by</option>
-                                                  <option value="dateRange">Date Range</option>
-                                                  <option value="inspectionLevel">Inspection Level</option>
-                                              </select>
-
-                                              <input name="startDate" type="date" class="form-control" id="startDateModal" style="display: none;">
-                                              <input name="endDate" type="date" class="form-control" id="endDateModal" style="display: none;">
-                                              <select class="form-control" name="inspectionLevel" id="inspectionLevelModal" style="display: none;">
-                                                  <option value="">Select Inspection Level</option>
-                                                  <option value="qg">QG</option>
-                                                  <option value="pdi">PDI</option>
-                                              </select>
-
-                                              <button class="btn btn-success btn-sm" type="submit">Export</button>
-                                          </div>
-                                      </form>
-                                  </div>
-                              </div>
-
-                              <div class="modal-footer">
-                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                              </div>
-                          </div>
-                      </div>
-                    </div>
-
-                    <script>
-                      function toggleSearchInputs() {
-                          var searchBy = document.getElementById('searchByModal').value;
-                          var startDateInput = document.getElementById('startDateModal');
-                          var endDateInput = document.getElementById('endDateModal');
-                          var inspectionLevelInput = document.getElementById('inspectionLevelModal');
-
-                          if (searchBy === 'dateRange') {
-                              startDateInput.style.display = 'block';
-                              endDateInput.style.display = 'block';
-                              inspectionLevelInput.style.display = 'none';
-                          } else if (searchBy === 'inspectionLevel') {
-                              startDateInput.style.display = 'none';
-                              endDateInput.style.display = 'none';
-                              inspectionLevelInput.style.display = 'block';
-                          } else {
-                              startDateInput.style.display = 'none';
-                              endDateInput.style.display = 'none';
-                              inspectionLevelInput.style.display = 'none';
-                          }
-                      }
-                    </script>
-
-
-
 
                     <div class="col-sm-12">
                       <!--alert success -->
@@ -127,9 +53,10 @@
                       <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <strong>{{ session('status') }}</strong>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                      </div> 
+                      </div>
                     @endif
-                    
+
+
                       <!--alert success -->
                       <!--validasi form-->
                         @if (count($errors)>0)
@@ -145,8 +72,118 @@
                         @endif
                       <!--end validasi form-->
                     </div>
+
+                    <div class="mb-3 col-sm-6">
+                        <form action="{{ url('/frame/search') }}" method="POST" id="searchForm">
+                            @csrf
+                            <div class="input-group input-group-sm">
+                              <select class="form-control" name="searchBy" id="searchBy" onchange="toggleSearchInputs(event)">
+                                <option value="">Search By</option>
+                                <option value="date">Date</option>
+                                <option value="no_frame">No Frame</option>
+                              </select>
+                              <input name="frameNo" type="text" class="form-control" id="searchNoFrame" placeholder="Enter search term" style="display: none;">
+                              <input name="dateFrom" type="date" class="form-control" id="startDate" placeholder="Start Date" style="display: none;">
+                              <input name="dateTo" type="date" class="form-control" id="endDate" placeholder="End Date" style="display: none;">
+                              <button class="btn btn-dark btn-sm" type="submit">Search</button>
+                            </div>
+                          </form>
+
+                          <script>
+                            $(document).ready(function() {
+                              $('#searchBy').change(function() {
+                                var selectedOption = $(this).val();
+                                $('#searchNoFrame, #startDate, #endDate').hide();
+
+                                if (selectedOption === 'date') {
+                                  $('#startDate, #endDate').show();
+                                } else if (selectedOption === 'no_frame') {
+                                  $('#searchNoFrame').show();
+                                }
+                              });
+                            });
+                          </script>
+
+
+
+                    </div>
+
+
+
+                    <div class="mb-3 col-sm-12">
+                        <button title="Export to Excel" type="button" class="btn btn-success btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#modal-export-excel">
+                            Export to Excel
+                        </button>
+
+                        <!-- Export to Excel Modal -->
+                        <div class="modal fade" id="modal-export-excel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Export to Excel</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- Add any content related to exporting to Excel here -->
+                                    <p>Choose export options and click export.</p>
+                                    <!-- You can add form elements, checkboxes, or any other export-related options here -->
+
+                                    <div class="col-sm-12 mb-2">
+                                        <form action="{{ url('/export') }}" method="GET">
+                                            @csrf
+                                            <div class="input-group input-group-sm">
+                                                <select class="form-control" name="searchBy" id="searchByModal" onchange="toggleSearchInputs()">
+                                                    <option value="">Export by</option>
+                                                    <option value="dateRange">Date Range</option>
+                                                    <option value="inspectionLevel">Inspection Level</option>
+                                                </select>
+
+                                                <input name="startDate" type="date" class="form-control" id="startDateModal" style="display: none;">
+                                                <input name="endDate" type="date" class="form-control" id="endDateModal" style="display: none;">
+                                                <select class="form-control" name="inspectionLevel" id="inspectionLevelModal" style="display: none;">
+                                                    <option value="">Select Inspection Level</option>
+                                                    <option value="qg">QG</option>
+                                                    <option value="pdi">PDI</option>
+                                                </select>
+
+                                                <button class="btn btn-success btn-sm" type="submit">Export</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+
+                        <script>
+                        function toggleSearchInputs() {
+                            var searchBy = document.getElementById('searchByModal').value;
+                            var startDateInput = document.getElementById('startDateModal');
+                            var endDateInput = document.getElementById('endDateModal');
+                            var inspectionLevelInput = document.getElementById('inspectionLevelModal');
+
+                            if (searchBy === 'dateRange') {
+                                startDateInput.style.display = 'block';
+                                endDateInput.style.display = 'block';
+                                inspectionLevelInput.style.display = 'none';
+                            } else if (searchBy === 'inspectionLevel') {
+                                startDateInput.style.display = 'none';
+                                endDateInput.style.display = 'none';
+                                inspectionLevelInput.style.display = 'block';
+                            } else {
+                                startDateInput.style.display = 'none';
+                                endDateInput.style.display = 'none';
+                                inspectionLevelInput.style.display = 'none';
+                            }
+                        }
+                        </script>
                 </div>
-                <div class="table-responsive"> 
+
+                <div class="table-responsive">
                 <table id="tableUser" class="table table-bordered table-striped">
                   <thead>
                   <tr>
@@ -181,8 +218,8 @@
                           <a title="Detail" class="btn btn-primary btn-sm" href="{{url("detail/".$data->NoFrame)}}"> <i class="fas fa-info"></i></a>
                           <button title="Delete" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-delete{{ $data->id }}">
                             <i class="fas fa-trash"></i>
-                        </button> 
-                           
+                        </button>
+
                         </td>
                     </tr>
 
@@ -232,7 +269,7 @@
   <!-- /.content-wrapper -->
 </div>
 
-     
+
 </main>
 <!-- For Datatables -->
 <script>
