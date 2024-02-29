@@ -37,6 +37,7 @@ class SLFrameController extends Controller
             $Commoninformation = Commoninformation::create([
                 'NoFrame' => $request->no_frame,
                 'Status' => 0,
+                'InspectionLevel' => 1,
                 'NamaQG'=> Auth::user()->name,
             ]);
             return redirect()->route('show', ['noframe' => $request->no_frame]);
