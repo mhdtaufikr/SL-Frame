@@ -42,16 +42,16 @@
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                           <strong>{{ session('status') }}</strong>
                           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div> 
+                        </div>
                       @endif
-  
+
                       @if (session('failed'))
                       <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <strong>{{ session('failed') }}</strong>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                      </div> 
+                      </div>
                     @endif
-                      
+
                         <!--alert success -->
                         <!--validasi form-->
                           @if (count($errors)>0)
@@ -80,7 +80,7 @@
                                 <option value="{{ $data->NoFrame }}">{{ $data->NoFrame }}</option>
                             @endforeach
                         </select>
-                    
+
                         <!-- Initialize Chosen -->
                         <script>
                             $(document).ready(function () {
@@ -91,7 +91,7 @@
                             });
                         </script>
                     @endif
-                    
+
                         <button class="btn btn-success mt-4" type="submit">Submit</button>
                     </form>
                 </div>
@@ -99,18 +99,18 @@
         </div>
         @endif
 
-   
+
           <div class="mt-4 row">
             <div class="col-12">
               <div class="card">
                 <div class="card-header">
                   <h3 class="card-title">Pending List</h3>
                 </div>
-                
+
                 <!-- /.card-header -->
                 <div class="card-body">
                   <div class="row">
-                  <div class=" mt-4 table-responsive"> 
+                  <div class=" mt-4 table-responsive">
                     <table id="tableUser" class="table table-bordered table-striped">
                       <thead>
                       <tr>
@@ -127,12 +127,12 @@
                       <tbody>
                         @php
                           $no=1;
-                        @endphp 
+                        @endphp
                         @foreach (\Auth::user()->role === 'QG' ? $CommoninformationQG : $CommoninformationPDI as $data)
                         <tr>
                             <td>{{ $no++ }}</td>
                             <td>{{ $data->NoFrame }}</td>
-                        
+
                             @if (\Auth::user()->role === 'PDI')
                                 <td>
                                     <div class="d-flex align-items-center">
@@ -153,7 +153,7 @@
                                     </div>
                                 </td>
                             @endif
-                        
+
                             <td>
                                 @if ($data->Status == 0)
                                     <button class="btn btn-sm btn-info btn-md">Waiting List</button>
@@ -165,22 +165,22 @@
                                     <span class="text-danger">Unknown Status</span>
                                 @endif
                             </td>
-                        
+
                             <td>
-                                
-                        
+
+
                                 @if(\Auth::user()->role === 'QG' || (\Auth::user()->role === 'PDI' && $data->InspectionLevel == 2))
                                 <button title="Edit User" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-delete{{ $data->id }}">
                                     <i class="fas fa-trash"></i>
-                                </button>    
+                                </button>
                                 <a class="btn btn-primary btn-sm" href="{{ url('/slframe/'.$data->NoFrame) }}">
                                         <i class="fas fa-step-forward"></i>
                                     </a>
                                 @endif
                             </td>
                         </tr>
-                        
-                    
+
+
                         {{-- Modal Delete --}}
                         <div class="modal fade" id="modal-delete{{ $data->id }}" tabindex="-1" aria-labelledby="modal-delete{{ $data->id }}-label" aria-hidden="true">
                             <div class="modal-dialog">
@@ -189,7 +189,7 @@
                                         <h4 class="modal-title" id="modal-delete{{ $data->id }}-label">Delete SL-Frame</h4>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <form action="{{ url('/slframe/delete/'.$data->NoFrame) }}" method="POST">
+                                    <form action="{{ url('/slframe/delete/pending/'.$data->NoFrame) }}" method="POST">
                                         @csrf
                                         @method('delete')
                                         <div class="modal-body">
@@ -206,7 +206,7 @@
                             </div>
                         </div>
                         {{-- Modal Delete --}}
-                    @endforeach                    
+                    @endforeach
                       </tbody>
                     </table>
                   </div>
@@ -219,7 +219,7 @@
             <!-- /.col -->
           </div>
           <!-- /.row -->
-      
+
 
     </div>
 </div>
@@ -245,8 +245,8 @@
 <script>
     $(document).ready(function() {
       var table = $("#tableUser").DataTable({
-        "responsive": true, 
-        "lengthChange": false, 
+        "responsive": true,
+        "lengthChange": false,
         "autoWidth": false,
         // "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
       });

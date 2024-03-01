@@ -54,9 +54,9 @@
             </div>
             @php
             $coordinates = [
-                '1' => '955,260,1233,337',
-                '2' => '941,129,1236,249',
-                '3' => '700,0,973,112',
+                '1' => '1224,284,706,192',
+                '2' => '1028,249,689,117',
+                '3' => '889,136,453,2',
                 '4' => '41,2,366,192',
                 '5' => '99,205,702,416',
             ];
@@ -64,15 +64,29 @@
             <map name="image-map">
                 @foreach ($itemCheckGroups as $checkGroup => $itemCheckGroup)
 
+                    @php
+                        $coordinate = $coordinates[$checkGroup] ?? null;
+                    @endphp
+
+                    @if ($coordinate)
                         @php
-                            $coordinate = $coordinates[$checkGroup] ?? null;
+                            // Extract coordinates
+                            list($x1, $y1, $x2, $y2) = explode(',', $coordinate);
+                            // Add a 1px border around each area
+                            $borderCoordinates = implode(',', [
+                                $x1 - 1, $y1 - 1,
+                                $x2 + 1, $y1 - 1,
+                                $x2 + 1, $y2 + 1,
+                                $x1 - 1, $y2 + 1
+                            ]);
                         @endphp
-                        @if ($coordinate)
-                            <area target="" alt="{{ $checkGroup }}" title="{{ $checkGroup }}" href="" coords="{{ $coordinate }}" shape="rect" data-bs-toggle="modal" data-bs-target="#modal{{ $checkGroup }}">
-                        @endif
+                        <area target="" alt="{{ $checkGroup }}" title="{{ $checkGroup }}" href="" coords="{{ $coordinate }}" shape="rect" data-bs-toggle="modal" data-bs-target="#modal{{ $checkGroup }}">
+                    @endif
 
                 @endforeach
             </map>
+
+
 
             <div class="row p-2">
                 @foreach ($itemCheckGroups as $checkGroup => $itemCheckGroup)

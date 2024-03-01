@@ -19,7 +19,7 @@
         </div>
     </header>
 <!-- Main page content-->
-<div class="container-xl px-4 mt-n10">       
+<div class="container-xl px-4 mt-n10">
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -42,15 +42,15 @@
               <div class="card-header">
                 <h3 class="card-title">List of User</h3>
               </div>
-              
+
               <!-- /.card-header -->
               <div class="card-body">
                 <div class="row">
                     <div class="mb-3 col-sm-12">
                         <button type="button" class="btn btn-dark btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#modal-add">
-                            <i class="fas fa-plus-square"></i> 
+                            <i class="fas fa-plus-square"></i>
                           </button>
-                          
+
                           <!-- Modal -->
                           <div class="modal fade" id="modal-add" tabindex="-1" aria-labelledby="modal-add-label" aria-hidden="true">
                             <div class="modal-dialog">
@@ -91,7 +91,7 @@
                               </div>
                             </div>
                           </div>
-                          
+
 
                     <div class="col-sm-12">
                       <!--alert success -->
@@ -99,9 +99,9 @@
                       <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <strong>{{ session('status') }}</strong>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                      </div> 
+                      </div>
                     @endif
-                    
+
                       <!--alert success -->
                       <!--validasi form-->
                         @if (count($errors)>0)
@@ -118,7 +118,7 @@
                       <!--end validasi form-->
                     </div>
                 </div>
-                <div class="table-responsive"> 
+                <div class="table-responsive">
                 <table id="tableUser" class="table table-bordered table-striped">
                   <thead>
                   <tr>
@@ -140,7 +140,7 @@
                         <td>{{ $data->name }}</td>
                         <td>{{ $data->email }}</td>
                         <td>{{ $data->role }}</td>
-                        <td> {{ date('Y-m-d H:i:s', strtotime($data->last_login)) }}</td>
+                        <td> {{ date('d-m-Y H:i:s', strtotime($data->last_login)) }}</td>
                         <td>
                             <button title="Edit User" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-update{{ $data->id }}">
                                 <i class="fas fa-user-edit"></i>
@@ -148,12 +148,12 @@
                             @if ($data->is_active=='1')
                             <button title="Revoke Access" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-revoke{{ $data->id }}">
                                 <i class="fas fa-user-lock"></i>
-                            </button>                                                      
+                            </button>
                             @else
                             <button title="Give Access" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modal-access{{ $data->id }}">
                                 <i class="fas fa-user-check"></i>
-                            </button>                            
-                            @endif 
+                            </button>
+                            @endif
                         </td>
                     </tr>
 
@@ -215,8 +215,8 @@
                         </div>
                     </div>
                     {{-- Modal Access --}}
-                    
-                    
+
+
                      {{-- Modal Revoke --}}
                      <div class="modal fade" id="modal-revoke{{ $data->id }}">
                         <div class="modal-dialog">
@@ -240,10 +240,10 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     {{-- Modal Revoke --}}
 
-  
+
 
                     {{-- Modal Delete --}}
                     <div class="modal fade" id="modal-delete{{ $data->id }}" tabindex="-1" aria-labelledby="modal-delete{{ $data->id }}-label" aria-hidden="true">
@@ -291,14 +291,14 @@
   <!-- /.content-wrapper -->
 </div>
 
-     
+
 </main>
 <!-- For Datatables -->
 <script>
     $(document).ready(function() {
       var table = $("#tableUser").DataTable({
-        "responsive": true, 
-        "lengthChange": false, 
+        "responsive": true,
+        "lengthChange": false,
         "autoWidth": false,
         // "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
       });

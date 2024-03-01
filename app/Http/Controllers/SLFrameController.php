@@ -220,33 +220,52 @@ class SLFrameController extends Controller
         $idFrame = Commoninformation::where('NoFrame',$id)->first()->CommonInfoID;
         $deleteslFrame=Commoninformation::where('CommonInfoID',$idFrame)->delete();
         $deleteChecksheet = Checksheet::where('CommonInfoID',$idFrame)->delete();
-        if ($deleteslFrame && $deleteChecksheet) {
+        if ($deleteslFrame || $deleteChecksheet) {
                 return redirect()->route('record')->with('status',"Success Delete {$id}");
             }else{
-                return redirect()->route('record')->with('status','Failed Delete ');
+                return redirect()->route('record')->with('failed','Failed Delete ');
             }
 
     }
+
+
+    public function deletePending($id){
+        $idFrame = Commoninformation::where('NoFrame',$id)->first()->CommonInfoID;
+        $deleteslFrame=Commoninformation::where('CommonInfoID',$idFrame)->delete();
+        $deleteChecksheet = Checksheet::where('CommonInfoID',$idFrame)->delete();
+        if ($deleteslFrame || $deleteChecksheet) {
+                return redirect()->route('checksheet')->with('status',"Success Delete {$id}");
+            }else{
+                return redirect()->route('checksheet')->with('failed','Failed Delete ');
+            }
+
+    }
+
     public function slFrameRecords(Request $request){
+        $searchBy = $request->input('searchBy');
         $Commoninformation = [];
+
         $getCommoninformation = Commoninformation::where('Status', 2)
-        ->where('InspectionLevel',2);
+            ->where('InspectionLevel',2);
 
-    if ($request->input('searchBy') === 'date') {
-        $dateFrom = $request->input('dateFrom');
-        $dateTo = $request->input('dateTo');
-        $getCommoninformation->whereBetween('created_at', [$dateFrom, $dateTo]);
+        if ($searchBy === 'production_date_range') {
+            $dateFrom = $request->input('dateFrom');
+            $dateTo = $request->input('dateTo');
+            $getCommoninformation->whereBetween('TglProd', [$dateFrom, $dateTo]);
+        } elseif ($searchBy === 'created_at_date_range') {
+            $dateFrom = $request->input('dateFrom');
+            $dateTo = $request->input('dateTo');
+            $getCommoninformation->whereBetween('created_at', [$dateFrom, $dateTo]);
+        } elseif ($searchBy === 'no_frame') {
+            $frameNo = $request->input('frameNo');
+            $getCommoninformation->where('NoFrame', $frameNo);
+        }
+
         $Commoninformation = $getCommoninformation->get();
-    } elseif ($request->input('searchBy') === 'no_frame') {
-        $frameNo = $request->input('frameNo');
-        $getCommoninformation->where('NoFrame', $frameNo);
-        $Commoninformation = $getCommoninformation->get();
+
+        return view('slframe.main', compact('Commoninformation'));
     }
 
-
-
-    return view('slframe.main', compact('Commoninformation'));
-    }
     public function chartSlFrame()
     {
         // Your existing query to get data from the database for findingQG
@@ -431,7 +450,6 @@ array_unshift($pendingCount, 0);
                 ->whereHas('checksheet')
                 ->get();
         }
-
         return view('slframe.main', compact('Commoninformation'));
     }
 

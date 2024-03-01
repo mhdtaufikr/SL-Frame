@@ -37,12 +37,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/submit/pdi', [SLFrameController::class, 'submitPDI'])->name('submitPDI');
     Route::post('/submit/main', [SLFrameController::class, 'submitMain'])->name('submitMain');
     Route::delete('/slframe/delete/{id}', [SLFrameController::class, 'delete']);
+    Route::delete('/slframe/delete/pending/{id}', [SLFrameController::class, 'deletePending']);
     Route::get('/record', [SLFrameController::class, 'slFrameRecords'])->name('record');
     Route::get('/home', [SLFrameController::class, 'chartSlFrame'])->name('home');
     Route::get('/detail/{id}', [SLFrameController::class, 'detailSLFrame']);
     Route::get('/export', [SLFrameController::class, 'export'])->name('export');
     Route::get('/detail/{role}/{date}', [SLFrameController::class, 'detailPDI']);
-    Route::post('/frame/search', [SLFrameController::class, 'slFrameRecords'])->name('record');
+    Route::post('/frame/search', [SLFrameController::class, 'slFrameRecords']);
 
 
     //Dropdown Controller

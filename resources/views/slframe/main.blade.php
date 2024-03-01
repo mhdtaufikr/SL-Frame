@@ -77,36 +77,39 @@
                         <form action="{{ url('/frame/search') }}" method="POST" id="searchForm">
                             @csrf
                             <div class="input-group input-group-sm">
-                              <select class="form-control" name="searchBy" id="searchBy" onchange="toggleSearchInputs(event)">
-                                <option value="">Search By</option>
-                                <option value="date">Date</option>
-                                <option value="no_frame">No Frame</option>
-                              </select>
-                              <input name="frameNo" type="text" class="form-control" id="searchNoFrame" placeholder="Enter search term" style="display: none;">
-                              <input name="dateFrom" type="date" class="form-control" id="startDate" placeholder="Start Date" style="display: none;">
-                              <input name="dateTo" type="date" class="form-control" id="endDate" placeholder="End Date" style="display: none;">
-                              <button class="btn btn-dark btn-sm" type="submit">Search</button>
+                                <select class="form-control" name="searchBy" id="searchBy">
+                                    <option value="">Search By</option>
+                                    <option value="production_date_range">Production Date Range</option>
+                                    <option value="created_at_date_range">Created at Date Range</option>
+                                    <option value="no_frame">No Frame</option>
+                                </select>
+                                <input name="frameNo" type="text" class="form-control" id="searchNoFrame" placeholder="Enter search term" style="display: none;">
+                                <input name="dateFrom" type="date" class="form-control" id="startDate" placeholder="Start Date" style="display: none;">
+                                <input name="dateTo" type="date" class="form-control" id="endDate" placeholder="End Date" style="display: none;">
+                                <button class="btn btn-dark btn-sm" type="submit">Search</button>
                             </div>
-                          </form>
-
-                          <script>
-                            $(document).ready(function() {
-                              $('#searchBy').change(function() {
-                                var selectedOption = $(this).val();
-                                $('#searchNoFrame, #startDate, #endDate').hide();
-
-                                if (selectedOption === 'date') {
-                                  $('#startDate, #endDate').show();
-                                } else if (selectedOption === 'no_frame') {
-                                  $('#searchNoFrame').show();
-                                }
-                              });
-                            });
-                          </script>
-
-
-
+                        </form>
                     </div>
+
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+                    <script>
+                       $(document).ready(function() {
+                        $('#searchBy').change(function() {
+                            var selectedOption = $(this).val();
+                            $('#searchNoFrame, #startDate, #endDate').hide();
+                            if (selectedOption === 'production_date_range') {
+                                $('#startDate, #endDate').show();
+                            } else if (selectedOption === 'created_at_date_range') {
+                                // Show the inputs for created at date range
+                                $('#startDate, #endDate').show();
+                            } else if (selectedOption === 'no_frame') {
+                                $('#searchNoFrame').show();
+                            }
+                        });
+                    });
+
+                    </script>
+
 
 
 
@@ -193,6 +196,7 @@
                     <th>PIC</th>
                     <th>Remarks</th>
                     <th>status</th>
+                    <th>Created At</th>
                     <th>Action</th>
                   </tr>
                   </thead>
@@ -204,16 +208,18 @@
                     <tr>
                         <td>{{ $no++ }}</td>
                         <td>{{ $data->NoFrame }}</td>
-                        <td>{{ date('Y-m-d', strtotime($data->TglProd)) }}</td>
+                        <td>{{ date('d-m-Y', strtotime($data->TglProd)) }}</td>
                         <td><p>QG : {{$data->NamaQG}}</p>
                             <p>PDI : {{$data->PDI}}</p>
                         </td>
                         <td>{{ $data->Remarks}}</td>
+
                         <td>@if ($data->QualityStatus == "Bad")
                             <a href="#" class="btn btn-danger btn-sm">Bad</a>
                         @else
                         <a href="#" class="btn btn-success btn-sm">Good</a>
                         @endif</td>
+                        <td>{{ date('d-m-Y', strtotime($data->created_at)) }}</td>
                         <td>
                           <a title="Detail" class="btn btn-primary btn-sm" href="{{url("detail/".$data->NoFrame)}}"> <i class="fas fa-info"></i></a>
                           <button title="Delete" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-delete{{ $data->id }}">
