@@ -374,13 +374,32 @@ array_unshift($pendingCount, 0);
             'sumPending' => $sumPending,
         ];
 
-         // Replace this query with your actual query to fetch the required data
-         $data = DB::table('itemcheckgroups')
-         ->leftJoin('checksheets', 'itemcheckgroups.ItemCheck', '=', 'checksheets.ItemCheck')
-         ->selectRaw('itemcheckgroups.ItemCheck, COUNT(checksheets.ItemCheck) AS CountChecksheet')
-         ->groupBy('itemcheckgroups.ItemCheck')
-         ->orderBy('itemcheckgroups.GroupID')
-         ->get();
+     // Get the current month's start and end date
+    $startDate = Carbon::now()->startOfMonth();
+    $endDate = Carbon::now()->endOfMonth();
+
+    // Get all itemcheckgroups
+    $itemCheckGroups = DB::table('itemcheckgroups')->orderBy('GroupID')->get();
+
+    // Create a new array to store the final data
+    $data = [];
+
+    // Iterate over each itemcheckgroup
+    foreach ($itemCheckGroups as $itemCheckGroup) {
+        // Get the count of checksheets for this itemcheckgroup within the current month
+        $countChecksheet = DB::table('checksheets')
+            ->where('ItemCheck', $itemCheckGroup->ItemCheck)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->count();
+
+        // Add the itemcheckgroup data and the count of checksheets to the final data array
+        $data[] = [
+            'ItemCheck' => $itemCheckGroup->ItemCheck,
+            'CountChecksheet' => $countChecksheet,
+        ];
+    }
+    $data = collect($data);
+
 
         // Pass the data to the view
         return view('slframe.chart', compact('sums', 'findingQGCount', 'findingPDICount', 'pendingCount','data'));

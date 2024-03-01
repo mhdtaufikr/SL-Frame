@@ -126,6 +126,13 @@
     </script>
 <script>
     window.onload = function () {
+
+        var monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+        ];
+
+        var now = new Date();
+        var month = monthNames[now.getMonth()];
         // Parse the data
         var chartData = {!! json_encode($data->toArray()) !!};
 
@@ -133,7 +140,7 @@
         var chart = new CanvasJS.Chart("chartContainer", {
             animationEnabled: true,
             title: {
-                text: "Count of finding & Repair Item Check SL - Frame"
+                text: "Count of finding & Repair Item Check SL - Frame " +"("+ month+")"
             },
             axisX: {
                 title: "ItemCheck",
