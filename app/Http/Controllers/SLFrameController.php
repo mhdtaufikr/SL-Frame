@@ -241,30 +241,32 @@ class SLFrameController extends Controller
 
     }
 
-    public function slFrameRecords(Request $request){
-        $searchBy = $request->input('searchBy');
-        $Commoninformation = [];
+    public function slFrameRecords(Request $request)
+{
+    $searchBy = $request->input('searchBy');
+    $Commoninformation = [];
 
-        $getCommoninformation = Commoninformation::where('Status', 2)
-            ->where('InspectionLevel',2);
+    $getCommoninformation = Commoninformation::where('Status', 2)
+        ->where('InspectionLevel', 2);
 
-        if ($searchBy === 'production_date_range') {
-            $dateFrom = $request->input('dateFrom');
-            $dateTo = $request->input('dateTo');
-            $getCommoninformation->whereBetween('TglProd', [$dateFrom, $dateTo]);
-        } elseif ($searchBy === 'created_at_date_range') {
-            $dateFrom = $request->input('dateFrom');
-            $dateTo = $request->input('dateTo');
-            $getCommoninformation->whereBetween('created_at', [$dateFrom, $dateTo]);
-        } elseif ($searchBy === 'no_frame') {
-            $frameNo = $request->input('frameNo');
-            $getCommoninformation->where('NoFrame', $frameNo);
-        }
-
-        $Commoninformation = $getCommoninformation->get();
-
-        return view('slframe.main', compact('Commoninformation'));
+    if ($searchBy === 'production_date_range') {
+        $dateFrom = $request->input('dateFrom');
+        $dateTo = $request->input('dateTo');
+        $getCommoninformation->whereBetween('TglProd', [$dateFrom, $dateTo]);
+    } elseif ($searchBy === 'created_at_date_range') {
+        $dateFrom = $request->input('dateFrom');
+        $dateTo = $request->input('dateTo');
+        $getCommoninformation->whereBetween('created_at', [$dateFrom, $dateTo]);
+    } elseif ($searchBy === 'no_frame') {
+        $frameNo = $request->input('frameNo');
+        $getCommoninformation->where('NoFrame', $frameNo);
     }
+
+    $Commoninformation = $getCommoninformation->orderByDesc('created_at')->get(); // Sort by newest created_at date
+
+    return view('slframe.main', compact('Commoninformation'));
+}
+
 
     public function chartSlFrame()
     {
