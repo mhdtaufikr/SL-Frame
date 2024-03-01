@@ -46,6 +46,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/frame/search', [SLFrameController::class, 'slFrameRecords']);
 
 
+
     //Dropdown Controller
     Route::get('/dropdown', [DropdownController::class, 'index'])->middleware(['checkRole:IT']);
     Route::post('/dropdown/store', [DropdownController::class, 'store'])->middleware(['checkRole:IT']);

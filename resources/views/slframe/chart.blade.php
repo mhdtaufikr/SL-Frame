@@ -86,12 +86,26 @@
                             </p></div>
                         </div>
                     </div>
+
+                    <div class="col-md-12">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div id="chartContainer" style="height: 370px; max-width: 920px; margin: 0px auto;"></div>
+                            </div>
+                            <div class="card-footer small text-muted"><p>
+                                Updated today at {{ now()->format('h:i A') }}
+                            </p></div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
         </div>
         <!-- /.container-fluid -->
     </section>
+
+
     <script>
         var myDate = new Date();
         var hrs = myDate.getHours();
@@ -110,15 +124,44 @@
 
 
     </script>
-
 <script>
     window.onload = function () {
+        // Parse the data
+        var chartData = {!! json_encode($data->toArray()) !!};
+
+        // Create the main chart
+        var chart = new CanvasJS.Chart("chartContainer", {
+            animationEnabled: true,
+            title: {
+                text: "Count of finding & Repair Item Check SL - Frame"
+            },
+            axisX: {
+                title: "ItemCheck",
+                interval: 1
+            },
+            axisY: {
+                title: "Count of Items",
+                interval: 1
+            },
+            data: [{
+                type: "area",
+                dataPoints: chartData.map(item => ({
+                    label: item.ItemCheck,
+                    y: item.CountChecksheet
+                }))
+            }]
+        });
+
+        // Render the main chart
+        chart.render();
+
+        // Create the findingByQGChart
         var findingByQGChart = new CanvasJS.Chart("findingByQG", {
             animationEnabled: true,
-            title:{
+            title: {
                 text: "Finding By QG"
             },
-            axisX:{
+            axisX: {
                 valueFormatString: "DD MMM",
                 crosshair: {
                     enabled: true,
@@ -132,7 +175,7 @@
                 crosshair: {
                     enabled: true,
                     snapToDataPoint: true,
-                    labelFormatter: function(e) {
+                    labelFormatter: function (e) {
                         return "" + CanvasJS.formatNumber(e.value, "##0");
                     }
                 }
@@ -143,31 +186,33 @@
                 yValueFormatString: "##0",
                 dataPoints: [
                     @foreach($findingQGCount as $key => $value)
-                    { x: new Date({{ now()->year }}, {{ now()->month - 1 }}, {{$key}}), y: {{$value}} },
+                        { x: new Date({{ now()->year }}, {{ now()->month - 1 }}, {{$key}}), y: {{$value}} },
                     @endforeach
                 ]
             }]
         });
+
+        // Render the findingByQGChart
         findingByQGChart.render();
         findingByQGChart.options.data[0].click = function (e) {
-        var date = new Date(e.dataPoint.x);
-        var day = date.getDate();
-        var month = date.getMonth() + 1; // Months are zero-based
-        var year = date.getFullYear();
-        var formattedDate = `${day}`;
+            var date = new Date(e.dataPoint.x);
+            var day = date.getDate();
+            var month = date.getMonth() + 1; // Months are zero-based
+            var year = date.getFullYear();
+            var formattedDate = `${day}`;
 
-        var role = 'qg';
-        var url = `/detail/${role}/${formattedDate}`;
-        window.open(url, '_blank');
-    };
+            var role = 'qg';
+            var url = `/detail/${role}/${formattedDate}`;
+            window.open(url, '_blank');
+        };
 
-
+        // Create the findingByPDIChart
         var findingByPDIChart = new CanvasJS.Chart("findingByPDI", {
             animationEnabled: true,
-            title:{
+            title: {
                 text: "Finding By PDI"
             },
-            axisX:{
+            axisX: {
                 valueFormatString: "DD MMM",
                 crosshair: {
                     enabled: true,
@@ -181,7 +226,7 @@
                 crosshair: {
                     enabled: true,
                     snapToDataPoint: true,
-                    labelFormatter: function(e) {
+                    labelFormatter: function (e) {
                         return "" + CanvasJS.formatNumber(e.value, "##0");
                     }
                 }
@@ -192,31 +237,33 @@
                 yValueFormatString: "##0",
                 dataPoints: [
                     @foreach($findingPDICount as $key => $value)
-                    { x: new Date({{ now()->year }}, {{ now()->month - 1 }}, {{$key}}), y: {{$value}} },
+                        { x: new Date({{ now()->year }}, {{ now()->month - 1 }}, {{$key}}), y: {{$value}} },
                     @endforeach
                 ]
             }]
         });
+
+        // Render the findingByPDIChart
         findingByPDIChart.render();
-
         findingByPDIChart.options.data[0].click = function (e) {
-        var date = new Date(e.dataPoint.x);
-        var day = date.getDate();
-        var month = date.getMonth() + 1; // Months are zero-based
-        var year = date.getFullYear();
-        var formattedDate = `${day}`;
+            var date = new Date(e.dataPoint.x);
+            var day = date.getDate();
+            var month = date.getMonth() + 1; // Months are zero-based
+            var year = date.getFullYear();
+            var formattedDate = `${day}`;
 
-        var role = 'pdi';
-        var url = `/detail/${role}/${formattedDate}`;
-        window.open(url, '_blank');
-    };
+            var role = 'pdi';
+            var url = `/detail/${role}/${formattedDate}`;
+            window.open(url, '_blank');
+        };
 
+        // Create the pendingChart
         var pendingChart = new CanvasJS.Chart("pending", {
             animationEnabled: true,
-            title:{
+            title: {
                 text: "Pending Checksheet"
             },
-            axisX:{
+            axisX: {
                 valueFormatString: "DD MMM",
                 crosshair: {
                     enabled: true,
@@ -230,7 +277,7 @@
                 crosshair: {
                     enabled: true,
                     snapToDataPoint: true,
-                    labelFormatter: function(e) {
+                    labelFormatter: function (e) {
                         return "" + CanvasJS.formatNumber(e.value, "##0");
                     }
                 }
@@ -241,14 +288,17 @@
                 yValueFormatString: "##0",
                 dataPoints: [
                     @foreach($pendingCount as $key => $value)
-                    { x: new Date({{ now()->year }}, {{ now()->month - 1 }}, {{$key}}), y: {{$value}} },
+                        { x: new Date({{ now()->year }}, {{ now()->month - 1 }}, {{$key}}), y: {{$value}} },
                     @endforeach
                 ]
             }]
         });
+
+        // Render the pendingChart
         pendingChart.render();
     }
 </script>
+
 
 
 </main>

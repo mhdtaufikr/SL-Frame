@@ -373,8 +373,17 @@ array_unshift($pendingCount, 0);
             'sumFindingPDI' => $sumFindingPDI,
             'sumPending' => $sumPending,
         ];
+
+         // Replace this query with your actual query to fetch the required data
+         $data = DB::table('itemcheckgroups')
+         ->leftJoin('checksheets', 'itemcheckgroups.ItemCheck', '=', 'checksheets.ItemCheck')
+         ->selectRaw('itemcheckgroups.ItemCheck, COUNT(checksheets.ItemCheck) AS CountChecksheet')
+         ->groupBy('itemcheckgroups.ItemCheck')
+         ->orderBy('itemcheckgroups.GroupID')
+         ->get();
+
         // Pass the data to the view
-        return view('slframe.chart', compact('sums', 'findingQGCount', 'findingPDICount', 'pendingCount'));
+        return view('slframe.chart', compact('sums', 'findingQGCount', 'findingPDICount', 'pendingCount','data'));
     }
     public function detailSLFrame($id){
         $noframe = $id;
@@ -452,8 +461,6 @@ array_unshift($pendingCount, 0);
         }
         return view('slframe.main', compact('Commoninformation'));
     }
-
-
 
 }
 
