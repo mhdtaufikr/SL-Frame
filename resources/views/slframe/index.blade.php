@@ -90,16 +90,28 @@
 
             <div class="row p-2">
                 @foreach ($itemCheckGroups as $checkGroup => $itemCheckGroup)
-                    @if ($checkGroup < 6 || \Auth::user()->role !== 'QG')
+                    @if ($checkGroup < 6 || Auth::user()->role !== 'QG')
                     <div class="col-md-2 col-sm-4 p-2 mb-2">
                         <div class="form-check text-center d-flex align-items-center justify-content-center mb-2">
-                            <div class="form-check text-center d-flex align-items-center justify-content-center mb-2">
+                            <div class="form-check d-flex justify-content-center align-items-center mb-2">
                                 @php
                                     $isCheckedGroup = $checkSheet->where('checkGroup', $checkGroup)->isNotEmpty();
+                                    if (Auth::user()->role == 'QG') {
+                                        $isCheck = $checkSheet->where('CommonInfoID',$commonInfoID)
+                                        ->where('FindingQG','1')->where('checkGroup', $checkGroup)->isNotEmpty();
+                                    }elseif(Auth::user()->role == 'PDI'){
+                                        $isCheck = $checkSheet->where('CommonInfoID',$commonInfoID)
+                                        ->where('FindingPDI','1')->where('checkGroup', $checkGroup)->isNotEmpty();
+                                    }
                                 @endphp
-                                <input class="form-check-input check-checkbox custom-checkbox" type="checkbox" id="check{{ $checkGroup }}" {{ $isCheckedGroup ? 'checked' : '' }} onchange="updateSubmitButtonState('{{ $checkGroup }}')">
-                                <p class="mb-0 ml-2">Check</p>
+                                <input class="form-check-input check-checkbox custom-checkbox" type="checkbox" id="check{{ $checkGroup }}" {{ $isCheck ? 'checked' : '' }} onchange="updateSubmitButtonState('{{ $checkGroup }}')">
+                                <label class="form-check-label ml-2" for="check{{ $checkGroup }}">Check</label>
+
+                                @if ($isCheckedGroup)
+                                    <i class="fas fa-exclamation-triangle text-danger ml-2"></i>
+                                @endif
                             </div>
+
                         </div>
 
                         <div class="card h-100" data-bs-toggle="modal" data-bs-target="#modal{{ $checkGroup }}">
@@ -120,26 +132,32 @@
                         </div>
                     </div>
                     <!-- Modal -->
-                    <div class="modal fade" id="modal{{ $checkGroup }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="modal{{ $checkGroup }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+
                         <div class="modal-dialog modal-dialog-centered modal-lg">
                             <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">
-                                        @if ($checkGroup == "5")
-                                            5 & 6
-                                       @elseif($checkGroup == "6")
-                                            Painting
-                                        @else
-                                            {{ $checkGroup }}
-                                        @endif
-                                    </h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
                                 @if (\Auth::user()->role === 'PDI')
-                                    <form action="{{ route('submitPDI') }}" method="POST">
+                                <form action="{{ route('submitPDI') }}" method="POST">
                                 @else
                                     <form action="{{ url('/submit') }}" method="POST">
                                 @endif
+                                <div class="modal-header sticky-top">
+                                    <div class="d-flex justify-content-between w-100">
+                                        <h5 class="modal-title">
+                                            @if ($checkGroup == "5")
+                                                5 & 6
+                                            @elseif($checkGroup == "6")
+                                                Painting
+                                            @else
+                                                {{ $checkGroup }}
+                                            @endif
+                                        </h5>
+                                        <div>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </div>
+                                </div>
                                     @csrf
                                     <input value="{{$noframe}}" hidden name="noframe" type="">
                                     <input value="{{$checkGroup}}" hidden name="checkGroup" type="">
@@ -200,8 +218,6 @@
                                                         </div>
                                                     </td>
                                                 @endif
-
-
                                                         <td {{ \Auth::user()->role === 'QG' ? 'hidden' : '' }}>
                                                             <div class="form-check d-flex justify-content-center">
                                                                 @php
@@ -238,10 +254,7 @@
                                         </textarea>
 
                                     </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Submit</button>
-                                    </div>
+
                                 </form>
                             </div>
                         </div>
@@ -350,11 +363,13 @@
     }
 
 
-
-                $(document).ready(function () {
+                    $(document).ready(function () {
                     $('.check-checkbox').on('change', function () {
                         updateSubmitButtonState();
                     });
+
+                    // Check if all checkboxes are checked when the page is ready
+                    updateSubmitButtonState();
                 });
 
                 function updateSubmitButtonState() {
@@ -362,9 +377,10 @@
                     var checkedCheckboxes = $('.check-checkbox:checked').length;
 
                     var allGroupsChecked = totalCheckboxes === checkedCheckboxes;
-
                     $('#submitButton').prop('disabled', !allGroupsChecked);
                 }
+
+
 
                 // This function ensures that the modal is opened only if at least one checkbox is checked
                 $('#additionalInfoModal').on('show.bs.modal', function (event) {

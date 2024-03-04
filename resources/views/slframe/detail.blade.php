@@ -82,8 +82,10 @@
                                 @php
                                     $isCheckedGroup = $checkSheet->where('checkGroup', $checkGroup)->isNotEmpty();
                                 @endphp
-                                <input class="form-check-input check-checkbox custom-checkbox" type="checkbox" id="check{{ $checkGroup }}" {{ $isCheckedGroup ? 'checked' : '' }} onchange="updateSubmitButtonState('{{ $checkGroup }}')">
-                                <p class="mb-0 ml-2">Finding & Repair</p>
+                                    @if ($isCheckedGroup)
+                                    <i style="margin-right: 50px" class="fas fa-exclamation-triangle fa-2x text-danger"></i>
+
+                                    @endif
                             </div>
                         </div>
 

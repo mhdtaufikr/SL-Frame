@@ -61,7 +61,8 @@ class SLFrameController extends Controller
         // Fetch all Itemcheckgroups for the specified CheckGroup values
         $itemCheckGroups = Itemcheckgroup::whereIn('CheckGroup', $checkGroups)->get()->groupBy('CheckGroup');
         $checkSheet = Checksheet::where('CommonInfoID',$Commoninformation->CommonInfoID)->get();
-        return view('slframe.index', compact('Commoninformation', 'itemCheckGroups','noframe','checkSheet'));
+        $commonInfoID = $Commoninformation->CommonInfoID;
+        return view('slframe.index', compact('Commoninformation', 'itemCheckGroups','noframe','checkSheet','commonInfoID'));
     }
     public function submit(Request $request)
     {
@@ -435,6 +436,8 @@ array_unshift($pendingCount, 0);
 
     public function detailPDI($role, $day)
     {
+        $day = $day - 1;
+
         $year = now()->year;
         $month = now()->month;
 
