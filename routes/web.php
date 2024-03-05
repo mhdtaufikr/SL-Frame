@@ -44,6 +44,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/export', [SLFrameController::class, 'export'])->name('export');
     Route::get('/detail/{role}/{date}', [SLFrameController::class, 'detailPDI']);
     Route::post('/frame/search', [SLFrameController::class, 'slFrameRecords']);
+    Route::get('/test', [SLFrameController::class, 'test']);
 
 
 

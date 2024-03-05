@@ -13,7 +13,7 @@
 :root {
   --bs-blue: #0061f2;
   --bs-indigo: #5800e8;
-  --bs-purple: #6900c7;
+  --bs-purple: #707cac;
   --bs-pink: #e30059;
   --bs-red: #e81500;
   --bs-orange: #f76400;
@@ -42,7 +42,7 @@
   --bs-cyan: #00cfd5;
   --bs-blue: #0061f2;
   --bs-indigo: #5800e8;
-  --bs-purple: #6900c7;
+  --bs-purple: #707cac;
   --bs-pink: #e30059;
   --bs-red-soft: #f1e0e3;
   --bs-orange-soft: #f3e7e3;
@@ -3645,8 +3645,8 @@ textarea.form-control-lg {
 
 .btn-purple {
   color: #fff;
-  background-color: #6900c7;
-  border-color: #6900c7;
+  background-color: #6d78ad;
+  border-color: #6d78ad;
 }
 .btn-purple:hover {
   color: #fff;
@@ -3675,8 +3675,8 @@ textarea.form-control-lg {
 
 .btn-pink {
   color: #fff;
-  background-color: #e30059;
-  border-color: #e30059;
+  background-color: #df7970;
+  border-color: #df7970;
 }
 .btn-pink:hover {
   color: #fff;
