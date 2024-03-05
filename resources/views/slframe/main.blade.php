@@ -226,10 +226,10 @@
                         </td>
                         <td>{{ $data->Remarks}}</td>
 
-                        <td>@if ($data->QualityStatus == "Bad")
-                            <a href="#" class="btn btn-danger btn-sm">Bad</a>
+                        <td class="text-center">@if ($data->QualityStatus == "Bad")
+                            <i class="fas fa-exclamation-triangle fa-2x text-warning"></i>
                         @else
-                        <a href="#" class="btn btn-success btn-sm">Good</a>
+                        <i class="fas fa-check-square fa-2x text-success"></i>
                         @endif</td>
                         <td>{{ date('d-m-Y', strtotime($data->created_at)) }}</td>
                         <td>

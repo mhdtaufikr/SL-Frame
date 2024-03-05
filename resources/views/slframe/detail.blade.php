@@ -75,7 +75,7 @@
             </map>
             <div class="row p-2">
                 @foreach ($itemCheckGroups as $checkGroup => $itemCheckGroup)
-                    @if ($checkGroup < 6 || \Auth::user()->role !== 'QG')
+                    @if ($checkGroup < 6 || Auth::user()->role !== 'QG')
                     <div class="col-md-2 col-sm-4 p-2 mb-2">
                         <div class="form-check text-center d-flex align-items-center justify-content-center mb-2">
                             <div class="form-check text-center d-flex align-items-center justify-content-center mb-2">
@@ -122,7 +122,7 @@
                                     </h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                @if (\Auth::user()->role === 'PDI')
+                                @if (Auth::user()->role === 'PDI')
                                     <form action="{{ route('submitPDI') }}" method="POST">
                                 @else
                                     <form action="{{ url('/submit') }}" method="POST">
@@ -137,8 +137,8 @@
                                                     <th>ItemCheck</th>
                                                     <th>FindingQG</th>
                                                     <th>RepairQG</th>
-                                                    <th {{ \Auth::user()->role === 'QG' ? 'hidden' : '' }} >FindingPDI</th>
-                                                    <th {{ \Auth::user()->role === 'QG' ? 'hidden' : '' }} >RepairPDI</th>
+                                                    <th {{ Auth::user()->role === 'QG' ? 'hidden' : '' }} >FindingPDI</th>
+                                                    <th {{ Auth::user()->role === 'QG' ? 'hidden' : '' }} >RepairPDI</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -148,7 +148,7 @@
                                                      <input type="hidden" name="findingQC[{{ $item->ItemCheck }}]" value="0">
                                                      <input type="hidden" name="repairQC[{{ $item->ItemCheck }}]" value="0">
                                                     <td>{{$item->index}} {{ $item->ItemCheck }}</td>
-                                                    @if (\Auth::user()->role === 'QG')
+                                                    @if (Auth::user()->role === 'QG')
                                                     <td>
                                                         <div class="form-check d-flex justify-content-center">
                                                             @php
@@ -164,7 +164,7 @@
                                                                 $isCheckedRepair = $checkSheet->contains('ItemCheck', $item->ItemCheck) && $checkSheet->where('ItemCheck', $item->ItemCheck)->first()->RepairQG == 1;
                                                                 $remarksRepair = $isCheckedRepair ? $checkSheet->where('ItemCheck', $item->ItemCheck)->first()->RemarksQG : null;
                                                             @endphp
-                                                            <input class="form-check-input bigger-checkbox repair-qc-checkbox" type="checkbox" name="repairQC[{{ $item->ItemCheck }}]" value="1" {{ $isCheckedRepair ? 'checked' : '' }} {{ \Auth::user()->role !== 'QG' ? 'disabled' : '' }}>
+                                                            <input class="form-check-input bigger-checkbox repair-qc-checkbox" type="checkbox" name="repairQC[{{ $item->ItemCheck }}]" value="1" {{ $isCheckedRepair ? 'checked' : '' }} {{ Auth::user()->role !== 'QG' ? 'disabled' : '' }}>
                                                         </div>
                                                     </td>
                                                 @else
@@ -187,7 +187,7 @@
                                                         </div>
                                                     </td>
                                                 @endif
-                                                        <td {{ \Auth::user()->role === 'QG' ? 'hidden' : '' }}>
+                                                        <td {{ Auth::user()->role === 'QG' ? 'hidden' : '' }}>
                                                             <div class="form-check d-flex justify-content-center">
                                                                 @php
                                                                     $isCheckedFindingPDI = $checkSheet->contains('ItemCheck', $item->ItemCheck) && $checkSheet->where('ItemCheck', $item->ItemCheck)->first()->FindingPDI == 1;
@@ -198,7 +198,7 @@
                                                                 <input class="form-check-input bigger-checkbox finding-pdi-checkbox" type="checkbox" name="findingPDI[{{ $item->ItemCheck }}]" value="1" {{ $isCheckedFindingPDI ? 'checked' : '' }} onchange="handleFindingPDIChange(this)" disabled>
                                                             </div>
                                                         </td>
-                                                        <td {{ \Auth::user()->role === 'QG' ? 'hidden' : '' }}>
+                                                        <td {{ Auth::user()->role === 'QG' ? 'hidden' : '' }}>
                                                             <div class="form-check d-flex justify-content-center">
                                                                 @php
                                                                     $isCheckedRepairPDI = $checkSheet->contains('ItemCheck', $item->ItemCheck) && $checkSheet->where('ItemCheck', $item->ItemCheck)->first()->RepairPDI == 1;
