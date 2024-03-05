@@ -11,6 +11,9 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\SLFrameExport;
+use App\Exports\SLFrameExportQG;
+use App\Exports\SLFrameExportPDI;
+
 
 class SLFrameController extends Controller
 {
@@ -419,17 +422,26 @@ array_unshift($pendingCount, 0);
     }
 
     public function export(Request $request) {
-        // Get the start and end dates from the request
-        $startDate = $request->input('startDate');
-        $endDate = $request->input('endDate');
-        $searchBy = $request->input('searchBy'); // Add this line to fetch the searchBy parameter
-
+        // dd($request->all());
+         // Get the start and end dates from the request
+         $startDate = $request->input('startDate');
+         $endDate = $request->input('endDate');
+         $searchBy = $request->input('searchBy'); // Add this line to fetch the searchBy parameter
         // Get the current date
         $currentDate = Carbon::now()->toDateString();
 
         // Combine the remarks, current date, and file extension
         // Change this to your desired remarks
         $fileName = "sl_frame_export_{$currentDate}.xlsx";
+
+        if ($request->inspectionLevel == 'qg') {
+            return Excel::download(new SLFrameExportQG($startDate, $endDate, $searchBy), $fileName);
+        }elseif($request->inspectionLevel == 'pdi'){
+            return Excel::download(new SLFrameExportPDI($startDate, $endDate, $searchBy), $fileName);
+        }
+
+
+
 
         // Pass the start and end dates, and searchBy to the export class
         return Excel::download(new SLFrameExport($startDate, $endDate, $searchBy), $fileName);

@@ -5,7 +5,6 @@ use App\Models\Checksheet;
 use App\Models\Itemcheckgroup;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithStyles;
@@ -15,8 +14,9 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use App\Models\Commoninformation;
 
+use Maatwebsite\Excel\Concerns\FromCollection;
 
-class SLFrameExport implements FromCollection, WithHeadings, WithStyles, ShouldAutoSize
+class SLFrameExportQG implements FromCollection, WithHeadings, WithStyles, ShouldAutoSize
 {
     use Exportable;
 
@@ -84,18 +84,6 @@ class SLFrameExport implements FromCollection, WithHeadings, WithStyles, ShouldA
                     $result[$item->CommonInfoID][$check . '_RepairQG'] = 0;
                 }
 
-                // If PDI Finding and Repair are both 1, set PDICheck to 1
-                if ($item->FindingPDI == 1) {
-                    $result[$item->CommonInfoID][$check . '_FindingPDI'] = 'X';
-                } else {
-                    $result[$item->CommonInfoID][$check . '_FindingPDI'] = 0;
-                }
-
-                if ($item->RepairPDI == 1) {
-                    $result[$item->CommonInfoID][$check . '_RepairPDI'] = 'V';
-                } else {
-                    $result[$item->CommonInfoID][$check . '_RepairPDI'] = 0;
-                }
             } else {
                 if (!isset($result[$item->CommonInfoID][$check . '_FindingQG'])) {
                     $result[$item->CommonInfoID][$check . '_FindingQG'] = 0;
@@ -104,22 +92,12 @@ class SLFrameExport implements FromCollection, WithHeadings, WithStyles, ShouldA
                 if (!isset($result[$item->CommonInfoID][$check . '_RepairQG'])) {
                     $result[$item->CommonInfoID][$check . '_RepairQG'] = 0;
                 }
-
-                if (!isset($result[$item->CommonInfoID][$check . '_FindingPDI'])) {
-                    $result[$item->CommonInfoID][$check . '_FindingPDI'] = 0;
-                }
-
-                if (!isset($result[$item->CommonInfoID][$check . '_RepairPDI'])) {
-                    $result[$item->CommonInfoID][$check . '_RepairPDI'] = 0;
-                }
             }
         }
             // Remove the unwanted keys
             unset(
                 $result[$item->CommonInfoID]['_FindingQG'],
                 $result[$item->CommonInfoID]['_RepairQG'],
-                $result[$item->CommonInfoID]['_FindingPDI'],
-                $result[$item->CommonInfoID]['_RepairPDI']
             );
         }
 
@@ -179,9 +157,9 @@ class SLFrameExport implements FromCollection, WithHeadings, WithStyles, ShouldA
     public function headings(): array
     {
         return [
-            ['NO.','Tgl','Shift','Serie','C/Mbr No.1 + Complete Bracket','','','','Hook Frt / CKD','','','','Bracket Tie Down / SLJ-77','','','','Bracket  / SGC -22','','','','Bracket Horn / SLJ-55','','','','Bracket Mtg Cabin A/SLJ-85','','','','C/Mbr No.1,5 + Complete Bracket','','','','Bracket Strut Bar  / SLJ-38','','','','Bracket Radiator  / SLJ-82-83','','','','Reinforcement / SLJ-44 & SLJ-33','','','','Bracket Roller / SLJ-73','','','','Bracket / SLJ-103','','','','C/Mbr No.2 + Complete Bracket','','','','Long Sill   / SLJ-81','','','','Bracket Assy Cab Mtg / SLJ-119','','','','Bracket Eng. Sup.  / SLJ-141','','','','Bracket Cable A / SLJ-65','','','','Bracket Hose / SLJ-35','','','','Hanger Spring / CKD','','','','Bracket Fuel Tank  / SLJ-97','','','','Brkt Brake Hose','','','','C/Mbr No. 3 + Complete Brkt','','','','C/Mbr No.4 + Complete Brkt','','','','Hook Rear / CKD','','','','Brkt Shackle','','','','Brkt Stay muffler / SLJ-97','','','','Brkt Stoper Bumper / SLJ-43','','','','Brkt Mtg SLJ-18 Assy Nut','','','','Brkt Harness , RH side x 3','','','','Bracket / SGJ-22','','','','Bracket Clip Bintang x 2','','','','Bracket New x 3','','','','Cat Belang','','','','Cat Bubble','','','','Vin Number','','','','Grease Shift Lev.','','','','Grease Pin Dumper','','','','Total',],
-            ['', '', '', '','1.1','1.1','1.1','1.1','1.2','1.2','1.2','1.2','1.3','1.3','1.3','1.3','1.4','1.4','1.4','1.4','1.5','1.5','1.5','1.5','1.6','1.6','1.6','1.6','2.1','2.1','2.1','2.1','2.2','2.2','2.2','2.2','2.3','2.3','2.3','2.3','2.4','2.4','2.4','2.4','2.5','2.5','2.5','2.5','2.6','2.6','2.6','2.6','3.1','3.1','3.1','3.1','3.2','3.2','3.2','3.2','3.3','3.3','3.3','3.3','3.4','3.4','3.4','3.4','3.5','3.5','3.5','3.5','3.6','3.6','3.6','3.6','3.7','3.7','3.7','3.7','3.8','3.8','3.8','3.8','4.1','4.1','4.1','4.1','4.2','4.2','4.2','4.2','4.3','4.3','4.3','4.3','4.4','4.4','4.4','4.4','4.5','4.5','4.5','4.5','4.6','4.6','4.6','4.6','4.7','4.7','4.7','4.7','4.8','4.8','4.8','4.8','5.1','5.1','5.1','5.1','5.2','5.2','5.2','5.2','6.1','6.1','6.1','6.1','6.2','6.2','6.2','6.2','7.1','7.1','7.1','7.1','7.2','7.2','7.2','7.2','7.3','7.3','7.3','7.3','7.4','7.4','7.4','7.4','7.5','7.5','7.5','7.5'],
-            ['', '', '', '','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI','','QG','','PDI',''],
+            ['NO.','Tgl','Shift','Serie','C/Mbr No.1 + Complete Bracket','','Hook Frt / CKD','','Bracket Tie Down / SLJ-77','','Bracket  / SGC -22','','Bracket Horn / SLJ-55','','Bracket Mtg Cabin A/SLJ-85','','C/Mbr No.1,5 + Complete Bracket','','Bracket Strut Bar  / SLJ-38','','Bracket Radiator  / SLJ-82-83','','Reinforcement / SLJ-44 & SLJ-33','','Bracket Roller / SLJ-73','','Bracket / SLJ-103','','C/Mbr No.2 + Complete Bracket','','Long Sill   / SLJ-81','','Bracket Assy Cab Mtg / SLJ-119','','Bracket Eng. Sup.  / SLJ-141','','Bracket Cable A / SLJ-65','','Bracket Hose / SLJ-35','','Hanger Spring / CKD','','Bracket Fuel Tank  / SLJ-97','','Brkt Brake Hose','','C/Mbr No. 3 + Complete Brkt','','C/Mbr No.4 + Complete Brkt','','Hook Rear / CKD','','Brkt Shackle','','Brkt Stay muffler / SLJ-97','','Brkt Stoper Bumper / SLJ-43','','Brkt Mtg SLJ-18 Assy Nut','','Brkt Harness , RH side x 3','','Bracket / SGJ-22','','Bracket Clip Bintang x 2','','Bracket New x 3','','Cat Belang','','Cat Bubble','','Vin Number','','Grease Shift Lev.','','Grease Pin Dumper','','Total',],
+            ['', '', '', '','1.1','1.1','1.2','1.2','1.3','1.3','1.4','1.4','1.5','1.5','1.6','1.6','2.1','2.1','2.2','2.2','2.3','2.3','2.4','2.4','2.5','2.5','2.6','2.6','3.1','3.1','3.2','3.2','3.3','3.3','3.4','3.4','3.5','3.5','3.6','3.6','3.7','3.7','3.8','3.8','4.1','4.1','4.2','4.2','4.3','4.3','4.4','4.4','4.5','4.5','4.6','4.6','4.7','4.7','4.8','4.8','5.1','5.1','5.2','5.2','6.1','6.1','6.2','6.2','7.1','7.1','7.2','7.2','7.3','7.3','7.4','7.4','7.5','7.5'],
+            ['', '', '', '','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG','','QG',''],
 
         ];
     }
@@ -210,44 +188,47 @@ class SLFrameExport implements FromCollection, WithHeadings, WithStyles, ShouldA
         $sheet->mergeCells('C1:C3');
         $sheet->mergeCells('D1:D3');
         //HEADER ITEM CHECK
-        $sheet->mergeCells('E1:H1');
-        $sheet->mergeCells('I1:L1');
-        $sheet->mergeCells('M1:P1');
-        $sheet->mergeCells('Q1:T1');
-        $sheet->mergeCells('U1:X1');
-        $sheet->mergeCells('Y1:AB1');
-        $sheet->mergeCells('AC1:AF1');
-        $sheet->mergeCells('AG1:AJ1');
-        $sheet->mergeCells('AK1:AN1');
-        $sheet->mergeCells('AO1:AR1');
-        $sheet->mergeCells('AS1:AV1');
-        $sheet->mergeCells('AW1:AZ1');
-        $sheet->mergeCells('BA1:BD1');
-        $sheet->mergeCells('BE1:BH1');
-        $sheet->mergeCells('BI1:BL1');
-        $sheet->mergeCells('BM1:BP1');
-        $sheet->mergeCells('BQ1:BT1');
-        $sheet->mergeCells('BU1:BX1');
-        $sheet->mergeCells('BY1:CB1');
-        $sheet->mergeCells('CC1:CF1');
-        $sheet->mergeCells('CG1:CJ1');
-        $sheet->mergeCells('CK1:CN1');
-        $sheet->mergeCells('CO1:CR1');
-        $sheet->mergeCells('CS1:CV1');
-        $sheet->mergeCells('CW1:CZ1');
-        $sheet->mergeCells('DA1:DD1');
-        $sheet->mergeCells('DE1:DH1');
-        $sheet->mergeCells('DI1:DL1');
-        $sheet->mergeCells('DM1:DP1');
-        $sheet->mergeCells('DQ1:DT1');
-        $sheet->mergeCells('DU1:DX1');
-        $sheet->mergeCells('DY1:EB1');
-        $sheet->mergeCells('EC1:EF1');
-        $sheet->mergeCells('EG1:EJ1');
-        $sheet->mergeCells('EK1:EN1');
-        $sheet->mergeCells('EO1:ER1');
-        $sheet->mergeCells('ES1:EV1');
-        //PDI QG
+        $sheet->mergeCells('E1:F1');
+        $sheet->mergeCells('G1:H1');
+        $sheet->mergeCells('I1:J1');
+        $sheet->mergeCells('K1:L1');
+        $sheet->mergeCells('M1:N1');
+        $sheet->mergeCells('O1:P1');
+        $sheet->mergeCells('Q1:R1');
+        $sheet->mergeCells('S1:T1');
+        $sheet->mergeCells('U1:V1');
+        $sheet->mergeCells('W1:X1');
+        $sheet->mergeCells('Y1:Z1');
+        $sheet->mergeCells('AA1:AB1');
+        $sheet->mergeCells('AC1:AD1');
+        $sheet->mergeCells('AE1:AF1');
+        $sheet->mergeCells('AG1:AH1');
+        $sheet->mergeCells('AI1:AJ1');
+        $sheet->mergeCells('AK1:AL1');
+        $sheet->mergeCells('AM1:AN1');
+        $sheet->mergeCells('AO1:AP1');
+        $sheet->mergeCells('AQ1:AR1');
+        $sheet->mergeCells('AS1:AT1');
+        $sheet->mergeCells('AU1:AV1');
+        $sheet->mergeCells('AW1:AX1');
+        $sheet->mergeCells('AY1:AZ1');
+        $sheet->mergeCells('BA1:BB1');
+        $sheet->mergeCells('BC1:BD1');
+        $sheet->mergeCells('BE1:BF1');
+        $sheet->mergeCells('BG1:BH1');
+        $sheet->mergeCells('BI1:BJ1');
+        $sheet->mergeCells('BK1:BL1');
+        $sheet->mergeCells('BM1:BN1');
+        $sheet->mergeCells('BO1:BP1');
+        $sheet->mergeCells('BQ1:BR1');
+        $sheet->mergeCells('BS1:BT1');
+        $sheet->mergeCells('BU1:BV1');
+        $sheet->mergeCells('BW1:BX1');
+        $sheet->mergeCells('BY1:BZ1');
+        $sheet->mergeCells('CA1:CA3');
+
+        //qg
+        //HEADER ITEM CHECK
         $sheet->mergeCells('E3:F3');
         $sheet->mergeCells('G3:H3');
         $sheet->mergeCells('I3:J3');
@@ -272,7 +253,6 @@ class SLFrameExport implements FromCollection, WithHeadings, WithStyles, ShouldA
         $sheet->mergeCells('AU3:AV3');
         $sheet->mergeCells('AW3:AX3');
         $sheet->mergeCells('AY3:AZ3');
-
         $sheet->mergeCells('BA3:BB3');
         $sheet->mergeCells('BC3:BD3');
         $sheet->mergeCells('BE3:BF3');
@@ -287,46 +267,6 @@ class SLFrameExport implements FromCollection, WithHeadings, WithStyles, ShouldA
         $sheet->mergeCells('BW3:BX3');
         $sheet->mergeCells('BY3:BZ3');
 
-        $sheet->mergeCells('CA3:CB3');
-        $sheet->mergeCells('CC3:CD3');
-        $sheet->mergeCells('CE3:CF3');
-        $sheet->mergeCells('CG3:CH3');
-        $sheet->mergeCells('CI3:CJ3');
-        $sheet->mergeCells('CK3:CL3');
-        $sheet->mergeCells('CM3:CN3');
-        $sheet->mergeCells('CO3:CP3');
-        $sheet->mergeCells('CQ3:CR3');
-        $sheet->mergeCells('CS3:CT3');
-        $sheet->mergeCells('CU3:CV3');
-        $sheet->mergeCells('CW3:CX3');
-        $sheet->mergeCells('CY3:CZ3');
-
-        $sheet->mergeCells('DA3:DB3');
-        $sheet->mergeCells('DC3:DD3');
-        $sheet->mergeCells('DE3:DF3');
-        $sheet->mergeCells('DG3:DH3');
-        $sheet->mergeCells('DI3:DJ3');
-        $sheet->mergeCells('DK3:DL3');
-        $sheet->mergeCells('DM3:DN3');
-        $sheet->mergeCells('DO3:DP3');
-        $sheet->mergeCells('DQ3:DR3');
-        $sheet->mergeCells('DS3:DT3');
-        $sheet->mergeCells('DU3:DV3');
-        $sheet->mergeCells('DW3:DX3');
-        $sheet->mergeCells('DY3:DZ3');
-
-        $sheet->mergeCells('EA3:EB3');
-        $sheet->mergeCells('EC3:ED3');
-        $sheet->mergeCells('EE3:EF3');
-        $sheet->mergeCells('EG3:EH3');
-        $sheet->mergeCells('EI3:EJ3');
-        $sheet->mergeCells('EK3:EL3');
-        $sheet->mergeCells('EM3:EN3');
-        $sheet->mergeCells('EO3:EP3');
-        $sheet->mergeCells('EQ3:ER3');
-        $sheet->mergeCells('ES3:ET3');
-        $sheet->mergeCells('EU3:EV3');
-        $sheet->mergeCells('EW1:EW3');
 
         $alignment = [
             'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -336,6 +276,3 @@ class SLFrameExport implements FromCollection, WithHeadings, WithStyles, ShouldA
         $sheet->getStyle('F1:AP1')->getAlignment()->applyFromArray($alignment);
     }
 }
-
-
-
