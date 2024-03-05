@@ -136,7 +136,8 @@
                                             <div class="input-group input-group-sm">
                                                 <select class="form-control" name="searchBy" id="searchByModal" onchange="toggleSearchInputs()">
                                                     <option value="">Export by</option>
-                                                    <option value="dateRange">Date Range</option>
+                                                    <option value="dateRangeCreatedAt">Date Range Created At</option>
+                                                    <option value="dateRangeProductionDate">Date Range Production Date</option>
                                                     <option value="inspectionLevel">Inspection Level</option>
                                                 </select>
 
@@ -162,26 +163,38 @@
                         </div>
 
                         <script>
-                        function toggleSearchInputs() {
-                            var searchBy = document.getElementById('searchByModal').value;
-                            var startDateInput = document.getElementById('startDateModal');
-                            var endDateInput = document.getElementById('endDateModal');
-                            var inspectionLevelInput = document.getElementById('inspectionLevelModal');
+                           $(document).ready(function() {
+                            $('#searchByModal').on('change', function() {
+                                var searchBy = $(this).val();
+                                var startDateInput = $('#startDateModal');
+                                var endDateInput = $('#endDateModal');
+                                var productionDateInput = $('#productionDateModal');
+                                var inspectionLevelInput = $('#inspectionLevelModal');
 
-                            if (searchBy === 'dateRange') {
-                                startDateInput.style.display = 'block';
-                                endDateInput.style.display = 'block';
-                                inspectionLevelInput.style.display = 'none';
-                            } else if (searchBy === 'inspectionLevel') {
-                                startDateInput.style.display = 'none';
-                                endDateInput.style.display = 'none';
-                                inspectionLevelInput.style.display = 'block';
-                            } else {
-                                startDateInput.style.display = 'none';
-                                endDateInput.style.display = 'none';
-                                inspectionLevelInput.style.display = 'none';
-                            }
-                        }
+                                if (searchBy === 'dateRangeCreatedAt') {
+                                    startDateInput.show();
+                                    endDateInput.show();
+                                    productionDateInput.hide();
+                                    inspectionLevelInput.hide();
+                                } else if (searchBy === 'dateRangeProductionDate') {
+                                    startDateInput.show();
+                                    endDateInput.show();
+                                    productionDateInput.show();
+                                    inspectionLevelInput.hide();
+                                } else if (searchBy === 'inspectionLevel') {
+                                    startDateInput.hide();
+                                    endDateInput.hide();
+                                    productionDateInput.hide();
+                                    inspectionLevelInput.show();
+                                } else {
+                                    startDateInput.hide();
+                                    endDateInput.hide();
+                                    productionDateInput.hide();
+                                    inspectionLevelInput.hide();
+                                }
+                            });
+                        });
+
                         </script>
                 </div>
 

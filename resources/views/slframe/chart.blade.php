@@ -3,7 +3,7 @@
 @section('content')
 <style>
     #lblGreetings {
-        font-size: 1.5rem; /* Adjust the base font size as needed */
+        font-size: 1.2rem; /* Adjust the base font size as needed */
     }
 
     @media only screen and (max-width: 600px) {
@@ -11,6 +11,10 @@
             font-size: 1rem; /* Adjust the font size for smaller screens */
         }
     }
+    .page-header .page-header-content {
+  padding-top: 0rem;
+  padding-bottom: 1rem;
+}
 </style>
 <script src="{{ asset('test.js') }}"></script>
 <main>
@@ -34,16 +38,28 @@
             <div class="container-xl px-4 mt-n10">
                 <div class="row">
                    <!-- Finding By QG -->
-                    <div class="col-md-4">
+                    <div class="col-md-12">
                         <div class="card mb-4">
                             <div class="card-header text-dark">
                                 <div class="d-flex justify-content-between">
                                     <span></span>
-                                    <span style="padding-right: 10px"><strong>Total : {{$sums['sumFindingQG']}}</strong></span>
+                                    <span style="margin-right: 130px"><strong>Total : {{$sums['sumFindingQG']}}</strong></span>
+                                    <span style="margin-right: 130px"><strong>Total : {{$sums['sumFindingPDI']}}</strong></span>
+                                   <span style="margin-right: 130px"><strong>Total : {{$sums['sumPending']}}</strong></span>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div id="findingByQG" style="height: 370px; max-width: 920px; margin: 0px auto;"></div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div id="findingByQG" style="height: 270px;"></div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div id="findingByPDI" style="height: 270px;"></div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div id="pending" style="height: 270px;"></div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="card-footer small text-muted"><p>
                                 Updated today at {{ now()->format('h:i A') }}
@@ -51,46 +67,12 @@
                         </div>
                     </div>
 
-                    <!-- Finding By PDI -->
-                    <div class="col-md-4">
-                        <div class="card mb-4">
-                            <div class="card-header text-dark">
-                                <div class="d-flex justify-content-between">
-                                    <span></span>
-                                    <span style="padding-right: 10px"><strong>Total : {{$sums['sumFindingPDI']}}</strong></span>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div id="findingByPDI" style="height: 370px; max-width: 920px; margin: 0px auto;"></div>
-                            </div>
-                            <div class="card-footer small text-muted"><p>
-                              Updated today at {{ now()->format('h:i A') }}
-                            </p></div>
-                        </div>
-                    </div>
 
-                    <!-- Pending -->
-                    <div class="col-md-4">
-                        <div class="card mb-4">
-                            <div class="card-header text-dark">
-                                <div class="d-flex justify-content-between">
-                                    <span></span>
-                                    <span style="padding-right: 10px"><strong>Total : {{$sums['sumPending']}}</strong></span>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div id="pending" style="height: 370px; max-width: 920px; margin: 0px auto;"></div>
-                            </div>
-                            <div class="card-footer small text-muted"><p>
-                              Updated today at {{ now()->format('h:i A') }}
-                            </p></div>
-                        </div>
-                    </div>
 
                     <div class="col-md-12">
                         <div class="card mb-4">
                             <div class="card-body">
-                                <div id="chartContainer" style="height: 370px; max-width: 920px; margin: 0px auto;"></div>
+                                <div id="chartContainer" style="height: 320px; max-width: 920px; margin: 0px auto;"></div>
                             </div>
                             <div class="card-footer small text-muted"><p>
                                 Updated today at {{ now()->format('h:i A') }}

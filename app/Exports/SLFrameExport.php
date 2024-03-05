@@ -22,31 +22,38 @@ class SLFrameExport implements FromCollection, WithHeadings, WithStyles, ShouldA
 
     private $startDate;
     private $endDate;
+    private $searchBy;
 
     // Constructor to accept the start and end dates
-    public function __construct($startDate, $endDate) {
+      // Constructor to accept the start and end dates and searchBy option
+      public function __construct($startDate, $endDate, $searchBy) {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
+        $this->searchBy = $searchBy;
     }
 
     public function collection()
-{
-    // Get the unique item check values
-    $uniqueItemChecks = Itemcheckgroup::distinct()->pluck('ItemCheck');
+    {
+        // Get the unique item check values
+        $uniqueItemChecks = Itemcheckgroup::distinct()->pluck('ItemCheck');
 
-    $checksheetsQuery = Commoninformation::rightJoin('checksheets', 'checksheets.CommonInfoID', '=', 'commoninformations.CommonInfoID')
-        ->where('commoninformations.Status', 2)
-        ->where('commoninformations.InspectionLevel', 2);
+        $checksheetsQuery = Commoninformation::rightJoin('checksheets', 'checksheets.CommonInfoID', '=', 'commoninformations.CommonInfoID')
+            ->where('commoninformations.Status', 2)
+            ->where('commoninformations.InspectionLevel', 2);
 
-    // Check if start and end dates are set
-    if (isset($this->startDate) && isset($this->endDate)) {
-        $checksheetsQuery->whereBetween('commoninformations.TglProd', [$this->startDate, $this->endDate]);
-    }
+        // Check if start and end dates are set
+        if (isset($this->startDate) && isset($this->endDate)) {
+            // Use the appropriate date column based on the searchBy option
+            if ($this->searchBy === 'dateRangeCreatedAt') {
+                $checksheetsQuery->whereBetween('commoninformations.created_at', [$this->startDate, $this->endDate]);
+            } elseif ($this->searchBy === 'dateRangeProductionDate') {
+                $checksheetsQuery->whereBetween('commoninformations.TglProd', [$this->startDate, $this->endDate]);
+            }
+        }
 
-    $checksheets = $checksheetsQuery->get();
-
-    $result = [];
-    $no = 1;
+        $checksheets = $checksheetsQuery->get();
+        $result = [];
+        $no = 1;
 
     foreach ($checksheets as $item) {
         if (!isset($result[$item->CommonInfoID])) {

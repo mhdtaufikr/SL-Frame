@@ -422,6 +422,7 @@ array_unshift($pendingCount, 0);
         // Get the start and end dates from the request
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
+        $searchBy = $request->input('searchBy'); // Add this line to fetch the searchBy parameter
 
         // Get the current date
         $currentDate = Carbon::now()->toDateString();
@@ -430,9 +431,10 @@ array_unshift($pendingCount, 0);
         // Change this to your desired remarks
         $fileName = "sl_frame_export_{$currentDate}.xlsx";
 
-        // Pass the start and end dates to the export class
-        return Excel::download(new SLFrameExport($startDate, $endDate), $fileName);
+        // Pass the start and end dates, and searchBy to the export class
+        return Excel::download(new SLFrameExport($startDate, $endDate, $searchBy), $fileName);
     }
+
 
     public function detailPDI($role, $day)
     {
