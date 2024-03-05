@@ -450,7 +450,6 @@ array_unshift($pendingCount, 0);
 
     public function detailPDI($role, $day)
     {
-        $day = $day - 1;
 
         $year = now()->year;
         $month = now()->month;
