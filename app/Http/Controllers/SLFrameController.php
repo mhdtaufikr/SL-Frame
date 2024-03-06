@@ -400,6 +400,7 @@ array_unshift($pendingCount, 0);
 
         // Add the itemcheckgroup data and the count of checksheets to the final data array
         $data[] = [
+            'id'    => $itemCheckGroup->GroupID,
             'ItemCheck' => $itemCheckGroup->ItemCheck,
             'CountChecksheet' => $countChecksheet,
         ];
