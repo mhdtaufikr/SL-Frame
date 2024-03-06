@@ -626,6 +626,7 @@ array_unshift($pendingCount, 0);
 
         // Add the itemcheckgroup data and the count of checksheets to the final data array
         $data[] = [
+            'id'    => $itemCheckGroup->GroupID,
             'ItemCheck' => $itemCheckGroup->ItemCheck,
             'CountChecksheet' => $countChecksheet,
         ];
@@ -633,6 +634,78 @@ array_unshift($pendingCount, 0);
     $data = collect($data);
         // Pass the data to the view
         return view('slframe.test', compact('sums', 'findingQGCount', 'findingPDICount', 'pendingCount','data'));
+    }
+
+    public function detailRole($role){
+
+        $year = now()->year;
+        $month = now()->month;
+
+        // Extract the start and end date from the provided $date range
+        // $dates = explode('-', $date);
+        // $startDate = Carbon::create(now()->year, now()->month, $dates[0], 0, 0, 0);
+        // $endDate = Carbon::create(now()->year, now()->month, $dates[1], 23, 59, 59);
+
+       // Get the first day of the current month
+        $startDate = Carbon::create($year, $month, 1, 0, 0, 0);
+
+        // Get the last day of the current month
+        $endDate = Carbon::create($year, $month, $startDate->daysInMonth, 23, 59, 59);
+
+        if ($role == 'pdi') {
+            // Fetch Commoninformation records where FindingPDI or RepairPDI is 1 and there is a related record in checksheet
+            $Commoninformation = Commoninformation::where('Status', 2)
+                ->where('InspectionLevel', 2)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->whereHas('checksheet', function ($query) {
+                    $query->where('FindingPDI', 1)->orWhere('RepairPDI', 1);
+                })
+                ->get();
+
+            // Join to checksheet table where FindingPDI or RepairPDI is 1
+            $Commoninformation->load(['checksheet' => function ($query) {
+                $query->where('FindingPDI', 1)->orWhere('RepairPDI', 1);
+            }]);
+        } else if ($role == 'qg') {
+            // Fetch Commoninformation records where FindingQG or RepairQG is 1 and there is a related record in checksheet
+            $Commoninformation = Commoninformation::where('Status', 2)
+                ->where('InspectionLevel', 2)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->whereHas('checksheet', function ($query) {
+                    $query->where('FindingQG', 1)->orWhere('RepairQG', 1);
+                })
+                ->get();
+
+            // Join to checksheet table where FindingQG or RepairQG is 1
+            $Commoninformation->load(['checksheet' => function ($query) {
+                $query->where('FindingQG', 1)->orWhere('RepairQG', 1);
+            }]);
+        } else {
+
+            $itemCheck = Itemcheckgroup::where('GroupID', $role)->value('ItemCheck');
+
+            $commonInfoIDs = Checksheet::where('ItemCheck', $itemCheck)->pluck('CommonInfoID');
+
+            $Commoninformation = collect(); // Initialize an empty collection to store the results
+
+            foreach ($commonInfoIDs as $commonInfoID) {
+                // Query the commoninformations table for each CommonInfoID
+                $commonInfo = Commoninformation::where('Status', 2)
+                    ->where('InspectionLevel', 2)
+                    ->whereBetween('created_at', [$startDate, $endDate])
+                    ->where('CommonInfoID', $commonInfoID)
+                    ->get();
+
+                // Merge the results into the collection
+                $Commoninformation = $Commoninformation->merge($commonInfo);
+            }
+
+            // Now $Commoninformation contains all the results in a single collection
+
+        }
+        return view('slframe.main', compact('Commoninformation'));
+
+
     }
 
 }
