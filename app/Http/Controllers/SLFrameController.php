@@ -289,6 +289,7 @@ class SLFrameController extends Controller
             ->where('checksheets.created_at', '>=', now()->firstOfMonth())
             ->groupBy('date')
             ->get();
+
         // Your existing query to get data from the database for findingPDI
         $findingPDIData = DB::table('commoninformations')
             ->leftJoin('checksheets', function ($join) {
@@ -315,58 +316,38 @@ class SLFrameController extends Controller
             ->groupBy('date')
             ->get();
 
-        // Initialize associative arrays for counts, starting from index 1
-// Initialize associative arrays for counts, starting from index 1
-$findingQGCount = [];
-$findingPDICount = [];
-$pendingCount = [];
+        // Initialize arrays for counts, starting from index 1
+        $findingQGCount = array_fill(1, Carbon::now()->daysInMonth, 0);
+        $findingPDICount = array_fill(1, Carbon::now()->daysInMonth, 0);
+        $pendingCount = array_fill(1, Carbon::now()->daysInMonth, 0);
 
-// Loop through the findingQG data and increment counts for each day of the month
-foreach ($findingQGData as $row) {
-    $dateFormatted = Carbon::parse($row->date)->format('d');
-    $findingQGCount[$dateFormatted] = $row->findingQGCount;
-}
+        // Loop through the findingQG data and increment counts for each day of the month
+        foreach ($findingQGData as $row) {
+            $day = Carbon::parse($row->date)->format('j');
+            $findingQGCount[$day] = $row->findingQGCount;
+        }
 
-// Loop through the findingPDI data and increment counts for each day of the month
-foreach ($findingPDIData as $row) {
-    $dateFormatted = Carbon::parse($row->date)->format('d');
-    $findingPDICount[$dateFormatted] = $row->findingPDICount;
-}
+        // Loop through the findingPDI data and increment counts for each day of the month
+        foreach ($findingPDIData as $row) {
+            $day = Carbon::parse($row->date)->format('j');
+            $findingPDICount[$day] = $row->findingPDICount;
+        }
 
-// Loop through the pending data and increment counts for each day of the month
-foreach ($pendingData as $row) {
-    $dateFormatted = Carbon::parse($row->date)->format('d');
-    $pendingCount[$dateFormatted] = $row->pendingCount;
-}
+        // Loop through the pending data and increment counts for each day of the month
+        foreach ($pendingData as $row) {
+            $day = Carbon::parse($row->date)->format('j');
+            $pendingCount[$day] = $row->pendingCount;
+        }
 
-// Fill in any missing days with zero counts
-for ($i = 1; $i <= 31; $i++) {
-    if (!isset($findingQGCount[$i])) {
-        $findingQGCount[$i] = 0;
-    }
-    if (!isset($findingPDICount[$i])) {
-        $findingPDICount[$i] = 0;
-    }
-    if (!isset($pendingCount[$i])) {
-        $pendingCount[$i] = 0;
-    }
-}
+        // Prepend a dummy value at the beginning of the arrays
+        array_unshift($findingQGCount, 0);
+        array_unshift($findingPDICount, 0);
+        array_unshift($pendingCount, 0);
 
-// Sort arrays by keys to ensure they are ordered correctly
-ksort($findingQGCount);
-ksort($findingPDICount);
-ksort($pendingCount);
-
-// Convert associative arrays to numerically indexed arrays
-$findingQGCount = array_values($findingQGCount);
-$findingPDICount = array_values($findingPDICount);
-$pendingCount = array_values($pendingCount);
-
-// Add a dummy value at the beginning of the arrays
-array_unshift($findingQGCount, 0);
-array_unshift($findingPDICount, 0);
-array_unshift($pendingCount, 0);
-
+        // Remove the dummy value from the end of the arrays
+        array_pop($findingQGCount);
+        array_pop($findingPDICount);
+        array_pop($pendingCount);
 
         // Calculate the sums
         $sumFindingQG = array_sum($findingQGCount);
@@ -406,7 +387,6 @@ array_unshift($pendingCount, 0);
         ];
     }
     $data = collect($data);
-
 
         // Pass the data to the view
         return view('slframe.chart', compact('sums', 'findingQGCount', 'findingPDICount', 'pendingCount','data'));
