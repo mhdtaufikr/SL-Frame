@@ -205,7 +205,7 @@
                     <th>No</th>
                     <th>No. Frame</th>
                     <th>TglProd</th>
-                    <th>PIC</th>
+                    <th>PIC (QG , PDI)</th>
                     <th>Remarks</th>
                     <th>status</th>
                     <th>Created At</th>
@@ -221,9 +221,7 @@
                         <td>{{ $no++ }}</td>
                         <td>{{ $data->NoFrame }}</td>
                         <td>{{ date('d-m-Y', strtotime($data->TglProd)) }}</td>
-                        <td><p>QG : {{$data->NamaQG}}</p>
-                            <p>PDI : {{$data->PDI}}</p>
-                        </td>
+                        <td>{{$data->NamaQG}} , {{$data->PDI}}</td>
                         <td>{{ $data->Remarks}}</td>
 
                         <td class="text-center">@if ($data->QualityStatus == "Bad")
@@ -234,7 +232,7 @@
                         <td>{{ date('d-m-Y', strtotime($data->created_at)) }}</td>
                         <td>
                           <a title="Detail" class="btn btn-primary btn-sm" href="{{url("detail/".$data->NoFrame)}}"> <i class="fas fa-info"></i></a>
-                          <button title="Delete" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-delete{{ $data->id }}">
+                          <button title="Delete" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-delete{{ $data->CommonInfoID }}">
                             <i class="fas fa-trash"></i>
                         </button>
 
@@ -242,11 +240,11 @@
                     </tr>
 
                     {{-- Modal Delete --}}
-                    <div class="modal fade" id="modal-delete{{ $data->id }}" tabindex="-1" aria-labelledby="modal-delete{{ $data->id }}-label" aria-hidden="true">
+                    <div class="modal fade" id="modal-delete{{ $data->CommonInfoID }}" tabindex="-1" aria-labelledby="modal-delete{{ $data->CommonInfoID }}-label" aria-hidden="true">
                         <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                            <h4 class="modal-title" id="modal-delete{{ $data->id }}-label">Delete SL-Frame Record</h4>
+                            <h4 class="modal-title" id="modal-delete{{ $data->CommonInfoID }}-label">Delete SL-Frame Record</h4>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <form action="{{ url('/slframe/delete/'.$data->NoFrame) }}" method="POST">
