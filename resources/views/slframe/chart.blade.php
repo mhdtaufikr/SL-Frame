@@ -72,50 +72,48 @@
                             });
                         </script>
 
-
-                        <div class="col-md-12">
-                            <div class="card mb-4">
-                                <div class="card-body">
-                                    <div id="chartContainer2" style="height: 270px; max-width: 920px; margin: 0px auto;"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="col-md-8">
-                        <div class="col-md-12">
-                            <div class="card mb-4">
-                                <div class="card-body">
-                                    <div id="chartContainer" style="height: 180px; max-width: 920px; margin: 0px auto;"></div>
-                                </div>
-                            </div>
-                        </div>
                         <div class="col-md-12">
                             <div class="card mb-4">
                                 <div class="card-header">
                                     <div class="row text-center">
                                         <div class="col-md-4">
                                             <a href="{{url('/slframe/detail/qg')}}">
-                                            <button class="btn btn-purple btn-icon mr-2">
-                                                <i class="fas fa-medal fa-2x ml-4"></i>
-                                            </button>Finding By QG</a>
+                                            <button class="btn btn-purple btn-sm btn-icon mr-2">
+                                                <i class="fas fa-medal  ml-4"></i>
+                                            </button><p style="font-size: 15px">Finding By QG</p></a>
                                         </div>
                                         <div class="col-md-4">
                                             <a href="{{url('/slframe/detail/qg')}}">
-                                            <button class="btn btn-teal btn-icon mr-2">
-                                                <i class="fas fa-truck-loading fa-2x ml-4"></i>
-                                            </button>Finding By PDI</a>
+                                            <button class="btn btn-teal btn-sm btn-icon mr-2">
+                                                <i class="fas fa-truck-loading  ml-4"></i>
+                                            </button><p style="font-size: 15px">Finding By PDI</p></a>
                                         </div>
                                         <div class="col-md-4">
                                             <a href="{{url('/checksheet')}}">
-                                            <button class="btn btn-pink btn-icon">
-                                                <i class="fas fa-hourglass-end fa-2x ml-4"></i>
-                                            </button>Pending</a>
+                                            <button class="btn btn-pink btn-icon btn-sm">
+                                                <i class="fas fa-hourglass-end  ml-4"></i>
+                                            </button><p style="font-size: 15px">Pending</p></a>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <div id="chartContainer3" style="height: 160px; max-width: 920px; margin: 0px auto;"></div>
+                                    <div id="chartContainer3" style="height: 220px; max-width: 920px; margin: 0px auto;"></div>
+                                </div>
+                            </div>
+                        </div>          </div>
+                    <div class="col-md-8">
+
+                        <div class="col-md-12">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <div id="chartContainer2" style="height: 220px; max-width: 920px; margin: 0px auto;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <div id="chartContainer" style="height: 220px; max-width: 920px; margin: 0px auto;"></div>
                                 </div>
                             </div>
                         </div>
