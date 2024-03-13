@@ -75,7 +75,7 @@
                         <div class="col-md-12">
                             <div class="card mb-4">
                                 <div class="card-header">
-                                    <div class="row text-center">
+                                    <div class="row text-center" style="margin-bottom: -20px">
                                         <div class="col-md-4">
                                             <a href="{{url('/slframe/detail/qg')}}">
                                             <button class="btn btn-purple btn-sm btn-icon mr-2">
@@ -97,7 +97,7 @@
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <div id="chartContainer3" style="height: 220px; max-width: 920px; margin: 0px auto;"></div>
+                                    <div id="chartContainer3" style="height: 240px; max-width: 920px; margin: 0px auto;"></div>
                                 </div>
                             </div>
                         </div>          </div>
