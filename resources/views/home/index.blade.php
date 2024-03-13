@@ -170,7 +170,7 @@
 
 
                                 @if(\Auth::user()->role === 'QG' || (\Auth::user()->role === 'PDI' && $data->InspectionLevel == 2))
-                                <button title="Edit User" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-delete{{ $data->id }}">
+                                <button title="Edit User" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-delete{{ $data->CommonInfoID }}">
                                     <i class="fas fa-trash"></i>
                                 </button>
                                 <a class="btn btn-primary btn-sm" href="{{ url('/slframe/'.$data->NoFrame) }}">
@@ -182,11 +182,11 @@
 
 
                         {{-- Modal Delete --}}
-                        <div class="modal fade" id="modal-delete{{ $data->id }}" tabindex="-1" aria-labelledby="modal-delete{{ $data->id }}-label" aria-hidden="true">
+                        <div class="modal fade" id="modal-delete{{ $data->CommonInfoID }}" tabindex="-1" aria-labelledby="modal-delete{{ $data->CommonInfoID }}-label" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h4 class="modal-title" id="modal-delete{{ $data->id }}-label">Delete SL-Frame</h4>
+                                        <h4 class="modal-title" id="modal-delete{{ $data->CommonInfoID }}-label">Delete SL-Frame</h4>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <form action="{{ url('/slframe/delete/pending/'.$data->NoFrame) }}" method="POST">
