@@ -50,7 +50,7 @@
 <body class="bg-dark">
     <div id="layoutAuthentication">
         <div id="layoutAuthentication_content">
-            <main style="margin-top: 200px">
+            <main style="margin-top: 150px">
                 <div class="container-xl px-4">
                     <div class="row justify-content-center">
                         <div class="col-lg-5">

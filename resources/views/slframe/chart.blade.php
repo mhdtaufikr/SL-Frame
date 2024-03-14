@@ -97,7 +97,7 @@
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <div id="chartContainer3" style="height: 270px; max-width: 920px; margin: -18px auto;"></div>
+                                    <div id="chartContainer3" style="height: 230px; max-width: 920px; margin: -18px auto;"></div>
                                 </div>
                             </div>
                         </div>          </div>
@@ -106,14 +106,14 @@
                         <div class="col-md-12">
                             <div class="card mb-4">
                                 <div class="card-body">
-                                    <div id="chartContainer2" style="height: 200px; max-width: 920px; margin: 0px auto;"></div>
+                                    <div id="chartContainer2" style="height: 180px; max-width: 920px; margin: 0px auto;"></div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-12">
                             <div class="card mb-4">
                                 <div class="card-body">
-                                    <div id="chartContainer" style="height: 240px; max-width: 920px; margin: 0px auto;"></div>
+                                    <div id="chartContainer" style="height: 200px; max-width: 920px; margin: 0px auto;"></div>
                                 </div>
                             </div>
                         </div>
