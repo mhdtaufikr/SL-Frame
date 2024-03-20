@@ -115,6 +115,26 @@
                                 <div class="card-body">
                                     <div id="chartContainer" style="height: 200px; max-width: 920px; margin: 0px auto;"></div>
                                 </div>
+                                {{-- <div class="card-footer">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            @foreach ($data->take(12) as $item)
+                                                <p style="font-size: 12px; margin-bottom: -2px">{{ $item['id'] }} = {{ $item['ItemCheck'] }}</p>
+                                            @endforeach
+                                        </div>
+                                        <div class="col-md-4">
+                                            @foreach ($data->slice(12, 12) as $item)
+                                                <p style="font-size: 12px; margin-bottom: -2px">{{ $item['id'] }} = {{ $item['ItemCheck'] }}</p>
+                                            @endforeach
+                                        </div>
+                                        <div class="col-md-4">
+                                            @foreach ($data->slice(24) as $item)
+                                                <p style="font-size: 12px; margin-bottom: -2px">{{ $item['id'] }} = {{ $item['ItemCheck'] }}</p>
+                                            @endforeach
+                                        </div>
+                                    </div>
+
+                                </div> --}}
                             </div>
                         </div>
                     </div>
@@ -211,10 +231,12 @@ var chart = new CanvasJS.Chart("chartContainer", {
     data: [{
         type: "area",
         dataPoints: chartData.map(item => ({
-            label: item.ItemCheck,
+            label: item.id,
             y: item.CountChecksheet,
+            name: item.ItemCheck, // Add the item check as the name property
             url: '{{ route("detailRole", ["role" => "itemCheck"]) }}'.replace('itemCheck', item.id)
-        }))
+        })),
+        toolTipContent: "<b>Item Check:</b> {name}<br/><b>Count:</b> {y}" // Use {name} for the item check
     }]
 });
 

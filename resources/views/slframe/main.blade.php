@@ -225,9 +225,11 @@
                         <td>{{ $data->Remarks}}</td>
 
                         <td class="text-center">@if ($data->QualityStatus == "Bad")
-                            <i class="fas fa-exclamation-triangle fa-2x text-warning"></i>
+                            <i class="fas fa-exclamation fa-2x text-warning"></i>
+                        @elseif($data->QualityStatus == "Good")
+                        <i class="fas fa-check fa-2x text-success"></i>
                         @else
-                        <i class="fas fa-check-square fa-2x text-success"></i>
+                        <i class="fas fa-ban fa-2x text-danger"></i>
                         @endif</td>
                         <td>{{ date('d-m-Y', strtotime($data->created_at)) }}</td>
                         <td>

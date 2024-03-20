@@ -14,7 +14,7 @@ class HomeController extends Controller
         ->where('Status', '<>', '2')
         ->get();
         $CommoninformationQG = Commoninformation::where('InspectionLevel', '1')->get();
-        $CommoninformationPDI = Commoninformation::where('Status','<>', '2')->get();
+        $CommoninformationPDI = Commoninformation::where('Status','<>', '2')->where('PDI', null)->get();
 
         return view('home.index',compact('Commoninformation','CommoninformationQG','CommoninformationPDI'));
 

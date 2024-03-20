@@ -20,6 +20,7 @@
         width: 1.25em;  /* Adjust the width as needed */
         height: 1.25em; /* Adjust the height as needed */
     }
+
 </style>
 
 @section('content')
@@ -42,7 +43,7 @@
                         @elseif($Commoninformation->Status == 2)
                             <button class="btn btn-success btn-md">Done</button>
                         @else
-                            <span class="text-danger">Unknown Status</span>
+                        <button class="btn btn-danger btn-md">Reject</button>
                         @endif
                         <button id="submitButton" class="btn btn-primary btn-md" data-bs-toggle="modal" data-bs-target="#additionalInfoModal" disabled>Submit</button>
                     </span>
@@ -298,6 +299,14 @@
 
                                         <input  value="{{ auth()->user()->name }}" type="text" class="form-control" id="nameOfQG" name="name">
                                     </div>
+                                    <div class="col-md-12 mb-4 mt-4">
+                                        <div class="form-check form-switch">
+                                            <input name='reject' class="form-check-input custom-checkbox" type="checkbox" role="switch" id="flexSwitchCheckDefault" {{ $Commoninformation->Status == 3 ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="flexSwitchCheckDefault">Reject?</label>
+
+                                        </div>
+                                    </div>
+
                                     <div class="col-sm-12">
                                         <label for="remarks" style="font-size: 1em;">Remarks</label>
                                         <textarea class="form-control" name="remarks" id="remarks" rows="5">{{$Commoninformation->Remarks}}</textarea>

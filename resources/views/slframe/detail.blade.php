@@ -42,7 +42,7 @@
                         @elseif($Commoninformation->Status == 2)
                             <button class="btn btn-success btn-md">Done</button>
                         @else
-                            <span class="text-danger">Unknown Status</span>
+                        <button class="btn btn-danger btn-md">Reject</button>
                         @endif
                         <button id="submitButton" class="btn btn-primary btn-md" data-bs-toggle="modal" data-bs-target="#additionalInfoModal">Info</button>
                     </span>

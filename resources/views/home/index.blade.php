@@ -162,7 +162,7 @@
                                 @elseif ($data->Status == 2)
                                     <button class="btn btn-sm btn-success btn-md">Done</button>
                                 @else
-                                    <span class="text-danger">Unknown Status</span>
+                                <button class="btn btn-danger btn-sm">Reject</button>
                                 @endif
                             </td>
 
