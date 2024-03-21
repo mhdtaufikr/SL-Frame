@@ -76,7 +76,7 @@
                         @if(\Auth::user()->role === 'PDI')
                         <select name="no_frame" id="noFrame" class="form-control chosen-select" required>
                             <option value="">- Please Select NO. Frame -</option>
-                            @foreach ($Commoninformation as $data)
+                            @foreach ($CommoninformationPDI as $data)
                                 <option value="{{ $data->NoFrame }}">{{ $data->NoFrame }}</option>
                             @endforeach
                         </select>
