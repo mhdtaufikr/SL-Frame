@@ -7,6 +7,7 @@ use App\Http\Controllers\DropdownController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RulesController;
 use App\Http\Controllers\SLFrameController;
+use App\Http\Controllers\ReportController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -47,7 +48,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/slframe/detail/{role}', [SLFrameController::class, 'detailRole'])->name('detailRole');
     Route::get('/test', [SLFrameController::class, 'test']);
 
-
+    //Report Controller
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::post('/reports/upload', [ReportController::class, 'upload'])->name('reports.upload');
+    Route::get('/reports/download/{id}', [ReportController::class, 'download'])->name('reports.download');
+    Route::delete('/reports/delete/{id}', [ReportController::class, 'destroy'])->name('reports.destroy');
 
     //Dropdown Controller
     Route::get('/dropdown', [DropdownController::class, 'index'])->middleware(['checkRole:IT']);

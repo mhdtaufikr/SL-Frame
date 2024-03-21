@@ -17,6 +17,10 @@
                     <div class="nav-link-icon"><i class="fas fa-database"></i></div>
                     SL-Frame Record
                 </a>
+                <a class="nav-link" href="{{url('/reports')}}">
+                    <div class="nav-link-icon"><i class="fas fa-folder-open"></i></div>
+                    SL-Frame Report
+                </a>
                 @if(\Auth::user()->role === 'IT')
                 <!-- Sidenav Menu Heading (Core)-->
                 <div class="sidenav-menu-heading">Configuration</div>

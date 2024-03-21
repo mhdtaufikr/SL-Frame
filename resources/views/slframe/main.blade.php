@@ -113,9 +113,19 @@
 
 
                     <div class="mb-3 col-sm-12">
-                        <button title="Export to Excel" type="button" class="btn btn-success btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#modal-export-excel">
-                            Export to Excel
-                        </button>
+                        <div class="mb-3 d-flex justify-content-between align-items-center">
+                            <button title="Export to Excel" type="button" class="btn btn-success btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#modal-export-excel">
+                                Export to Excel
+                            </button>
+                            <div class="legend d-flex">
+                                <span class="legend-item me-3"><i class="fas fa-check text-success me-1"></i> No Finding</span>
+                                <span class="legend-item me-3"><i class="fas fa-exclamation text-warning me-1"></i> Finding</span>
+                                <span class="legend-item"><i class="fas fa-ban text-danger me-1"></i> Reject</span>
+                            </div>
+                        </div>
+
+
+
 
                         <!-- Export to Excel Modal -->
                         <div class="modal fade" id="modal-export-excel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
