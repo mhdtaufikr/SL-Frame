@@ -313,13 +313,14 @@ class SLFrameController extends Controller
 
         // Your existing query to get data from the database for pending
         $pendingData = DB::table('commoninformations')
-            ->select(
-                DB::raw('DATE(created_at) as date'),
-                DB::raw('SUM(IF(Status != 2 OR InspectionLevel != 2, 1, 0)) as pendingCount')
-            )
-            ->where('created_at', '>=', now()->firstOfMonth())
-            ->groupBy('date')
-            ->get();
+        ->select(
+            DB::raw('DATE(created_at) as date'),
+            DB::raw('SUM(IF(Status != 2 AND Status != 3 AND InspectionLevel != 2, 1, 0)) as pendingCount')
+        )
+        ->where('created_at', '>=', now()->firstOfMonth())
+        ->groupBy('date')
+        ->get();
+
 
         // Initialize arrays for counts, starting from index 1
         $findingQGCount = array_fill(1, Carbon::now()->daysInMonth, 0);
