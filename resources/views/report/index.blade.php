@@ -222,7 +222,7 @@
                 </div>
                 <div class="modal-body">
                     <!-- File list for the folder -->
-                    <table class="table table-bordered table-striped">
+                    <table  id="tableFile" class="table table-bordered table-striped">
                         <thead>
                             <tr>
                                 <th>File Name</th>
@@ -282,6 +282,17 @@
 <script>
 $(document).ready(function () {
     var table = $("#tableUser").DataTable({
+        "responsive": false,
+        "lengthChange": false,
+        "autoWidth": false,
+        "order": [],
+        "dom": 'Bfrtip',
+        "buttons": []  // Set buttons to an empty array to disable export button
+    });
+});
+
+$(document).ready(function () {
+    var table = $("#tableFile").DataTable({
         "responsive": false,
         "lengthChange": false,
         "autoWidth": false,
