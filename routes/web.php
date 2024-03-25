@@ -52,7 +52,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::post('/reports/upload', [ReportController::class, 'upload'])->name('reports.upload');
     Route::get('/reports/download/{id}', [ReportController::class, 'download'])->name('reports.download');
-    Route::delete('/reports/delete/{id}', [ReportController::class, 'destroy'])->name('reports.destroy');
+    Route::get('/reports/delete/{id}', [ReportController::class, 'destroy'])->name('reports.destroy');
+    Route::post('/reports/folder/add', [ReportController::class, 'addFolder'])->name('reports.folder');
+    Route::get('/reports/folder/{folder}', [ReportController::class, 'folderDetail'])->name('reports.folderDetail');
+    Route::delete('/reports/delete/folder/{folder}', [ReportController::class, 'destroyFolder'])->name('reports.destroy');
+
 
     //Dropdown Controller
     Route::get('/dropdown', [DropdownController::class, 'index'])->middleware(['checkRole:IT']);

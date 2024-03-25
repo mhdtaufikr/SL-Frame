@@ -74,25 +74,33 @@
                     </div>
 
                 <div class="mb-3 col-sm-12">
-                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#upload-file">
-                        Upload File
+                    <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#add-folder">
+                        Add Folder
                     </button>
-                    <div class="modal fade" id="upload-file" tabindex="-1" aria-labelledby="upload-file-label" aria-hidden="true">
+
+
+                    <div class="modal fade" id="add-folder" tabindex="-1" aria-labelledby="add-folder-label" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="upload-file-label">Upload File</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <h5 class="modal-title" id="add-folder-label">Add Folder</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modals" aria-label="Close"></button>
                                 </div>
-                                <form action="{{ route('reports.upload') }}" method="POST" enctype="multipart/form-data">
+                                <form action="{{route('reports.folder')}}" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <div class="modal-body">
                                         <div class="mb-3">
-                                            <label for="title" class="form-label">Title</label>
-                                        <input  required type="text" class="form-control" id="title" name="title">
-
+                                            <label for="title" class="form-label">Folder Name</label>
+                                            <input  required type="text" class="form-control" id="title" name="folder">
                                         </div>
+
                                         <div class="mb-3">
+                                            <label for="title" class="form-label">File Name</label>
+                                            <input  required type="text" class="form-control" id="title" name="title">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="">Initiate File</label>
                                             <input required type="file" class="form-control" id="csvFile" name="file" accept=".xlsx">
 
                                         </div>
@@ -106,12 +114,13 @@
                                     <div class="modal-footer">
 
                                         <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Upload File</button>
+                                        <button type="submit" class="btn btn-primary">Add Folder</button>
                                     </div>
                                 </form>
                             </div>
                         </div>
                     </div>
+
                 </div>
 
 
@@ -120,8 +129,7 @@
                   <thead>
                   <tr>
                     <th>No</th>
-                    <th>Title</th>
-                    <th>Date</th>
+                    <th>Folder</th>
                     <th>Action</th>
                   </tr>
                   </thead>
@@ -129,28 +137,59 @@
                     @php
                       $no=1;
                     @endphp
-                    @foreach ($report as $data)
+                    @foreach ($folders as $data)
                     <tr>
                         <td>{{ $no++ }}</td>
-                        <td>{{ $data->title }}</td>
-                        <td>{{ date('d-m-Y', strtotime($data->created_at)) }}</td>
+                        <td>{{ $data->folder }}</td>
                         <td>
-                          <a title="Download" class="btn btn-success btn-sm" href="{{url('/reports/download/'.$data->id)}}"> <i class="fas fa-download"></i></a>
+                            <button title="Add File" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modal-upload-{{ $data->folder }}">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                         <!-- Button to open the modal -->
+                        <button title="Detail" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-detail-{{ $data->folder }}">
+                            <i class="fas fa-info"></i>
+                        </button>
                           <button title="Delete" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-delete{{ $data->id }}">
                             <i class="fas fa-trash"></i>
                         </button>
                         </td>
                     </tr>
 
+                     <!-- Modal for uploading file -->
+                        <div class="modal fade" id="modal-upload-{{ $data->folder }}" tabindex="-1" aria-labelledby="modal-upload-label-{{ $data->folder }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="modal-upload-label-{{ $data->folder }}">Upload File ({{ $data->folder }})</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form action="{{ route('reports.upload') }}" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        <input type="hidden" name="folder" value="{{ $data->folder }}">
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label for="file" class="form-label">Select File</label>
+                                                <input required type="file" class="form-control" id="file" name="file">
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Upload</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
                     {{-- Modal Delete --}}
                     <div class="modal fade" id="modal-delete{{ $data->id }}" tabindex="-1" aria-labelledby="modal-delete{{ $data->id }}-label" aria-hidden="true">
                         <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                            <h4 class="modal-title" id="modal-delete{{ $data->id }}-label">Delete Report?</h4>
+                            <h4 class="modal-title" id="modal-delete{{ $data->id }}-label">Delete Folder {{ $data->folder }}?</h4>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <form action="{{ url('/reports/delete/'.$data->id) }}" method="POST">
+                            <form action="{{ url('/reports/delete/folder/'.$data->folder) }}" method="POST">
                             @csrf
                             @method('delete')
                             <div class="modal-body">
@@ -171,6 +210,55 @@
                     @endforeach
                   </tbody>
                 </table>
+
+                @foreach ($folders as $folder)
+    <!-- Modal for folder: {{ $folder->folder }} -->
+    <div class="modal fade" id="modal-detail-{{ $folder->folder }}" tabindex="-1" aria-labelledby="modal-detail-title" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-detail-title">Files in Folder "{{ $folder->folder }}"</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- File list for the folder -->
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>File Name</th>
+                                <th>Created At</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($reports as $report)
+                                @if ($report->folder === $folder->folder)
+                                    <tr>
+                                        <td>{{ $report->title }}</td>
+                                        <td>{{ date('d-m-Y', strtotime($report->created_at)) }}</td>
+                                        <td>
+                                            <a title="Download" class="btn btn-success btn-sm" href="{{ url('/reports/download/'.$report->id) }}">
+                                                <i class="fas fa-download"></i>
+                                            </a>
+                                            <a title="delete" class="btn btn-danger btn-sm" href="{{ url('/reports/delete/'.$report->id) }}">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endif
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endforeach
+
+
               </div>
               </div>
               <!-- /.card-body -->

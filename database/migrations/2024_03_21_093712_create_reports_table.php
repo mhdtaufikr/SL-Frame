@@ -15,10 +15,12 @@ class CreateReportsTable extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
+            $table->string('folder');
             $table->string('title');
             $table->string('file_path');
             $table->timestamps();
         });
+
 
     }
 
