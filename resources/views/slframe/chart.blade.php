@@ -97,25 +97,29 @@
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <div id="chartContainer3" style="height: 230px; max-width: 920px; margin: -18px auto;"></div>
+                                    <div id="chartContainer3" style="height: 290px; max-width: 920px; margin: -18px auto;"></div>
                                 </div>
                             </div>
                         </div>          </div>
                     <div class="col-md-8">
 
                         <div class="col-md-12">
-                            <div class="card mb-4">
+                            <div class="card mb-3">
                                 <div class="card-body">
-                                    <div id="chartContainer2" style="height: 180px; max-width: 920px; margin: 0px auto;"></div>
+                                    <div id="chartContainer2" style="height: 210px; max-width: 920px; margin: 0px auto;"></div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-12">
-                            <div class="card mb-4">
-                                <div class="card-body">
-                                    <div id="chartContainer" style="height: 200px; max-width: 920px; margin: 0px auto;"></div>
+                            <div class="card mb-4  card-collapsable">
+                                <div class="card-body" href="#collapseCardExample" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+
+                                    <div id="chartContainer" style="height: 228px; max-width: 920px; margin: 0px auto;"></div>
+                                    <div class="card-collapsable-arrow">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </div>
                                 </div>
-                                {{-- <div class="card-footer">
+                                 <div id="collapseCardExample" class="card-footer collapse ">
                                     <div class="row">
                                         <div class="col-md-4">
                                             @foreach ($data->take(12) as $item)
@@ -134,7 +138,7 @@
                                         </div>
                                     </div>
 
-                                </div> --}}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -173,13 +177,14 @@
 
         var now = new Date();
         var month = monthNames[now.getMonth()];
-
-        var chart = new CanvasJS.Chart("chartContainer3", {
+        var totalRecordsChecked = {{ $totalRecordsChecked }};
+    var chart = new CanvasJS.Chart("chartContainer3", {
     theme: "light2",
     exportEnabled: true,
     animationEnabled: true,
     title: {
-        text: month
+        text:  "Total = " + totalRecordsChecked + "(" + month + ")"
+
     },
     data: [{
         type: "pie",

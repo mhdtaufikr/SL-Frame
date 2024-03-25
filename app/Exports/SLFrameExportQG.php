@@ -53,18 +53,16 @@ class SLFrameExportQG implements FromCollection, WithHeadings, WithStyles, Shoul
 
         $checksheets = $checksheetsQuery->get();
         $result = [];
-        $no = 1;
-
         foreach ($checksheets as $item) {
             if (!isset($result[$item->CommonInfoID])) {
                 $result[$item->CommonInfoID] = [
-                    'no' => $no,
                     'tgl' => $item->TglProd,
                     'shift' => $item->Shift,
                     'No. Frame' => $item->NoFrame,
+                    'Status' =>  $item['QualityStatus'],
                 ];
 
-                $no++;
+
             }
 
         foreach ($uniqueItemChecks as $check) {
@@ -114,24 +112,17 @@ class SLFrameExportQG implements FromCollection, WithHeadings, WithStyles, Shoul
         foreach ($compare as $frame) {
             if (!in_array($frame['NoFrame'], array_column($result, 'No. Frame'))) {
                 $result[] = [
-                    'no' => $no,
                     'tgl' => $frame['TglProd'],
                     'shift' => $frame['Shift'],
                     'No. Frame' => $frame['NoFrame'],
+                    'Status' =>  $frame['QualityStatus'],
                 ];
-                $no++;
             }
         }
         // Sort the result array by No. Frame column in ascending order
         usort($result, function ($a, $b) {
             return strcmp($a['No. Frame'], $b['No. Frame']);
         });
-
-        // Reassign the 'no' keys to ensure they are sequential
-        $result = array_values(array_map(function ($item, $index) {
-            $item['no'] = $index + 1;
-            return $item;
-        }, $result, array_keys($result)));
 
 
         foreach ($result as &$item) {

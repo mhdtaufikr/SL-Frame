@@ -198,31 +198,37 @@ class SLFrameController extends Controller
             return redirect()->route('checksheet')->with('error', 'Commoninformation not found');
         }
 
-           // Update Commoninformation based on user role and reject status
-                if (Auth::user()->role == 'QG') {
-                    $commoninformation->update([
-                        'Status' => $rejectStatus ?? 0,
-                        'TglProd' => $tglProd,
-                        'Shift' => $shift,
-                        'NamaQG' => $name,
-                        'Remarks' => $remarks,
-                        'InspectionLevel' => 2,
-                        'QualityStatus' => $rejectStatus ? 'Reject' : ($commoninformation->checksheet->isEmpty() ? 'Good' : 'Bad'),
-                    ]);
-                } elseif (Auth::user()->role == 'PDI') {
-                    $commoninformation->update([
-                        'Status' => $rejectStatus ?? 2,
-                        'PDI' => $name,
-                        'PDI_Date' => $tglProd,
-                        'Remarks' => $remarks,
-                        'QualityStatus' => $rejectStatus ? 'Reject' : ($commoninformation->checksheet->isEmpty() ? 'Good' : 'Bad'),
-                    ]);
-                }
+        // Update Commoninformation based on user role and reject status
+        if (Auth::user()->role == 'QG') {
+            $updateData = [
+                'Status' => $rejectStatus ?? 0,
+                'TglProd' => $tglProd,
+                'Shift' => $shift,
+                'NamaQG' => $name,
+                'Remarks' => $remarks,
+                'InspectionLevel' => 2,
+                'QualityStatus' => $rejectStatus ? 'Reject' : ($commoninformation->checksheet->isEmpty() ? 'Good' : 'Finding'),
+            ];
 
+            if ($rejectStatus) {
+                $updateData['PDI'] = '-';
+            }
+
+            $commoninformation->update($updateData);
+        } elseif (Auth::user()->role == 'PDI') {
+            $commoninformation->update([
+                'Status' => $rejectStatus ?? 2,
+                'PDI' => $name,
+                'PDI_Date' => $tglProd,
+                'Remarks' => $remarks,
+                'QualityStatus' => $rejectStatus ? 'Reject' : ($commoninformation->checksheet->isEmpty() ? 'Good' : 'Finding'),
+            ]);
+        }
 
         // Redirect to the '/home' route
         return redirect()->route('checksheet')->with('status', "Data SL-Frame No. {$noFrame} has been submitted successfully!");
     }
+
 
     public function delete($id){
         $idFrame = Commoninformation::where('NoFrame',$id)->first()->CommonInfoID;
@@ -321,6 +327,12 @@ class SLFrameController extends Controller
         ->groupBy('date')
         ->get();
 
+        $totalRecordsChecked = DB::table('commoninformations')
+        ->where('Status', '=', 2)
+        ->orwhere('Status', '=', 3)
+        ->where('InspectionLevel', '=', 2)
+        ->whereMonth('created_at', now()->month) // Filter by current month
+        ->count();
 
         // Initialize arrays for counts, starting from index 1
         $findingQGCount = array_fill(1, Carbon::now()->daysInMonth, 0);
@@ -393,9 +405,8 @@ class SLFrameController extends Controller
         ];
     }
     $data = collect($data);
-
         // Pass the data to the view
-        return view('slframe.chart', compact('sums', 'findingQGCount', 'findingPDICount', 'pendingCount','data'));
+        return view('slframe.chart', compact('sums', 'findingQGCount', 'findingPDICount', 'pendingCount','data','totalRecordsChecked'));
     }
     public function detailSLFrame($id){
         $noframe = $id;

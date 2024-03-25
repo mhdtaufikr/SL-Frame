@@ -52,18 +52,16 @@ class SLFrameExportPDI implements FromCollection, WithHeadings, WithStyles, Shou
 
         $checksheets = $checksheetsQuery->get();
         $result = [];
-        $no = 1;
 
         foreach ($checksheets as $item) {
             if (!isset($result[$item->CommonInfoID])) {
                 $result[$item->CommonInfoID] = [
-                    'no' => $no,
                     'tgl' => $item->TglProd,
                     'shift' => $item->Shift,
                     'No. Frame' => $item->NoFrame,
+                    'Status' =>  $item['QualityStatus'],
                 ];
 
-                $no++;
             }
 
         foreach ($uniqueItemChecks as $check) {
@@ -115,24 +113,17 @@ class SLFrameExportPDI implements FromCollection, WithHeadings, WithStyles, Shou
         foreach ($compare as $frame) {
             if (!in_array($frame['NoFrame'], array_column($result, 'No. Frame'))) {
                 $result[] = [
-                    'no' => $no,
                     'tgl' => $frame['TglProd'],
                     'shift' => $frame['Shift'],
                     'No. Frame' => $frame['NoFrame'],
+                    'Status' =>  $frame['QualityStatus'],
                 ];
-                $no++;
             }
         }
         // Sort the result array by No. Frame column in ascending order
         usort($result, function ($a, $b) {
             return strcmp($a['No. Frame'], $b['No. Frame']);
         });
-
-        // Reassign the 'no' keys to ensure they are sequential
-        $result = array_values(array_map(function ($item, $index) {
-            $item['no'] = $index + 1;
-            return $item;
-        }, $result, array_keys($result)));
 
 
         foreach ($result as &$item) {
@@ -158,7 +149,7 @@ class SLFrameExportPDI implements FromCollection, WithHeadings, WithStyles, Shou
     public function headings(): array
     {
         return [
-            ['NO.','Tgl','Shift','Serie','C/Mbr No.1 + Complete Bracket','','Hook Frt / CKD','','Bracket Tie Down / SLJ-77','','Bracket  / SGC -22','','Bracket Horn / SLJ-55','','Bracket Mtg Cabin A/SLJ-85','','C/Mbr No.1,5 + Complete Bracket','','Bracket Strut Bar  / SLJ-38','','Bracket Radiator  / SLJ-82-83','','Reinforcement / SLJ-44 & SLJ-33','','Bracket Roller / SLJ-73','','Bracket / SLJ-103','','C/Mbr No.2 + Complete Bracket','','Long Sill   / SLJ-81','','Bracket Assy Cab Mtg / SLJ-119','','Bracket Eng. Sup.  / SLJ-141','','Bracket Cable A / SLJ-65','','Bracket Hose / SLJ-35','','Hanger Spring / CKD','','Bracket Fuel Tank  / SLJ-97','','Brkt Brake Hose','','C/Mbr No. 3 + Complete Brkt','','C/Mbr No.4 + Complete Brkt','','Hook Rear / CKD','','Brkt Shackle','','Brkt Stay muffler / SLJ-97','','Brkt Stoper Bumper / SLJ-43','','Brkt Mtg SLJ-18 Assy Nut','','Brkt Harness , RH side x 3','','Bracket / SGJ-22','','Bracket Clip Bintang x 2','','Bracket New x 3','','Cat Belang','','Cat Bubble','','Vin Number','','Grease Shift Lev.','','Grease Pin Dumper','','Total',],
+            ['Tgl','Shift','Serie','Status','C/Mbr No.1 + Complete Bracket','','Hook Frt / CKD','','Bracket Tie Down / SLJ-77','','Bracket  / SGC -22','','Bracket Horn / SLJ-55','','Bracket Mtg Cabin A/SLJ-85','','C/Mbr No.1,5 + Complete Bracket','','Bracket Strut Bar  / SLJ-38','','Bracket Radiator  / SLJ-82-83','','Reinforcement / SLJ-44 & SLJ-33','','Bracket Roller / SLJ-73','','Bracket / SLJ-103','','C/Mbr No.2 + Complete Bracket','','Long Sill   / SLJ-81','','Bracket Assy Cab Mtg / SLJ-119','','Bracket Eng. Sup.  / SLJ-141','','Bracket Cable A / SLJ-65','','Bracket Hose / SLJ-35','','Hanger Spring / CKD','','Bracket Fuel Tank  / SLJ-97','','Brkt Brake Hose','','C/Mbr No. 3 + Complete Brkt','','C/Mbr No.4 + Complete Brkt','','Hook Rear / CKD','','Brkt Shackle','','Brkt Stay muffler / SLJ-97','','Brkt Stoper Bumper / SLJ-43','','Brkt Mtg SLJ-18 Assy Nut','','Brkt Harness , RH side x 3','','Bracket / SGJ-22','','Bracket Clip Bintang x 2','','Bracket New x 3','','Cat Belang','','Cat Bubble','','Vin Number','','Grease Shift Lev.','','Grease Pin Dumper','','Total',],
             ['', '', '', '','1.1','1.1','1.2','1.2','1.3','1.3','1.4','1.4','1.5','1.5','1.6','1.6','2.1','2.1','2.2','2.2','2.3','2.3','2.4','2.4','2.5','2.5','2.6','2.6','3.1','3.1','3.2','3.2','3.3','3.3','3.4','3.4','3.5','3.5','3.6','3.6','3.7','3.7','3.8','3.8','4.1','4.1','4.2','4.2','4.3','4.3','4.4','4.4','4.5','4.5','4.6','4.6','4.7','4.7','4.8','4.8','5.1','5.1','5.2','5.2','6.1','6.1','6.2','6.2','7.1','7.1','7.2','7.2','7.3','7.3','7.4','7.4','7.5','7.5'],
             ['', '', '', '','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI','','PDI',''],
 

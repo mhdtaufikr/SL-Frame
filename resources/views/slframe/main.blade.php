@@ -234,7 +234,7 @@
                         <td>{{$data->NamaQG}} , {{$data->PDI}}</td>
                         <td>{{ $data->Remarks}}</td>
 
-                        <td class="text-center">@if ($data->QualityStatus == "Bad")
+                        <td class="text-center">@if ($data->QualityStatus == "Finding")
                             <i class="fas fa-exclamation fa-2x text-warning"></i>
                         @elseif($data->QualityStatus == "Good")
                         <i class="fas fa-check fa-2x text-success"></i>
