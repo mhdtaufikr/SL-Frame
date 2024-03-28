@@ -76,7 +76,7 @@
                                         @csrf
                                         <!-- Form Group (email address)-->
                                         <div class="mb-3">
-                                            <label class="small mb-1" for="inputEmailAddress">Email</label>
+                                            <label class="small mb-1" for="inputEmailAddress">Username</label>
                                             <input class="form-control" id="inputEmailAddress" type="text" placeholder="Enter email address" name="email" />
                                         </div>
                                         <!-- Form Group (password)-->

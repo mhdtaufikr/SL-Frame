@@ -334,50 +334,69 @@ class SLFrameController extends Controller
         ->whereMonth('created_at', now()->month) // Filter by current month
         ->count();
 
-        // Initialize arrays for counts, starting from index 1
-        $findingQGCount = array_fill(1, Carbon::now()->daysInMonth, 0);
-        $findingPDICount = array_fill(1, Carbon::now()->daysInMonth, 0);
-        $pendingCount = array_fill(1, Carbon::now()->daysInMonth, 0);
+        $rejectData = DB::table('commoninformations')
+        ->select('PDI_Date', 'Status') // Include the date column in your select statement
+        ->where('Status', '=', 3) // Filter by status 3 for rejected records
+        ->whereMonth('created_at', now()->month) // Filter by current month
+        ->get();
 
-        // Loop through the findingQG data and increment counts for each day of the month
-        foreach ($findingQGData as $row) {
-            $day = Carbon::parse($row->date)->format('j');
-            $findingQGCount[$day] = $row->findingQGCount;
-        }
 
-        // Loop through the findingPDI data and increment counts for each day of the month
-        foreach ($findingPDIData as $row) {
-            $day = Carbon::parse($row->date)->format('j');
-            $findingPDICount[$day] = $row->findingPDICount;
-        }
+    // Initialize arrays for counts, starting from index 1
+    $findingQGCount = array_fill(1, Carbon::now()->daysInMonth, 0);
+    $findingPDICount = array_fill(1, Carbon::now()->daysInMonth, 0);
+    $pendingCount = array_fill(1, Carbon::now()->daysInMonth, 0);
+    $rejectCount = array_fill(1, Carbon::now()->daysInMonth, 0); // Initialize reject count array
 
-        // Loop through the pending data and increment counts for each day of the month
-        foreach ($pendingData as $row) {
-            $day = Carbon::parse($row->date)->format('j');
-            $pendingCount[$day] = $row->pendingCount;
-        }
+    // Loop through the findingQG data and increment counts for each day of the month
+    foreach ($findingQGData as $row) {
+        $day = Carbon::parse($row->date)->format('j');
+        $findingQGCount[$day] = $row->findingQGCount;
+    }
 
-        // Prepend a dummy value at the beginning of the arrays
-        array_unshift($findingQGCount, 0);
-        array_unshift($findingPDICount, 0);
-        array_unshift($pendingCount, 0);
+    // Loop through the findingPDI data and increment counts for each day of the month
+    foreach ($findingPDIData as $row) {
+        $day = Carbon::parse($row->date)->format('j');
+        $findingPDICount[$day] = $row->findingPDICount;
+    }
 
-        // Remove the dummy value from the end of the arrays
-        array_pop($findingQGCount);
-        array_pop($findingPDICount);
-        array_pop($pendingCount);
+    // Loop through the pending data and increment counts for each day of the month
+    foreach ($pendingData as $row) {
+        $day = Carbon::parse($row->date)->format('j');
+        $pendingCount[$day] = $row->pendingCount;
+    }
 
-        // Calculate the sums
-        $sumFindingQG = array_sum($findingQGCount);
-        $sumFindingPDI = array_sum($findingPDICount);
-        $sumPending = array_sum($pendingCount);
+    // Loop through the reject data and increment counts for each day of the month where status is 3
+    foreach ($rejectData as $row) {
+        $day = Carbon::parse($row->PDI_Date)->format('j');
+        $rejectCount[$day]++;
+    }
 
-        // Create an associative array to store the sums
-        $sums = [
-            'sumFindingQG' => $sumFindingQG,
-            'sumFindingPDI' => $sumFindingPDI,
-            'sumPending' => $sumPending,
-        ];
+    // Prepend a dummy value at the beginning of the arrays
+    array_unshift($findingQGCount, 0);
+    array_unshift($findingPDICount, 0);
+    array_unshift($pendingCount, 0);
+    array_unshift($rejectCount, 0); // Add a dummy value for reject count
+
+    // Remove the dummy value from the end of the arrays
+    array_pop($findingQGCount);
+    array_pop($findingPDICount);
+    array_pop($pendingCount);
+    array_pop($rejectCount);
+
+    // Calculate the sums
+    $sumFindingQG = array_sum($findingQGCount);
+    $sumFindingPDI = array_sum($findingPDICount);
+    $sumPending = array_sum($pendingCount);
+    $sumReject = array_sum($rejectCount); // Calculate sum of reject count
+
+    // Create an associative array to store the sums
+    $sums = [
+        'sumFindingQG' => $sumFindingQG,
+        'sumFindingPDI' => $sumFindingPDI,
+        'sumPending' => $sumPending,
+        'sumReject' => $sumReject, // Add sum of reject count to the sums array
+    ];
+
 
      // Get the current month's start and end date
     $startDate = Carbon::now()->startOfMonth();
@@ -678,7 +697,13 @@ array_unshift($pendingCount, 0);
             $Commoninformation->load(['checksheet' => function ($query) {
                 $query->where('FindingQG', 1)->orWhere('RepairQG', 1);
             }]);
-        } else {
+        }else if ($role == 'reject') {
+            // Fetch Commoninformation records where FindingQG or RepairQG is 1 and there is a related record in checksheet
+            $Commoninformation = Commoninformation::where('Status', 3)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->get();
+        }
+        else {
 
             $itemCheck = Itemcheckgroup::where('GroupID', $role)->value('ItemCheck');
 

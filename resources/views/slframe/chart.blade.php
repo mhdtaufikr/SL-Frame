@@ -76,23 +76,29 @@
                             <div class="card mb-4">
                                 <div class="card-header">
                                     <div class="row text-center" style="margin-bottom: -20px">
-                                        <div class="col-md-4">
-                                            <a href="{{url('/slframe/detail/qg')}}">
-                                            <button class="btn btn-purple btn-sm btn-icon mr-2">
-                                                <i class="fas fa-medal  ml-4"></i>
-                                            </button><p style="font-size: 15px">Finding By QG</p></a>
-                                        </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <a href="{{url('/slframe/detail/qg')}}">
                                             <button class="btn btn-teal btn-sm btn-icon mr-2">
-                                                <i class="fas fa-truck-loading  ml-4"></i>
-                                            </button><p style="font-size: 15px">Finding By PDI</p></a>
+                                                <i class="fas fa-medal  ml-4"></i>
+                                            </button><p style="font-size: 12px">Finding By QG</p></a>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
+                                            <a href="{{url('/slframe/detail/qg')}}">
+                                            <button class="btn btn-purple btn-sm btn-icon mr-2">
+                                                <i class="fas fa-truck-loading  ml-4"></i>
+                                            </button><p style="font-size: 12px">Finding By PDI</p></a>
+                                        </div>
+                                        <div class="col-md-3">
                                             <a href="{{url('/checksheet')}}">
-                                            <button class="btn btn-pink btn-icon btn-sm">
+                                            <button class="btn btn-green btn-icon btn-sm">
                                                 <i class="fas fa-hourglass-end  ml-4"></i>
-                                            </button><p style="font-size: 15px">Pending</p></a>
+                                            </button><p style="font-size: 12px">Pending</p></a>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <a href="{{url('/slframe/detail/reject')}}">
+                                            <button class="btn btn-pink btn-icon btn-sm">
+                                                <i class="fas fa-times"></i>
+                                            </button><p style="font-size: 12px">Reject</p></a>
                                         </div>
                                     </div>
                                 </div>
@@ -114,7 +120,7 @@
                             <div class="card mb-4  card-collapsable">
                                 <div class="card-body" href="#collapseCardExample" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
 
-                                    <div id="chartContainer" style="height: 228px; max-width: 920px; margin: 0px auto;"></div>
+                                    <div id="chartContainer" style="height: 225px; max-width: 920px; margin: 0px auto;"></div>
                                     <div class="card-collapsable-arrow">
                                         <i class="fas fa-chevron-down"></i>
                                     </div>
@@ -195,9 +201,11 @@
         indexLabelFontSize: 16,
         indexLabel: "{label} - {y}",
         dataPoints: [
-            { y: {{ $sums['sumFindingQG'] }}, label: "FindingQG", role: "qg" },
             { y: {{ $sums['sumFindingPDI'] }}, label: "FindingPDI", role: "pdi" },
+            { y: {{ $sums['sumFindingQG'] }}, label: "FindingQG", role: "qg" },
+            { y: {{ $sums['sumReject'] }}, label: "Reject", role: "reject" },
             { y: {{ $sums['sumPending'] }}, label: "Pending", role: "pending" }
+
         ]
     }]
 });
@@ -207,7 +215,7 @@ chart.render();
 // Add click event handler for the data points
 chart.options.data[0].click = function (e) {
     var role = e.dataPoint.role;
-    if (role === "qg" || role === "pdi") {
+    if (role === "qg" || role === "pdi" || role === "reject") {
         var url = "/slframe/detail/" + role;
     } else if (role === "pending") {
         var url = "/checksheet";
